@@ -1,0 +1,26 @@
+[
+    {
+        "label": "Portfolio: Dev Server",
+        "command": "npm run dev",
+        "cwd": "$ZED_WORKTREE_ROOT",
+        "use_new_terminal": false,
+        "allow_concurrent_runs": false,
+        "reveal": "always"
+    },
+    {
+        "label": "Portfolio: Check",
+        "command": "npm run lint && npx tsc --noEmit",
+        "cwd": "$ZED_WORKTREE_ROOT",
+        "use_new_terminal": false,
+        "allow_concurrent_runs": false,
+        "reveal": "always"
+    },
+    {
+        "label": "Portfolio: Production Build",
+        "command": "npm run build",
+        "cwd": "$ZED_WORKTREE_ROOT",
+        "use_new_terminal": false,
+        "allow_concurrent_runs": false,
+        "reveal": "always"
+    }
+]
