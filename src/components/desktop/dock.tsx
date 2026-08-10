@@ -20,8 +20,8 @@ export function Dock() {
       "
         >
             <MagicDock
-                iconSize={54}
-                iconMagnification={72}
+                iconSize={64}
+                iconMagnification={78}
                 iconDistance={130}
                 direction="middle"
                 className="
@@ -30,11 +30,11 @@ export function Dock() {
           gap-2.5
           rounded-[24px]
           border-black/10
-          bg-white/35
+          bg-white/15
           px-3
           py-2.5
           shadow-[0_8px_28px_rgba(0,0,0,0.08)]
-          backdrop-blur-xl
+          backdrop-blur-sm
           dark:border-white/[0.14]
           dark:bg-black/30
           dark:shadow-[0_8px_28px_rgba(0,0,0,0.20)]

@@ -1,11 +1,37 @@
 .desktop {
+    position: relative;
+    isolation: isolate;
     min-height: 100dvh;
-    background-image: url("/backgrounds/light_mode.webp");
-    background-position: center;
-    background-size: cover;
-    background-repeat: no-repeat;
+    overflow: hidden;
+    background: var(--background);
 }
 
-:global(.dark) .desktop {
-    background-image: url("/backgrounds/dark_mode.webp");
+.wallpaper {
+    z-index: -1;
+    object-fit: cover;
+    object-position: center;
+    pointer-events: none;
+    user-select: none;
+}
+
+.lightWallpaper {
+    opacity: 1;
+}
+
+.darkWallpaper {
+    opacity: 0;
+}
+
+:global(.dark) .lightWallpaper {
+    opacity: 0;
+}
+
+:global(.dark) .darkWallpaper {
+    opacity: 1;
+}
+
+.content {
+    position: relative;
+    min-height: 100dvh;
+    z-index: 1;
 }

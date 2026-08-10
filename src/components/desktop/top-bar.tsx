@@ -20,7 +20,7 @@ export function TopBar() {
     const { resolvedTheme, setTheme } = useTheme();
 
     return (
-        <header className="flex items-center justify-between px-10 py-8 font-mono text-black dark:text-white">
+        <header className="flex items-center justify-between px-12 py-8 font-mono text-black dark:text-white">
             <div>
                 <h1 className="text-[20px] font-semibold uppercase leading-none tracking-tight">
                     Rishik
@@ -49,7 +49,7 @@ export function TopBar() {
                         <AnimatedThemeToggler
                             theme={resolvedTheme === "dark" ? "dark" : "light"}
                             onThemeChange={setTheme}
-                            duration={600}
+                            duration={400}
                             aria-label="Toggle theme"
                             className="relative -top-px flex size-4 cursor-pointer items-center justify-center border-0 bg-transparent p-0 outline-none focus:outline-none focus-visible:outline-none [&_svg]:block [&_svg]:size-4"
                         />
