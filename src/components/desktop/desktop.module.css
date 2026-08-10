@@ -1,0 +1,11 @@
+.desktop {
+    min-height: 100dvh;
+    background-image: url("/backgrounds/light_mode.webp");
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+:global(.dark) .desktop {
+    background-image: url("/backgrounds/dark_mode.webp");
+}
