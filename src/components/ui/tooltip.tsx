@@ -61,28 +61,24 @@ const placementClasses: Record<TooltipPlacement, string> = {
         "bottom-full left-1/2",
         "-translate-x-1/2 translate-y-1",
         "group-hover/tooltip:translate-y-0",
-        "group-focus-within/tooltip:translate-y-0",
     ].join(" "),
 
     bottom: [
         "top-full left-1/2",
         "-translate-x-1/2 -translate-y-1",
         "group-hover/tooltip:translate-y-0",
-        "group-focus-within/tooltip:translate-y-0",
     ].join(" "),
 
     left: [
         "right-full top-1/2",
         "-translate-y-1/2 translate-x-1",
         "group-hover/tooltip:translate-x-0",
-        "group-focus-within/tooltip:translate-x-0",
     ].join(" "),
 
     right: [
         "left-full top-1/2",
         "-translate-y-1/2 -translate-x-1",
         "group-hover/tooltip:translate-x-0",
-        "group-focus-within/tooltip:translate-x-0",
     ].join(" "),
 };
 
@@ -115,12 +111,12 @@ function TooltipContent({
                 data-placement={placement}
                 style={tooltipStyle}
                 className={cn(
-                    "pointer-events-none absolute z-[100] whitespace-nowrap",
+                    "pointer-events-none absolute z-100 whitespace-nowrap",
 
                     "rounded-[13px]",
-                    "border border-black/[0.08]",
+                    "border border-black/8",
                     "bg-white",
-                    "px-[15px] py-[9px]",
+                    "px-3.75 py-2.25",
 
                     "text-[13px]",
                     "font-medium",
@@ -146,11 +142,6 @@ function TooltipContent({
                     "group-hover/tooltip:scale-100",
                     "group-hover/tooltip:opacity-100",
                     "group-hover/tooltip:[transition-delay:var(--tooltip-delay)]",
-
-                    "group-focus-within/tooltip:visible",
-                    "group-focus-within/tooltip:scale-100",
-                    "group-focus-within/tooltip:opacity-100",
-                    "group-focus-within/tooltip:[transition-delay:var(--tooltip-delay)]",
 
                     "motion-reduce:transition-none",
 
@@ -183,9 +174,9 @@ function TooltipArrow() {
         <span
             aria-hidden="true"
             className={cn(
-                "absolute size-[10px]",
+                "absolute size-2.5",
                 "rotate-45",
-                "rounded-[2px]",
+                "rounded-xs",
                 "bg-white",
                 arrowPlacementClasses[placement],
             )}

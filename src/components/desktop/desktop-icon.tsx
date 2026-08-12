@@ -2,21 +2,28 @@
 
 import Image from "next/image";
 import { motion } from "motion/react";
-import type { RefObject } from "react";
+import type { KeyboardEvent, Ref, RefObject } from "react";
 
 import { cn } from "@/lib/utils";
 
 type DesktopIconProps = {
     label: string;
     icon: string;
+
     position: {
         top: string;
         left: string;
     };
+
     dragConstraints: RefObject<HTMLDivElement | null>;
+
     className?: string;
+
     iconWidth?: number;
     iconHeight?: number;
+
+    launcherRef?: Ref<HTMLDivElement>;
+    onOpen?: () => void;
 };
 
 export function DesktopIcon({
@@ -27,13 +34,32 @@ export function DesktopIcon({
     className,
     iconWidth = 64,
     iconHeight = 64,
+    launcherRef,
+    onOpen,
 }: DesktopIconProps) {
+    const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+        if (!onOpen) {
+            return;
+        }
+
+        if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            onOpen();
+        }
+    };
+
     return (
         <motion.div
+            ref={launcherRef}
             drag
             dragConstraints={dragConstraints}
             dragElastic={0}
             dragMomentum={false}
+            onTap={() => onOpen?.()}
+            onKeyDown={handleKeyDown}
+            role={onOpen ? "button" : undefined}
+            tabIndex={onOpen ? 0 : undefined}
+            aria-label={onOpen ? `Open ${label}` : undefined}
             style={{
                 top: position.top,
                 left: position.left,
@@ -45,7 +71,7 @@ export function DesktopIcon({
         >
             <div
                 className={cn(
-                    "flex flex-col h-fit w-fit items-center justify-center rounded-[18px]",
+                    "flex h-fit w-fit flex-col items-center justify-center rounded-[18px]",
                     "transition-[background-color,box-shadow,transform] duration-150 ease-out",
                     "group-hover:scale-[1.02]",
                 )}

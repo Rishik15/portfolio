@@ -51,6 +51,7 @@ export function LiveClock() {
 
         return () => {
             clearTimeout(timer);
+
             document.removeEventListener(
                 "visibilitychange",
                 handleVisibilityChange,
@@ -63,7 +64,17 @@ export function LiveClock() {
 
     return (
         <div
-            className="flex items-center gap-3 whitespace-nowrap text-[12px] font-normal uppercase tracking-[0.12em]"
+            className="
+                flex
+                items-center
+                gap-3
+                whitespace-nowrap
+                font-mono
+                text-[12px]
+                font-normal
+                uppercase
+                tracking-[0.12em]
+            "
             aria-label="Current date and time in New York"
         >
             <time suppressHydrationWarning className="tabular-nums">
@@ -74,14 +85,7 @@ export function LiveClock() {
                 {date}
             </span>
 
-            <span className="flex items-center gap-2">
-                <span>New York</span>
-
-                <span
-                    className="size-1.5 shrink-0 rounded-full bg-emerald-500"
-                    aria-hidden="true"
-                />
-            </span>
+            <span>New York</span>
         </div>
     );
 }
