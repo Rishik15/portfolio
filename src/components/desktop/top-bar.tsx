@@ -6,8 +6,6 @@ import { useTheme } from "next-themes";
 import { LiveClock } from "@/components/desktop/live-clock";
 import { AnimatedThemeToggler } from "@/components/ui/animated-theme-toggler";
 
-const RESUME_URL = "resume/resume.pdf";
-
 const emptySubscribe = () => () => {};
 
 export function TopBar() {
@@ -20,7 +18,7 @@ export function TopBar() {
     const { resolvedTheme, setTheme } = useTheme();
 
     return (
-        <header className="flex items-center justify-between px-12 py-8 font-mono text-black dark:text-white">
+        <header className="flex items-center justify-between px-10 py-8 font-mono text-black dark:text-white">
             <div>
                 <h1 className="text-[20px] font-semibold uppercase leading-none tracking-tight">
                     Rishik
@@ -34,22 +32,12 @@ export function TopBar() {
             <div className="flex items-center gap-8 leading-none">
                 <LiveClock />
 
-                <a
-                    href={RESUME_URL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label="Open resume in a new tab"
-                    className="text-[12px] font-normal uppercase tracking-[0.12em] outline-none transition-opacity duration-150 hover:opacity-60 focus:outline-none focus-visible:outline-none"
-                >
-                    Resume
-                </a>
-
                 <div className="flex size-4 shrink-0 items-center justify-center">
                     {mounted && (
                         <AnimatedThemeToggler
                             theme={resolvedTheme === "dark" ? "dark" : "light"}
                             onThemeChange={setTheme}
-                            duration={400}
+                            duration={800}
                             aria-label="Toggle theme"
                             className="relative -top-px flex size-4 cursor-pointer items-center justify-center border-0 bg-transparent p-0 outline-none focus:outline-none focus-visible:outline-none [&_svg]:block [&_svg]:size-4"
                         />

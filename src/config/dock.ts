@@ -15,6 +15,11 @@ export const APP_DOCK_ITEMS = [
         label: "Notes",
         icon: "/icons/notes.webp",
     },
+    {
+        id: "photos",
+        label: "Photos",
+        icon: "/icons/photos.webp",
+    },
 ] as const satisfies readonly DockItemConfig[];
 
 export const CONTACT_DOCK_ITEMS = [

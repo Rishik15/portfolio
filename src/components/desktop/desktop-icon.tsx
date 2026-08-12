@@ -25,8 +25,8 @@ export function DesktopIcon({
     position,
     dragConstraints,
     className,
-    iconWidth = 88,
-    iconHeight = 88,
+    iconWidth = 64,
+    iconHeight = 64,
 }: DesktopIconProps) {
     return (
         <motion.div
@@ -45,13 +45,9 @@ export function DesktopIcon({
         >
             <div
                 className={cn(
-                    "inline-flex h-fit w-fit items-center justify-center rounded-[18px] p-1",
+                    "flex flex-col h-fit w-fit items-center justify-center rounded-[18px]",
                     "transition-[background-color,box-shadow,transform] duration-150 ease-out",
-                    "group-hover:scale-[1.01]",
-                    "group-hover:bg-black/15",
-                    "group-hover:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.12),0_2px_8px_rgba(0,0,0,0.08)]",
-                    "dark:group-hover:bg-white/12",
-                    "dark:group-hover:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.10),0_2px_8px_rgba(0,0,0,0.20)]",
+                    "group-hover:scale-[1.02]",
                 )}
             >
                 <Image
@@ -74,8 +70,8 @@ export function DesktopIcon({
                     fontFamily: "var(--font-inter)",
                 }}
                 className={cn(
-                    "mt-1 whitespace-nowrap text-center",
-                    "text-[14px] font-normal leading-[22.4px] tracking-[-0.6px]",
+                    "whitespace-nowrap text-center",
+                    "text-[14px] font-bold leading-[22.4px] tracking-[-0.6px]",
                     "text-black",
                     "[text-shadow:0_1px_2px_rgba(255,255,255,0.65),0_1px_3px_rgba(0,0,0,0.12)]",
                     "dark:text-[#f7f7f7]",

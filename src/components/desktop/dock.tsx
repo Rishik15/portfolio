@@ -12,11 +12,12 @@ export function Dock() {
                 pointer-events-none
                 fixed
                 inset-x-0
-                bottom-14
+                bottom-8
                 z-50
                 flex
                 justify-center
                 px-4
+                ml-2
             "
         >
             <MagicDock
@@ -26,17 +27,17 @@ export function Dock() {
                 direction="middle"
                 className="
                     pointer-events-auto
-                    h-[76px]
-                    gap-[10px]
+                    h-19
+                    gap-2.5
                     rounded-[24px]
-                    px-[12px]
-                    py-[10px]
+                    px-3
+                    py-2.5
 
-                    !border
-                    !border-white/20
-                    !bg-white/10
-                    !backdrop-blur-[5px]
-                    !shadow-none
+                    border!
+                    border-white/10!
+                    bg-white/10!
+                    backdrop-blur-[5px]!
+                    shadow-none!
                 "
             >
                 {APP_DOCK_ITEMS.map((item) => (
@@ -54,7 +55,8 @@ export function Dock() {
                         w-[1.5px]
                         shrink-0
                         self-center
-                        bg-white/60
+                        bg-black
+                        dark:bg-white/90
                     "
                 />
 

@@ -6,60 +6,14 @@ import { DesktopIcon } from "@/components/desktop/desktop-icon";
 
 const desktopApps = [
     {
-        id: "experience",
-        label: "Experience",
-        icon: "/icons/work.webp",
-
-        iconWidth: 80,
-        iconHeight: 72,
-
-        position: {
-            top: "19%",
-            left: "15.5%",
-        },
-    },
-    {
-        id: "projects",
-        label: "Projects",
+        id: "Terminal",
+        label: "Terminal",
         icon: "/icons/terminal.webp",
-        iconWidth: 80,
-        iconHeight: 80,
+        iconWidth: 72,
+        iconHeight: 72,
         position: {
-            top: "27%",
-            left: "76.5%",
-        },
-    },
-    {
-        id: "certificates",
-        label: "Certificates",
-        icon: "/icons/certificates.webp",
-        iconWidth: 80,
-        iconHeight: 80,
-        position: {
-            top: "47%",
-            left: "41.5%",
-        },
-    },
-    {
-        id: "playground",
-        label: "Playground",
-        icon: "/icons/playground.webp",
-        iconWidth: 80,
-        iconHeight: 80,
-        position: {
-            top: "58%",
-            left: "18.5%",
-        },
-    },
-    {
-        id: "skills",
-        label: "Skills",
-        icon: "/icons/skills.webp",
-        iconWidth: 80,
-        iconHeight: 80,
-        position: {
-            top: "56%",
-            left: "69%",
+            top: "40%",
+            left: "2%",
         },
     },
 ] as const;

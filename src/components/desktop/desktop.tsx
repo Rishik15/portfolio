@@ -8,13 +8,13 @@ import styles from "./desktop.module.css";
 
 export function Desktop() {
     return (
-        <main className="relative h-screen w-screen overflow-hidden">
+        <main className={styles.desktop}>
             <Image
                 src="/backgrounds/light_mode.webp"
                 alt=""
                 fill
-                priority
                 sizes="100vw"
+                loading="eager"
                 draggable={false}
                 className={`${styles.wallpaper} ${styles.lightWallpaper}`}
             />
@@ -23,8 +23,8 @@ export function Desktop() {
                 src="/backgrounds/dark_mode.webp"
                 alt=""
                 fill
-                priority
                 sizes="100vw"
+                loading="eager"
                 draggable={false}
                 className={`${styles.wallpaper} ${styles.darkWallpaper}`}
             />
