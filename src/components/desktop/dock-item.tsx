@@ -23,7 +23,7 @@ function DockItemComponent({ item }: DockItemProps) {
                     loading="eager"
                     draggable={false}
                     className="
-                        size-15
+                        size-14
                         shrink-0
                         select-none
                         object-contain

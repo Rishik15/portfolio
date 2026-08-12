@@ -6,48 +6,60 @@ import { DesktopIcon } from "@/components/desktop/desktop-icon";
 
 const desktopApps = [
     {
-        id: "playground",
-        label: "Playground",
-        icon: "/icons/playground.webp",
+        id: "experience",
+        label: "Experience",
+        icon: "/icons/work.webp",
+
+        iconWidth: 80,
+        iconHeight: 72,
+
         position: {
-            top: "22%",
-            left: "20%",
-        },
-    },
-    {
-        id: "certificates",
-        label: "Certificates",
-        icon: "/icons/certificates.webp",
-        position: {
-            top: "14%",
-            left: "65%",
+            top: "19%",
+            left: "15.5%",
         },
     },
     {
         id: "projects",
         label: "Projects",
         icon: "/icons/terminal.webp",
+        iconWidth: 80,
+        iconHeight: 80,
         position: {
-            top: "35%",
-            left: "47%",
+            top: "27%",
+            left: "76.5%",
         },
     },
     {
-        id: "experience",
-        label: "Experience",
-        icon: "/icons/experiences.webp",
+        id: "certificates",
+        label: "Certificates",
+        icon: "/icons/certificates.webp",
+        iconWidth: 80,
+        iconHeight: 80,
         position: {
-            top: "61%",
-            left: "17%",
+            top: "47%",
+            left: "41.5%",
+        },
+    },
+    {
+        id: "playground",
+        label: "Playground",
+        icon: "/icons/playground.webp",
+        iconWidth: 80,
+        iconHeight: 80,
+        position: {
+            top: "58%",
+            left: "18.5%",
         },
     },
     {
         id: "skills",
         label: "Skills",
         icon: "/icons/skills.webp",
+        iconWidth: 80,
+        iconHeight: 80,
         position: {
-            top: "61%",
-            left: "67%",
+            top: "56%",
+            left: "69%",
         },
     },
 ] as const;
@@ -65,6 +77,8 @@ export function DesktopIcons() {
                     key={app.id}
                     label={app.label}
                     icon={app.icon}
+                    iconWidth={app.iconWidth}
+                    iconHeight={app.iconHeight}
                     position={app.position}
                     dragConstraints={dragBoundsRef}
                     className="pointer-events-auto"

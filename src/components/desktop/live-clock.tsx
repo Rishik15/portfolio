@@ -19,27 +19,22 @@ const DATE_FORMATTER = new Intl.DateTimeFormat("en-US", {
 });
 
 export function LiveClock() {
-    const [now, setNow] = useState<Date | null>(null);
+    const [now, setNow] = useState(() => new Date());
 
     useEffect(() => {
-        let timer: ReturnType<typeof setTimeout> | undefined;
+        let timer: ReturnType<typeof setTimeout>;
 
         function scheduleNextTick() {
             const delay = ONE_MINUTE - (Date.now() % ONE_MINUTE);
 
-            timer = setTimeout(tick, delay);
-        }
-
-        function tick() {
-            setNow(new Date());
-            scheduleNextTick();
+            timer = setTimeout(() => {
+                setNow(new Date());
+                scheduleNextTick();
+            }, delay);
         }
 
         function syncClock() {
-            if (timer !== undefined) {
-                clearTimeout(timer);
-            }
-
+            clearTimeout(timer);
             setNow(new Date());
             scheduleNextTick();
         }
@@ -50,15 +45,12 @@ export function LiveClock() {
             }
         }
 
-        syncClock();
+        scheduleNextTick();
 
         document.addEventListener("visibilitychange", handleVisibilityChange);
 
         return () => {
-            if (timer !== undefined) {
-                clearTimeout(timer);
-            }
-
+            clearTimeout(timer);
             document.removeEventListener(
                 "visibilitychange",
                 handleVisibilityChange,
@@ -66,24 +58,20 @@ export function LiveClock() {
         };
     }, []);
 
-    const time = now ? TIME_FORMATTER.format(now) : "00:00 AM";
-    const date = now ? DATE_FORMATTER.format(now).toUpperCase() : "JAN 00";
+    const time = TIME_FORMATTER.format(now);
+    const date = DATE_FORMATTER.format(now).toUpperCase();
 
     return (
         <div
             className="flex items-center gap-3 whitespace-nowrap text-[12px] font-normal uppercase tracking-[0.12em]"
             aria-label="Current date and time in New York"
         >
-            <time dateTime={now?.toISOString()} className="tabular-nums">
-                <span className={now ? "opacity-100" : "opacity-0"}>
-                    {time}
-                </span>
+            <time suppressHydrationWarning className="tabular-nums">
+                {time}
             </time>
 
-            <span className="tabular-nums">
-                <span className={now ? "opacity-100" : "opacity-0"}>
-                    {date}
-                </span>
+            <span suppressHydrationWarning className="tabular-nums">
+                {date}
             </span>
 
             <span className="flex items-center gap-2">

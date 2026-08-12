@@ -8,7 +8,7 @@ import styles from "./desktop.module.css";
 
 export function Desktop() {
     return (
-        <main className={styles.desktop}>
+        <main className="relative h-screen w-screen overflow-hidden">
             <Image
                 src="/backgrounds/light_mode.webp"
                 alt=""

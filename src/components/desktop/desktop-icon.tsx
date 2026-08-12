@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import { motion } from "motion/react";
 import type { RefObject } from "react";
@@ -12,8 +14,9 @@ type DesktopIconProps = {
         left: string;
     };
     dragConstraints: RefObject<HTMLDivElement | null>;
-    onOpenAction?: () => void;
     className?: string;
+    iconWidth?: number;
+    iconHeight?: number;
 };
 
 export function DesktopIcon({
@@ -21,8 +24,9 @@ export function DesktopIcon({
     icon,
     position,
     dragConstraints,
-    onOpenAction,
     className,
+    iconWidth = 88,
+    iconHeight = 88,
 }: DesktopIconProps) {
     return (
         <motion.div
@@ -30,61 +34,52 @@ export function DesktopIcon({
             dragConstraints={dragConstraints}
             dragElastic={0}
             dragMomentum={false}
-            whileDrag={{ scale: 1.025 }}
-            onDoubleClick={onOpenAction}
-            onKeyDown={(event) => {
-                if (event.key === "Enter") {
-                    onOpenAction?.();
-                }
-            }}
-            tabIndex={0}
-            role="button"
-            aria-label={`Open ${label}`}
             style={{
                 top: position.top,
                 left: position.left,
             }}
             className={cn(
-                "group absolute z-10 flex w-[104px] select-none flex-col items-center",
-                "outline-none",
+                "group absolute z-10 flex w-30 select-none flex-col items-center outline-none",
                 className,
             )}
         >
             <div
                 className={cn(
-                    "flex size-[78px] items-center justify-center rounded-[18px]",
-                    "border border-transparent",
-                    "transition-[background-color,border-color,box-shadow,backdrop-filter,transform]",
-                    "duration-150 ease-out",
-
-                    "group-hover:scale-[1.02]",
-                    "group-hover:border-black/[0.07]",
-                    "group-hover:bg-black/[0.045]",
-                    "group-hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_5px_18px_rgba(0,0,0,0.06)]",
-                    "group-hover:backdrop-blur-[6px]",
-
-                    "dark:group-hover:border-white/[0.10]",
-                    "dark:group-hover:bg-white/[0.075]",
-                    "dark:group-hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.10),0_5px_18px_rgba(0,0,0,0.18)]",
+                    "inline-flex h-fit w-fit items-center justify-center rounded-[18px] p-1",
+                    "transition-[background-color,box-shadow,transform] duration-150 ease-out",
+                    "group-hover:scale-[1.01]",
+                    "group-hover:bg-black/15",
+                    "group-hover:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.12),0_2px_8px_rgba(0,0,0,0.08)]",
+                    "dark:group-hover:bg-white/12",
+                    "dark:group-hover:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.10),0_2px_8px_rgba(0,0,0,0.20)]",
                 )}
             >
                 <Image
                     src={icon}
                     alt=""
-                    width={64}
-                    height={64}
+                    width={iconWidth}
+                    height={iconHeight}
                     draggable={false}
-                    sizes="64px"
-                    className="pointer-events-none size-16 object-contain"
+                    sizes={`${iconWidth}px`}
+                    className="pointer-events-none block shrink-0 object-contain drop-shadow-[0_5px_6px_rgba(0,0,0,0.16)]"
+                    style={{
+                        width: iconWidth,
+                        height: iconHeight,
+                    }}
                 />
             </div>
 
             <span
+                style={{
+                    fontFamily: "var(--font-inter)",
+                }}
                 className={cn(
-                    "mt-1.5 max-w-[104px] truncate rounded-md px-1.5 py-0.5",
-                    "text-center font-sans text-[13px] font-medium leading-tight",
-                    "text-black/80 dark:text-white/90",
-                    "dark:drop-shadow-[0_1px_2px_rgba(0,0,0,0.65)]",
+                    "mt-1 whitespace-nowrap text-center",
+                    "text-[14px] font-normal leading-[22.4px] tracking-[-0.6px]",
+                    "text-black",
+                    "[text-shadow:0_1px_2px_rgba(255,255,255,0.65),0_1px_3px_rgba(0,0,0,0.12)]",
+                    "dark:text-[#f7f7f7]",
+                    "dark:[text-shadow:0_1px_3px_rgba(0,0,0,0.75)]",
                 )}
             >
                 {label}
