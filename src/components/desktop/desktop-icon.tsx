@@ -81,6 +81,7 @@ export function DesktopIcon({
                     alt=""
                     width={iconWidth}
                     height={iconHeight}
+                    loading="eager"
                     draggable={false}
                     sizes={`${iconWidth}px`}
                     className="pointer-events-none block shrink-0 object-contain drop-shadow-[0_5px_6px_rgba(0,0,0,0.16)]"

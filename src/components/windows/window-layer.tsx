@@ -1,14 +1,28 @@
 "use client";
 
+import { useEffect } from "react";
+
+import { About } from "@/components/apps/about/about";
+import { preloadNotesLibrary } from "@/components/apps/notes/notes-cache";
+import { Notes } from "@/components/apps/notes/notes";
 import { Terminal } from "@/components/apps/terminal/terminal";
 import { AppWindow } from "@/components/windows/app-window";
 import { useWindowManager } from "@/components/windows/window-manager";
 import { WINDOW_CONFIGS } from "@/config/windows";
 
+const NOTES_PRELOAD_DELAY = 700;
+
 function getWindowContent(windowId: string) {
     switch (windowId) {
         case "terminal":
             return <Terminal />;
+
+        case "about":
+            return <About />;
+
+        case "notes":
+            return <Notes />;
+
         default:
             return null;
     }
@@ -16,6 +30,17 @@ function getWindowContent(windowId: string) {
 
 export function WindowLayer() {
     const { windows, getLauncherPosition } = useWindowManager();
+
+    useEffect(() => {
+        const timeout = window.setTimeout(
+            preloadNotesLibrary,
+            NOTES_PRELOAD_DELAY,
+        );
+
+        return () => {
+            window.clearTimeout(timeout);
+        };
+    }, []);
 
     return (
         <div className="pointer-events-none fixed inset-0 z-60 overflow-hidden">
