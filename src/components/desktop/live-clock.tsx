@@ -71,7 +71,7 @@ export function LiveClock() {
                 whitespace-nowrap
                 font-mono
                 text-[12px]
-                font-normal
+                font-medium
                 uppercase
                 tracking-[0.12em]
             "

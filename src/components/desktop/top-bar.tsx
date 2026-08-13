@@ -40,15 +40,15 @@ export function TopBar() {
                     Rishik
                 </h1>
 
-                <p className="mt-2 text-[12px] font-medium uppercase leading-none tracking-[0.12em]">
+                <p className="mt-2 text-[14px] font-normal uppercase leading-none tracking-[0.12em]">
                     Software Engineer
                 </p>
             </div>
 
-            <div className="flex items-center gap-8 leading-none">
+            <div className="flex items-center gap-4 leading-none">
                 <LiveClock />
 
-                <div className="pointer-events-auto flex size-4 shrink-0 items-center justify-center">
+                <div className="pointer-events-auto flex size-4.5 shrink-0 items-center justify-center">
                     {mounted && (
                         <AnimatedThemeToggler
                             theme={resolvedTheme === "dark" ? "dark" : "light"}
@@ -59,7 +59,7 @@ export function TopBar() {
                                 relative
                                 -top-px
                                 flex
-                                size-4
+                                size-4.5
                                 cursor-pointer
                                 items-center
                                 justify-center
@@ -70,7 +70,7 @@ export function TopBar() {
                                 focus:outline-none
                                 focus-visible:outline-none
                                 [&_svg]:block
-                                [&_svg]:size-4
+                                [&_svg]:size-4.5
                             "
                         />
                     )}

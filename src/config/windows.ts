@@ -41,8 +41,8 @@ export const WINDOW_CONFIGS = [
         minWidth: 420,
         minHeight: 360,
 
-        initialX: 190,
-        initialY: 240,
+        initialX: 120,
+        initialY: 280,
 
         canMinimize: true,
         canMaximize: true,
@@ -62,8 +62,8 @@ export const WINDOW_CONFIGS = [
         minWidth: 600,
         minHeight: 440,
 
-        initialX: 600,
-        initialY: 100,
+        initialX: 650,
+        initialY: 60,
 
         canMinimize: true,
         canMaximize: true,
