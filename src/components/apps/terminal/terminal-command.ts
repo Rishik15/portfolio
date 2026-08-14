@@ -32,6 +32,16 @@ export function resolveTerminalCommand(command: string): TerminalEntry {
         };
     }
 
+    if (normalized === "/about") {
+        return {
+            command,
+            result: {
+                type: "text",
+                lines: ["Opening about..."],
+            },
+        };
+    }
+
     if (normalized === "/resume") {
         return {
             command,
@@ -53,6 +63,16 @@ export function resolveTerminalCommand(command: string): TerminalEntry {
         return {
             command,
             result: { type: "certificates" },
+        };
+    }
+
+    if (normalized === "/music") {
+        return {
+            command,
+            result: {
+                type: "text",
+                lines: ["Toggling music..."],
+            },
         };
     }
 

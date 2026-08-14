@@ -1,7 +1,8 @@
 import { useState } from "react";
 
+import { useMusic } from "@/components/providers/music-provider";
 import { useWindowManager } from "@/components/windows/window-manager";
-import { WINDOW_IDS } from "@/config/windows";
+import { WINDOW_IDS, type WindowId } from "@/config/windows";
 
 import {
     normalizeTerminalCommand,
@@ -9,8 +10,14 @@ import {
 } from "./terminal-command";
 import type { TerminalEntry } from "./terminal-types";
 
+const TERMINAL_WINDOW_COMMANDS: Readonly<Record<string, WindowId>> = {
+    "/about": WINDOW_IDS.about,
+    "/resume": WINDOW_IDS.resume,
+};
+
 export function useTerminal() {
     const { activateWindow } = useWindowManager();
+    const { toggleMusic } = useMusic();
 
     const [entries, setEntries] = useState<TerminalEntry[]>([]);
     const [history, setHistory] = useState<string[]>([]);
@@ -27,8 +34,14 @@ export function useTerminal() {
             return;
         }
 
-        if (normalizedCommand === "/resume") {
-            activateWindow(WINDOW_IDS.resume);
+        const windowId = TERMINAL_WINDOW_COMMANDS[normalizedCommand];
+
+        if (windowId) {
+            activateWindow(windowId);
+        }
+
+        if (normalizedCommand === "/music") {
+            toggleMusic();
         }
 
         setEntries((current) => [...current, resolveTerminalCommand(command)]);

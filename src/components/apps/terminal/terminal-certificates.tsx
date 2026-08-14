@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { motion, useReducedMotion, type MotionProps } from "motion/react";
 import type { ReactNode } from "react";
 
@@ -12,6 +13,7 @@ type PrintedLineProps = {
     index: number;
     className?: string;
     reduceMotion: boolean | null;
+    onComplete?: () => void;
 };
 
 function PrintedLine({
@@ -19,6 +21,7 @@ function PrintedLine({
     index,
     className,
     reduceMotion,
+    onComplete,
 }: PrintedLineProps) {
     const animation: MotionProps = reduceMotion
         ? {
@@ -31,6 +34,7 @@ function PrintedLine({
                   duration: 0.01,
                   delay: index * LINE_DELAY_SECONDS,
               },
+              onAnimationComplete: onComplete,
           };
 
     return (
@@ -40,8 +44,26 @@ function PrintedLine({
     );
 }
 
-export function TerminalCertificates() {
+type TerminalCertificatesProps = {
+    onComplete?: () => void;
+};
+
+export function TerminalCertificates({
+    onComplete,
+}: TerminalCertificatesProps) {
     const reduceMotion = useReducedMotion();
+
+    const lastLineIndex = CERTIFICATES.reduce(
+        (count, certificate) => count + 2 + (certificate.credentialUrl ? 1 : 0),
+        0,
+    );
+
+    useEffect(() => {
+        if (reduceMotion) {
+            onComplete?.();
+        }
+    }, [reduceMotion]);
+
     let lineIndex = 1;
 
     return (
@@ -49,6 +71,7 @@ export function TerminalCertificates() {
             <PrintedLine
                 index={0}
                 reduceMotion={reduceMotion}
+                onComplete={lastLineIndex === 0 ? onComplete : undefined}
                 className="text-blue-500/80 dark:text-blue-400/80"
             >
                 certificates/
@@ -73,6 +96,11 @@ export function TerminalCertificates() {
                         <PrintedLine
                             index={certificateLineIndex}
                             reduceMotion={reduceMotion}
+                            onComplete={
+                                certificateLineIndex === lastLineIndex
+                                    ? onComplete
+                                    : undefined
+                            }
                             className="grid grid-cols-[4ch_minmax(0,1fr)]"
                         >
                             <span
@@ -90,6 +118,11 @@ export function TerminalCertificates() {
                         <PrintedLine
                             index={issuerLineIndex}
                             reduceMotion={reduceMotion}
+                            onComplete={
+                                issuerLineIndex === lastLineIndex
+                                    ? onComplete
+                                    : undefined
+                            }
                             className="grid grid-cols-[7ch_7rem_minmax(0,1fr)]"
                         >
                             <span
@@ -113,6 +146,11 @@ export function TerminalCertificates() {
                                 <PrintedLine
                                     index={credentialLineIndex}
                                     reduceMotion={reduceMotion}
+                                    onComplete={
+                                        credentialLineIndex === lastLineIndex
+                                            ? onComplete
+                                            : undefined
+                                    }
                                     className="grid grid-cols-[7ch_7rem_minmax(0,1fr)]"
                                 >
                                     <span

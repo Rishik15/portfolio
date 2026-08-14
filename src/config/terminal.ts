@@ -26,6 +26,11 @@ export const TERMINAL_COMMANDS: readonly TerminalCommand[] = [
         visibleInHelp: true,
     },
     {
+        name: "/about",
+        description: "Open about me",
+        visibleInHelp: true,
+    },
+    {
         name: "/resume",
         description: "Open my resume",
         visibleInHelp: true,
@@ -38,6 +43,11 @@ export const TERMINAL_COMMANDS: readonly TerminalCommand[] = [
     {
         name: "/certificates",
         description: "View my certifications",
+        visibleInHelp: true,
+    },
+    {
+        name: "/music",
+        description: "Toggle music player",
         visibleInHelp: true,
     },
     {

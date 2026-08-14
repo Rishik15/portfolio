@@ -3,6 +3,8 @@ import Image from "next/image";
 import { DesktopIcons } from "@/components/desktop/desktop-icons";
 import { Dock } from "@/components/desktop/dock";
 import { TopBar } from "@/components/desktop/top-bar";
+import { MusicProvider } from "@/components/providers/music-provider";
+import DynamicIsland from "@/components/ui/dynamic-island";
 import { WindowLayer } from "@/components/windows/window-layer";
 import { WindowManagerProvider } from "@/components/windows/window-manager";
 import { WINDOW_CONFIGS } from "@/config/windows";
@@ -33,12 +35,26 @@ export function Desktop() {
             />
 
             <WindowManagerProvider configs={WINDOW_CONFIGS}>
-                <div className={styles.content}>
-                    <TopBar />
-                    <DesktopIcons />
-                    <WindowLayer />
-                    <Dock />
-                </div>
+                <MusicProvider>
+                    <div className={styles.content}>
+                        <TopBar />
+
+                        <DynamicIsland
+                            className="
+                                pointer-events-auto
+                                fixed
+                                left-1/2
+                                top-4
+                                z-200
+                                -translate-x-1/2
+                            "
+                        />
+
+                        <DesktopIcons />
+                        <WindowLayer />
+                        <Dock />
+                    </div>
+                </MusicProvider>
             </WindowManagerProvider>
         </main>
     );

@@ -26,7 +26,7 @@ export function TopBar() {
                 top-0
                 z-40
                 flex
-                items-center
+                items-start
                 justify-between
                 px-10
                 py-8
