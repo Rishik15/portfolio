@@ -33,6 +33,7 @@ export function Terminal() {
             onClick={focusInput}
             className="
                 h-full
+                w-full
                 cursor-text
                 overflow-x-hidden
                 overflow-y-auto
@@ -49,7 +50,7 @@ export function Terminal() {
                 showWelcome={terminal.showWelcome}
             />
 
-            <div className={hasContent ? "mt-4" : ""}>
+            <div className={hasContent ? "mt-2 w-full" : "w-full"}>
                 <TerminalInput
                     history={terminal.history}
                     inputRef={inputRef}

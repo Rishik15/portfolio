@@ -1,5 +1,8 @@
 import { useState } from "react";
 
+import { useWindowManager } from "@/components/windows/window-manager";
+import { WINDOW_IDS } from "@/config/windows";
+
 import {
     normalizeTerminalCommand,
     resolveTerminalCommand,
@@ -7,17 +10,25 @@ import {
 import type { TerminalEntry } from "./terminal-types";
 
 export function useTerminal() {
+    const { activateWindow } = useWindowManager();
+
     const [entries, setEntries] = useState<TerminalEntry[]>([]);
     const [history, setHistory] = useState<string[]>([]);
     const [showWelcome, setShowWelcome] = useState(true);
 
     function submitCommand(command: string) {
+        const normalizedCommand = normalizeTerminalCommand(command);
+
         setHistory((current) => [...current, command]);
 
-        if (normalizeTerminalCommand(command) === "/clear") {
+        if (normalizedCommand === "/clear") {
             setEntries([]);
             setShowWelcome(false);
             return;
+        }
+
+        if (normalizedCommand === "/resume") {
+            activateWindow(WINDOW_IDS.resume);
         }
 
         setEntries((current) => [...current, resolveTerminalCommand(command)]);

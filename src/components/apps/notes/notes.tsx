@@ -9,7 +9,7 @@ import { NotesSidebar } from "@/components/apps/notes/notes-sidebar";
 import { useNotes } from "@/components/apps/notes/use-notes";
 
 const DEFAULT_SIDEBAR_WIDTH = 150;
-const DEFAULT_LIST_WIDTH = 220;
+const DEFAULT_LIST_WIDTH = 190;
 
 const MIN_SIDEBAR_WIDTH = 120;
 const MAX_SIDEBAR_WIDTH = 230;

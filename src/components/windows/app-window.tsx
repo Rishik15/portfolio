@@ -139,12 +139,12 @@ export function AppWindow({
 
                         border
                         border-black/15
-                        bg-white/94
+                        bg-white/96
 
                         shadow-[0_24px_60px_-16px_rgba(0,0,0,0.38),0_8px_24px_-12px_rgba(0,0,0,0.28)]
 
                         dark:border-white/15
-                        dark:bg-black/97
+                        dark:bg-black/99
                         dark:shadow-[0_24px_60px_-16px_rgba(0,0,0,0.75),0_8px_24px_-12px_rgba(0,0,0,0.6)]
 
                         ${frame.isMaximized ? "" : "rounded-2xl"}

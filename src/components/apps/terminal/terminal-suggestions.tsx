@@ -16,7 +16,7 @@ export function TerminalSuggestions({
     }
 
     return (
-        <div className="mt-2 max-w-2xl border-y border-foreground/15 py-1">
+        <div className="mt-2 w-full border-y border-foreground/15 py-1">
             {suggestions.map((suggestion, index) => (
                 <button
                     key={suggestion.name}
@@ -26,9 +26,9 @@ export function TerminalSuggestions({
                     className={`
                         grid
                         w-full
-                        grid-cols-[7rem_1fr]
+                        grid-cols-[10rem_1fr]
                         gap-4
-                        px-2
+                        px-3
                         py-1.5
                         text-left
                         transition-colors
@@ -44,8 +44,8 @@ export function TerminalSuggestions({
                 </button>
             ))}
 
-            <div className="border-t border-foreground/10 px-2 pt-1.5 text-xs text-foreground/30">
-                Tab cycle · Enter select
+            <div className="border-t border-foreground/10 px-3 pt-1.5 text-xs text-foreground/50">
+                Press Tab to cycle · Press Enter to select
             </div>
         </div>
     );

@@ -1,22 +1,9 @@
-import { TERMINAL_WELCOME } from "@/config/terminal";
-
+import { TerminalCertificates } from "./terminal-certificates";
 import { TerminalHelp } from "./terminal-help";
 import { TerminalPrompt } from "./terminal-prompt";
+import { TerminalSkills } from "./terminal-skills";
 import type { TerminalEntry, TerminalResult } from "./terminal-types";
-
-function Welcome() {
-    return (
-        <div className="max-w-2xl border-y border-foreground/15 py-3">
-            <p className="text-[15px] font-medium text-foreground/90">
-                {TERMINAL_WELCOME.title}
-            </p>
-
-            <p className="mt-1.5 text-xs text-foreground/45">
-                {TERMINAL_WELCOME.hint}
-            </p>
-        </div>
-    );
-}
+import { TerminalWelcome } from "./terminal-welcome";
 
 function TextResult({ lines }: { lines: readonly string[] }) {
     return (
@@ -29,22 +16,32 @@ function TextResult({ lines }: { lines: readonly string[] }) {
 }
 
 function Result({ result }: { result: TerminalResult }) {
-    return result.type === "help" ? (
-        <TerminalHelp />
-    ) : (
-        <TextResult lines={result.lines} />
-    );
+    switch (result.type) {
+        case "help":
+            return <TerminalHelp />;
+
+        case "skills":
+            return <TerminalSkills />;
+
+        case "certificates":
+            return <TerminalCertificates />;
+
+        case "text":
+            return <TextResult lines={result.lines} />;
+    }
 }
 
 function Entry({ entry }: { entry: TerminalEntry }) {
     return (
-        <div className="space-y-2">
+        <div className="w-full">
             <div className="flex items-center gap-2">
                 <TerminalPrompt />
                 <span>{entry.command}</span>
             </div>
 
-            <Result result={entry.result} />
+            <div className="mt-2 w-full">
+                <Result result={entry.result} />
+            </div>
         </div>
     );
 }
@@ -56,12 +53,19 @@ type TerminalOutputProps = {
 
 export function TerminalOutput({ entries, showWelcome }: TerminalOutputProps) {
     return (
-        <div className="space-y-4">
-            {showWelcome && <Welcome />}
+        <div className="w-full">
+            {showWelcome && <TerminalWelcome />}
 
-            {entries.map((entry, index) => (
-                <Entry key={`${entry.command}-${index}`} entry={entry} />
-            ))}
+            {entries.length > 0 && (
+                <div className={showWelcome ? "mt-2 space-y-2" : "space-y-2"}>
+                    {entries.map((entry, index) => (
+                        <Entry
+                            key={`${entry.command}-${index}`}
+                            entry={entry}
+                        />
+                    ))}
+                </div>
+            )}
         </div>
     );
 }

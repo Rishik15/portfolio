@@ -5,6 +5,7 @@ export const WINDOW_IDS = {
     about: "about",
     notes: "notes",
     images: "images",
+    resume: "resume",
 } as const;
 
 export type WindowId = (typeof WINDOW_IDS)[keyof typeof WINDOW_IDS];
@@ -85,6 +86,27 @@ export const WINDOW_CONFIGS = [
 
         initialX: 50,
         initialY: 50,
+
+        canMinimize: true,
+        canMaximize: true,
+        canResize: true,
+
+        hideTitleBar: false,
+        openMaximized: false,
+    },
+
+    {
+        id: WINDOW_IDS.resume,
+        title: "Resume",
+
+        width: "760px",
+        height: "650px",
+
+        minWidth: 560,
+        minHeight: 420,
+
+        initialX: 360,
+        initialY: 70,
 
         canMinimize: true,
         canMaximize: true,

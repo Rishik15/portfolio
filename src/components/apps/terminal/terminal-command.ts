@@ -32,6 +32,30 @@ export function resolveTerminalCommand(command: string): TerminalEntry {
         };
     }
 
+    if (normalized === "/resume") {
+        return {
+            command,
+            result: {
+                type: "text",
+                lines: ["Opening resume..."],
+            },
+        };
+    }
+
+    if (normalized === "/skills") {
+        return {
+            command,
+            result: { type: "skills" },
+        };
+    }
+
+    if (normalized === "/certificates") {
+        return {
+            command,
+            result: { type: "certificates" },
+        };
+    }
+
     return {
         command,
         result: {
