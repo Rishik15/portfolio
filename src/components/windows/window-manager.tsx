@@ -32,6 +32,8 @@ export type AppWindowConfig = {
     canMaximize?: boolean;
     canResize?: boolean;
 
+    closeOnMinimize?: boolean;
+
     hideTitleBar?: boolean;
     openMaximized?: boolean;
 };
@@ -240,21 +242,34 @@ export function WindowManagerProvider({
         });
     }, []);
 
-    const minimizeWindow = useCallback((id: string) => {
-        setWindowStates((previousStates) => {
-            const currentState = previousStates.get(id);
+    const minimizeWindow = useCallback(
+        (id: string) => {
+            setWindowStates((previousStates) => {
+                const currentState = previousStates.get(id);
 
-            if (!currentState || !isWindowOpen(currentState)) {
-                return previousStates;
-            }
+                if (!currentState || !isWindowOpen(currentState)) {
+                    return previousStates;
+                }
 
-            const nextStates = new Map(previousStates);
+                const config = configs.find((windowConfig) => {
+                    return windowConfig.id === id;
+                });
 
-            nextStates.set(id, createMinimizedState(currentState.zIndex));
+                const nextStates = new Map(previousStates);
 
-            return nextStates;
-        });
-    }, []);
+                if (config?.closeOnMinimize) {
+                    nextStates.set(id, createClosedState());
+
+                    return nextStates;
+                }
+
+                nextStates.set(id, createMinimizedState(currentState.zIndex));
+
+                return nextStates;
+            });
+        },
+        [configs],
+    );
 
     const restoreWindow = useCallback((id: string) => {
         setWindowStates((previousStates) => {

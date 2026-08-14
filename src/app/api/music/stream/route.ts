@@ -1,5 +1,7 @@
 import { fetchAudius, getAudiusHeaders } from "@/lib/audius";
 
+const STREAM_RETRY_DELAYS_MS = [250, 600] as const;
+
 const PASSTHROUGH_HEADERS = [
     "accept-ranges",
     "cache-control",
@@ -24,6 +26,49 @@ function createResponseHeaders(upstream: Response) {
     return headers;
 }
 
+function wait(milliseconds: number) {
+    return new Promise<void>((resolve) => {
+        setTimeout(resolve, milliseconds);
+    });
+}
+
+async function fetchTrackStream(trackId: string, range: string | null) {
+    const headers = getAudiusHeaders({
+        Accept: "audio/*",
+    });
+
+    if (range) {
+        headers.set("Range", range);
+    }
+
+    return fetchAudius(`/tracks/${encodeURIComponent(trackId)}/stream`, {
+        cache: "no-store",
+        headers,
+        redirect: "follow",
+    });
+}
+
+async function fetchTrackStreamWithRetry(
+    trackId: string,
+    range: string | null,
+) {
+    try {
+        return await fetchTrackStream(trackId, range);
+    } catch (firstError) {
+        for (const delay of STREAM_RETRY_DELAYS_MS) {
+            await wait(delay);
+
+            try {
+                return await fetchTrackStream(trackId, range);
+            } catch {
+                // Try the next retry delay.
+            }
+        }
+
+        throw firstError;
+    }
+}
+
 export async function GET(request: Request) {
     const url = new URL(request.url);
     const trackId = url.searchParams.get("trackId");
@@ -37,22 +82,7 @@ export async function GET(request: Request) {
     try {
         const range = request.headers.get("range");
 
-        const headers = getAudiusHeaders({
-            Accept: "audio/*",
-        });
-
-        if (range) {
-            headers.set("Range", range);
-        }
-
-        const upstream = await fetchAudius(
-            `/tracks/${encodeURIComponent(trackId)}/stream`,
-            {
-                cache: "no-store",
-                headers,
-                redirect: "follow",
-            },
-        );
+        const upstream = await fetchTrackStreamWithRetry(trackId, range);
 
         if (!upstream.ok && upstream.status !== 206) {
             console.error(
@@ -71,7 +101,7 @@ export async function GET(request: Request) {
             headers: createResponseHeaders(upstream),
         });
     } catch (error) {
-        console.error("Failed to stream Audius track:", error);
+        console.error("Failed to stream Audius track after retries:", error);
 
         return new Response("Unable to stream this track.", {
             status: 502,

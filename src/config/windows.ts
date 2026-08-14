@@ -112,6 +112,8 @@ export const WINDOW_CONFIGS = [
         canMaximize: true,
         canResize: true,
 
+        closeOnMinimize: true,
+
         hideTitleBar: false,
         openMaximized: false,
     },

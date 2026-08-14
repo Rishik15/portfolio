@@ -11,9 +11,23 @@ import {
     type ReactNode,
 } from "react";
 
+import {
+    consumeTrackStart,
+    getStoredPlaybackState,
+    storePlaybackState,
+} from "@/components/providers/music-storage";
 import type { MusicPlaylist, MusicTrack } from "@/types/music";
 
-const DEFAULT_VOLUME = 0.65;
+const MUSIC_LIMIT_MESSAGE =
+    "Music limit reached for this browser. Please try again later.";
+
+const MUSIC_UNAVAILABLE_MESSAGE =
+    "Music is temporarily unavailable. Please try again later.";
+
+type PendingSeek = {
+    trackId: string;
+    position: number;
+};
 
 type MusicContextValue = {
     isMusicVisible: boolean;
@@ -23,6 +37,7 @@ type MusicContextValue = {
 
     playlistName: string | null;
     currentTrack: MusicTrack | null;
+    musicError: string | null;
 
     toggleMusic: () => void;
     playMusic: () => void;
@@ -32,6 +47,7 @@ type MusicContextValue = {
 
     requestCloseMusic: () => void;
     finishHideMusic: () => void;
+    clearMusicError: () => void;
 };
 
 type MusicProviderProps = {
@@ -55,11 +71,15 @@ export function MusicProvider({ children }: MusicProviderProps) {
 
     const [isTrackLoading, setIsTrackLoading] = useState(false);
 
+    const [musicError, setMusicError] = useState<string | null>(null);
+
     const audioRef = useRef<HTMLAudioElement | null>(null);
 
     const playlistRef = useRef<MusicPlaylist | null>(null);
 
     const playlistPromiseRef = useRef<Promise<MusicPlaylist> | null>(null);
+
+    const pendingSeekRef = useRef<PendingSeek | null>(null);
 
     const currentIndexRef = useRef(0);
 
@@ -67,9 +87,42 @@ export function MusicProvider({ children }: MusicProviderProps) {
 
     const isMusicPlayingRef = useRef(false);
 
+    const clearMusicError = useCallback(() => {
+        setMusicError(null);
+    }, []);
+
+    const saveCurrentPlayback = useCallback(() => {
+        const audio = audioRef.current;
+
+        const trackId = audio?.dataset.trackId;
+
+        if (!audio || !trackId) {
+            return;
+        }
+
+        storePlaybackState(trackId, audio.currentTime);
+    }, []);
+
+    const failMusic = useCallback((message: string) => {
+        const audio = audioRef.current;
+
+        audio?.pause();
+
+        isMusicPlayingRef.current = false;
+
+        setIsMusicPlaying(false);
+        setIsTrackLoading(false);
+        setMusicError(message);
+
+        if (isMusicVisibleRef.current) {
+            setIsMusicClosing(true);
+        }
+    }, []);
+
     const playTrackAtIndex = useCallback(
         async (index: number, shouldPlay: boolean) => {
             const audio = audioRef.current;
+
             const currentPlaylist = playlistRef.current;
 
             if (
@@ -87,20 +140,43 @@ export function MusicProvider({ children }: MusicProviderProps) {
 
             const track = currentPlaylist.tracks[normalizedIndex];
 
+            const isNewTrack = audio.dataset.trackId !== track.id;
+
+            if (isNewTrack && !consumeTrackStart()) {
+                failMusic(MUSIC_LIMIT_MESSAGE);
+
+                return;
+            }
+
             currentIndexRef.current = normalizedIndex;
 
             setCurrentIndex(normalizedIndex);
 
-            if (audio.dataset.trackId !== track.id) {
+            if (isNewTrack) {
+                const previousTrackId = audio.dataset.trackId;
+
+                if (previousTrackId) {
+                    storePlaybackState(previousTrackId, audio.currentTime);
+                }
+
                 setIsTrackLoading(true);
 
                 audio.pause();
+
+                const pendingSeek =
+                    pendingSeekRef.current?.trackId === track.id
+                        ? pendingSeekRef.current
+                        : null;
 
                 audio.dataset.trackId = track.id;
 
                 audio.src = `/api/music/stream?trackId=${encodeURIComponent(
                     track.id,
                 )}`;
+
+                if (!pendingSeek) {
+                    storePlaybackState(track.id, 0);
+                }
 
                 audio.load();
             }
@@ -119,17 +195,13 @@ export function MusicProvider({ children }: MusicProviderProps) {
                 isMusicPlayingRef.current = true;
 
                 setIsMusicPlaying(true);
-                setIsTrackLoading(false);
             } catch (error) {
-                console.warn("Browser prevented music playback:", error);
+                console.warn("Unable to play music:", error);
 
-                isMusicPlayingRef.current = false;
-
-                setIsMusicPlaying(false);
-                setIsTrackLoading(false);
+                failMusic(MUSIC_UNAVAILABLE_MESSAGE);
             }
         },
-        [],
+        [failMusic],
     );
 
     const loadPlaylist = useCallback(async () => {
@@ -156,13 +228,32 @@ export function MusicProvider({ children }: MusicProviderProps) {
             .then((nextPlaylist) => {
                 if (nextPlaylist.tracks.length === 0) {
                     throw new Error(
-                        "The Audius trending list contains no playable tracks.",
+                        "The Audius playlist contains no playable tracks.",
                     );
                 }
 
                 playlistRef.current = nextPlaylist;
 
                 setPlaylist(nextPlaylist);
+
+                const storedPlayback = getStoredPlaybackState();
+
+                if (storedPlayback) {
+                    const storedTrackIndex = nextPlaylist.tracks.findIndex(
+                        (track) => track.id === storedPlayback.trackId,
+                    );
+
+                    if (storedTrackIndex >= 0) {
+                        currentIndexRef.current = storedTrackIndex;
+
+                        setCurrentIndex(storedTrackIndex);
+
+                        pendingSeekRef.current = {
+                            trackId: storedPlayback.trackId,
+                            position: storedPlayback.position,
+                        };
+                    }
+                }
 
                 return nextPlaylist;
             })
@@ -182,34 +273,45 @@ export function MusicProvider({ children }: MusicProviderProps) {
             return;
         }
 
+        saveCurrentPlayback();
+
+        pendingSeekRef.current = null;
+
         void playTrackAtIndex(
             currentIndexRef.current - 1,
             isMusicPlayingRef.current,
         );
-    }, [playTrackAtIndex]);
+    }, [playTrackAtIndex, saveCurrentPlayback]);
 
     const nextTrack = useCallback(() => {
         if (!playlistRef.current) {
             return;
         }
 
+        saveCurrentPlayback();
+
+        pendingSeekRef.current = null;
+
         void playTrackAtIndex(
             currentIndexRef.current + 1,
             isMusicPlayingRef.current,
         );
-    }, [playTrackAtIndex]);
+    }, [playTrackAtIndex, saveCurrentPlayback]);
 
     const pauseMusic = useCallback(() => {
         audioRef.current?.pause();
 
+        saveCurrentPlayback();
+
         isMusicPlayingRef.current = false;
 
         setIsMusicPlaying(false);
-    }, []);
+    }, [saveCurrentPlayback]);
 
     const playMusic = useCallback(() => {
         isMusicVisibleRef.current = true;
 
+        setMusicError(null);
         setIsMusicVisible(true);
         setIsMusicClosing(false);
 
@@ -230,24 +332,25 @@ export function MusicProvider({ children }: MusicProviderProps) {
             .catch((error) => {
                 console.error("Unable to start Audius playback:", error);
 
-                isMusicPlayingRef.current = false;
-
-                setIsMusicPlaying(false);
-                setIsTrackLoading(false);
+                failMusic(MUSIC_UNAVAILABLE_MESSAGE);
             });
-    }, [loadPlaylist, playTrackAtIndex]);
+    }, [failMusic, loadPlaylist, playTrackAtIndex]);
 
     const requestCloseMusic = useCallback(() => {
         audioRef.current?.pause();
+
+        saveCurrentPlayback();
 
         isMusicPlayingRef.current = false;
 
         setIsMusicPlaying(false);
         setIsMusicClosing(true);
-    }, []);
+    }, [saveCurrentPlayback]);
 
     const finishHideMusic = useCallback(() => {
         audioRef.current?.pause();
+
+        saveCurrentPlayback();
 
         isMusicVisibleRef.current = false;
 
@@ -257,11 +360,12 @@ export function MusicProvider({ children }: MusicProviderProps) {
         setIsMusicPlaying(false);
         setIsMusicClosing(false);
         setIsTrackLoading(false);
-    }, []);
+    }, [saveCurrentPlayback]);
 
     const toggleMusic = useCallback(() => {
         if (isMusicVisibleRef.current) {
             requestCloseMusic();
+
             return;
         }
 
@@ -272,10 +376,28 @@ export function MusicProvider({ children }: MusicProviderProps) {
         const audio = new Audio();
 
         audio.preload = "none";
-        audio.volume = DEFAULT_VOLUME;
 
         function handleLoadStart() {
             setIsTrackLoading(true);
+        }
+
+        function handleLoadedMetadata() {
+            const pendingSeek = pendingSeekRef.current;
+
+            const trackId = audio.dataset.trackId;
+
+            if (!pendingSeek || pendingSeek.trackId !== trackId) {
+                return;
+            }
+
+            const maxPosition =
+                Number.isFinite(audio.duration) && audio.duration > 0
+                    ? Math.max(0, audio.duration - 0.25)
+                    : pendingSeek.position;
+
+            audio.currentTime = Math.min(pendingSeek.position, maxPosition);
+
+            pendingSeekRef.current = null;
         }
 
         function handleCanPlay() {
@@ -301,13 +423,16 @@ export function MusicProvider({ children }: MusicProviderProps) {
             isMusicPlayingRef.current = false;
 
             setIsMusicPlaying(false);
+
+            const trackId = audio.dataset.trackId;
+
+            if (trackId) {
+                storePlaybackState(trackId, audio.currentTime);
+            }
         }
 
         function handleError() {
-            isMusicPlayingRef.current = false;
-
-            setIsMusicPlaying(false);
-            setIsTrackLoading(false);
+            failMusic(MUSIC_UNAVAILABLE_MESSAGE);
         }
 
         function handleEnded() {
@@ -317,10 +442,22 @@ export function MusicProvider({ children }: MusicProviderProps) {
                 return;
             }
 
+            pendingSeekRef.current = null;
+
             void playTrackAtIndex(currentIndexRef.current + 1, true);
         }
 
+        function handlePageHide() {
+            const trackId = audio.dataset.trackId;
+
+            if (trackId) {
+                storePlaybackState(trackId, audio.currentTime);
+            }
+        }
+
         audio.addEventListener("loadstart", handleLoadStart);
+
+        audio.addEventListener("loadedmetadata", handleLoadedMetadata);
 
         audio.addEventListener("canplay", handleCanPlay);
 
@@ -336,12 +473,22 @@ export function MusicProvider({ children }: MusicProviderProps) {
 
         audio.addEventListener("ended", handleEnded);
 
+        window.addEventListener("pagehide", handlePageHide);
+
         audioRef.current = audio;
 
         return () => {
+            const trackId = audio.dataset.trackId;
+
+            if (trackId) {
+                storePlaybackState(trackId, audio.currentTime);
+            }
+
             audio.pause();
 
             audio.removeEventListener("loadstart", handleLoadStart);
+
+            audio.removeEventListener("loadedmetadata", handleLoadedMetadata);
 
             audio.removeEventListener("canplay", handleCanPlay);
 
@@ -357,12 +504,14 @@ export function MusicProvider({ children }: MusicProviderProps) {
 
             audio.removeEventListener("ended", handleEnded);
 
+            window.removeEventListener("pagehide", handlePageHide);
+
             audio.removeAttribute("src");
             audio.load();
 
             audioRef.current = null;
         };
-    }, [playTrackAtIndex]);
+    }, [failMusic, playTrackAtIndex]);
 
     const currentTrack = playlist?.tracks[currentIndex] ?? null;
 
@@ -378,6 +527,7 @@ export function MusicProvider({ children }: MusicProviderProps) {
             playlistName: playlist?.name ?? null,
 
             currentTrack,
+            musicError,
 
             toggleMusic,
             playMusic,
@@ -387,6 +537,7 @@ export function MusicProvider({ children }: MusicProviderProps) {
 
             requestCloseMusic,
             finishHideMusic,
+            clearMusicError,
         }),
         [
             isMusicVisible,
@@ -395,6 +546,7 @@ export function MusicProvider({ children }: MusicProviderProps) {
             isMusicLoading,
             playlist,
             currentTrack,
+            musicError,
             toggleMusic,
             playMusic,
             pauseMusic,
@@ -402,6 +554,7 @@ export function MusicProvider({ children }: MusicProviderProps) {
             nextTrack,
             requestCloseMusic,
             finishHideMusic,
+            clearMusicError,
         ],
     );
 

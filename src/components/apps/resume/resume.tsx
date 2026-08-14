@@ -1,6 +1,6 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
-import Image from "next/image";
 import { useState } from "react";
 
 const MIN_ZOOM = 50;
@@ -32,15 +32,15 @@ export function Resume() {
                         aspectRatio: "8.5 / 11",
                     }}
                 >
-                    <Image
+                    <img
                         src="/resume/resume.webp"
                         alt="Rishik Resume"
-                        fill
-                        priority
-                        sizes="90vw"
+                        width={1582}
+                        height={2048}
                         loading="eager"
+                        fetchPriority="high"
                         draggable={false}
-                        className="object-contain"
+                        className="absolute inset-0 h-full w-full object-contain"
                     />
                 </div>
             </div>
@@ -162,7 +162,7 @@ export function Resume() {
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     aria-hidden="true"
-                    className="size-[18px]"
+                    className="size-4.5"
                 >
                     <path d="M12 3v12" />
                     <path d="m7 10 5 5 5-5" />

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 import { useMusic } from "@/components/providers/music-provider";
 import { useWindowManager } from "@/components/windows/window-manager";
@@ -17,11 +17,52 @@ const TERMINAL_WINDOW_COMMANDS: Readonly<Record<string, WindowId>> = {
 
 export function useTerminal() {
     const { activateWindow } = useWindowManager();
-    const { toggleMusic } = useMusic();
+
+    const { isMusicVisible, toggleMusic, musicError } = useMusic();
 
     const [entries, setEntries] = useState<TerminalEntry[]>([]);
+
     const [history, setHistory] = useState<string[]>([]);
+
     const [showWelcome, setShowWelcome] = useState(true);
+
+    const displayedEntries = useMemo(() => {
+        if (!musicError) {
+            return entries;
+        }
+
+        let hasUpdatedMusicEntry = false;
+
+        return entries.map((entry, index) => {
+            if (hasUpdatedMusicEntry) {
+                return entry;
+            }
+
+            const remainingEntries = entries.slice(index + 1);
+
+            const hasLaterMusicEntry = remainingEntries.some(
+                (nextEntry) =>
+                    normalizeTerminalCommand(nextEntry.command) === "/music",
+            );
+
+            if (
+                normalizeTerminalCommand(entry.command) !== "/music" ||
+                hasLaterMusicEntry
+            ) {
+                return entry;
+            }
+
+            hasUpdatedMusicEntry = true;
+
+            return {
+                ...entry,
+                result: {
+                    type: "text" as const,
+                    lines: [musicError],
+                },
+            };
+        });
+    }, [entries, musicError]);
 
     function submitCommand(command: string) {
         const normalizedCommand = normalizeTerminalCommand(command);
@@ -31,6 +72,7 @@ export function useTerminal() {
         if (normalizedCommand === "/clear") {
             setEntries([]);
             setShowWelcome(false);
+
             return;
         }
 
@@ -41,14 +83,33 @@ export function useTerminal() {
         }
 
         if (normalizedCommand === "/music") {
+            const wasMusicVisible = isMusicVisible;
+
             toggleMusic();
+
+            setEntries((current) => [
+                ...current,
+                {
+                    command,
+                    result: {
+                        type: "text",
+                        lines: [
+                            wasMusicVisible
+                                ? "Music paused."
+                                : "Starting music...",
+                        ],
+                    },
+                },
+            ]);
+
+            return;
         }
 
         setEntries((current) => [...current, resolveTerminalCommand(command)]);
     }
 
     return {
-        entries,
+        entries: displayedEntries,
         history,
         showWelcome,
         submitCommand,
