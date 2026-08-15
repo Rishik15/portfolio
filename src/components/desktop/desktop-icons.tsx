@@ -30,9 +30,9 @@ const desktopApps = [
         iconHeight: 72,
 
         position: {
-            top: "35%",
+            top: "43%",
             left: "1%",
-        },
+        }, 
     },
 ] as const satisfies readonly DesktopApp[];
 

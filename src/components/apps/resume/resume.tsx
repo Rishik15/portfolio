@@ -98,7 +98,7 @@ export function Resume() {
                         font-medium
                         text-foreground/65
                         transition-colors
-                        hover:bg-foreground/[0.06]
+                        hover:bg-foreground/6
                         hover:text-foreground
                     "
                 >
@@ -118,7 +118,7 @@ export function Resume() {
                         text-lg
                         text-foreground/70
                         transition-colors
-                        hover:bg-foreground/[0.06]
+                        hover:bg-foreground/6
                         hover:text-foreground
                         disabled:pointer-events-none
                         disabled:opacity-30

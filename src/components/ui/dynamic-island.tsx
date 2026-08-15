@@ -297,9 +297,9 @@ function VisibleDynamicIsland({ className }: VisibleDynamicIslandProps) {
                     className="
                         mx-auto
                         w-fit
-                        min-w-[100px]
+                        min-w-25
                         overflow-hidden
-                        rounded-full
+                        rounded-[32px]
                         bg-black
                         dark:bg-white
                     "
@@ -307,7 +307,7 @@ function VisibleDynamicIsland({ className }: VisibleDynamicIslandProps) {
                     onHoverStart={handleHoverStart}
                     onHoverEnd={handleHoverEnd}
                     style={{
-                        borderRadius: 32,
+                        borderRadius: 48,
                     }}
                     transition={
                         shouldReduceMotion

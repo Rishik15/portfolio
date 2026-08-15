@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { motion } from "motion/react";
-import type { KeyboardEvent, Ref, RefObject } from "react";
+import { useRef, type KeyboardEvent, type Ref, type RefObject } from "react";
 
 import { cn } from "@/lib/utils";
 
@@ -26,6 +26,8 @@ type DesktopIconProps = {
     onOpen?: () => void;
 };
 
+const DRAG_TAP_BLOCK_MS = 100;
+
 export function DesktopIcon({
     label,
     icon,
@@ -37,6 +39,9 @@ export function DesktopIcon({
     launcherRef,
     onOpen,
 }: DesktopIconProps) {
+    const isDraggingRef = useRef(false);
+    const lastDragEndRef = useRef(0);
+
     const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
         if (!onOpen) {
             return;
@@ -48,6 +53,29 @@ export function DesktopIcon({
         }
     };
 
+    const handleDragStart = () => {
+        isDraggingRef.current = true;
+    };
+
+    const handleDragEnd = () => {
+        isDraggingRef.current = false;
+        lastDragEndRef.current = performance.now();
+    };
+
+    const handleTap = () => {
+        if (!onOpen || isDraggingRef.current) {
+            return;
+        }
+
+        const timeSinceDragEnd = performance.now() - lastDragEndRef.current;
+
+        if (timeSinceDragEnd < DRAG_TAP_BLOCK_MS) {
+            return;
+        }
+
+        onOpen();
+    };
+
     return (
         <motion.div
             ref={launcherRef}
@@ -55,7 +83,9 @@ export function DesktopIcon({
             dragConstraints={dragConstraints}
             dragElastic={0}
             dragMomentum={false}
-            onTap={() => onOpen?.()}
+            onDragStart={handleDragStart}
+            onDragEnd={handleDragEnd}
+            onTap={handleTap}
             onKeyDown={handleKeyDown}
             role={onOpen ? "button" : undefined}
             tabIndex={onOpen ? 0 : undefined}

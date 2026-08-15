@@ -53,7 +53,7 @@ export function TopBar() {
                         <AnimatedThemeToggler
                             theme={resolvedTheme === "dark" ? "dark" : "light"}
                             onThemeChange={setTheme}
-                            duration={800}
+                            duration={600}
                             aria-label="Toggle theme"
                             className="
                                 relative
