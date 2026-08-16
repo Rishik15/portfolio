@@ -1,68 +1,68 @@
+import {
+    PROJECT_FALLBACK_LANGUAGE_COLORS,
+    PROJECT_LANGUAGE_COLORS,
+    PROJECTS_UI,
+} from "@/components/apps/projects/projects-ui";
 import type { Project, ProjectLanguage } from "@/config/projects";
 
 type ProjectStatusBarProps = {
     project: Project;
 };
 
-const LANGUAGE_COLORS: Readonly<Record<string, string>> = {
-    Python: "#3572A5",
-    TypeScript: "#5B5BD6",
-    JavaScript: "#F1E05A",
-    Java: "#B07219",
-    "C++": "#F34B7D",
-    C: "#555555",
-    CSS: "#663399",
-    HTML: "#E34C26",
-    Shell: "#89E051",
-    SQL: "#E38C00",
-};
-
-const FALLBACK_LANGUAGE_COLORS = [
-    "#8B949E",
-    "#6E7681",
-    "#57606A",
-    "#AFB8C1",
-] as const;
-
 function getLanguageColor(language: ProjectLanguage, index: number) {
     return (
-        LANGUAGE_COLORS[language.name] ??
-        FALLBACK_LANGUAGE_COLORS[index % FALLBACK_LANGUAGE_COLORS.length]
+        PROJECT_LANGUAGE_COLORS[language.name] ??
+        PROJECT_FALLBACK_LANGUAGE_COLORS[
+            index % PROJECT_FALLBACK_LANGUAGE_COLORS.length
+        ]
     );
 }
 
 export function ProjectStatusBar({ project }: ProjectStatusBarProps) {
     const repositoryCount = project.repositories.length;
 
+    const languageSummary = project.languages
+        .map((language) => `${language.name} ${language.percentage}%`)
+        .join(", ");
+
     return (
         <footer
-            className="
+            className={`
                 flex
-                h-10
                 shrink-0
                 items-center
                 justify-between
-                gap-4
                 border-t
                 border-foreground/10
-                px-4
-                text-[10px]
                 text-foreground/45
-            "
+
+                ${PROJECTS_UI.chrome.statusHeight}
+                ${PROJECTS_UI.status.padding}
+                ${PROJECTS_UI.status.text}
+                ${PROJECTS_UI.status.gap}
+            `}
         >
-            <div className="flex min-w-0 items-center gap-3">
+            <div
+                className={`
+                    flex
+                    min-w-0
+                    items-center
+                    ${PROJECTS_UI.status.gap}
+                `}
+            >
                 {project.languages.length > 0 && (
                     <>
+                        <span className="sr-only">{languageSummary}</span>
+
                         <div
-                            className="
+                            className={`
                                 flex
-                                h-1
-                                w-44
                                 shrink-0
                                 overflow-hidden
                                 rounded-full
                                 bg-foreground/8
-                            "
+                                ${PROJECTS_UI.status.languageBar}
+                            `}
                             aria-hidden="true"
                         >
                             {project.languages.map((language, index) => (
@@ -83,13 +83,15 @@ export function ProjectStatusBar({ project }: ProjectStatusBarProps) {
                         </div>
 
                         <div
-                            className="
-                                flex
+                            className={`
                                 min-w-0
                                 items-center
-                                gap-3
                                 overflow-hidden
-                            "
+
+                                ${PROJECTS_UI.status.languageList}
+                                ${PROJECTS_UI.status.languageGap}
+                            `}
+                            aria-hidden="true"
                         >
                             {project.languages.map((language, index) => (
                                 <div
@@ -102,7 +104,11 @@ export function ProjectStatusBar({ project }: ProjectStatusBarProps) {
                                     "
                                 >
                                     <span
-                                        className="size-1.5 rounded-full"
+                                        className="
+                                            size-1.5
+                                            rounded-full
+                                            @7xl/projects:size-2
+                                        "
                                         style={{
                                             backgroundColor: getLanguageColor(
                                                 language,
@@ -123,7 +129,7 @@ export function ProjectStatusBar({ project }: ProjectStatusBarProps) {
                 )}
             </div>
 
-            <div className="shrink-0 text-foreground/40">
+            <div className="shrink-0 whitespace-nowrap text-foreground/40">
                 {repositoryCount}{" "}
                 {repositoryCount === 1 ? "repository" : "repositories"}
             </div>

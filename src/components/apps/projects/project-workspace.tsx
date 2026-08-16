@@ -7,6 +7,10 @@ import { ProjectOverview } from "@/components/apps/projects/project-overview";
 import { ProjectPreview } from "@/components/apps/projects/project-preview";
 import { ProjectRepositoryLinks } from "@/components/apps/projects/project-repository-links";
 import { ProjectStatusBar } from "@/components/apps/projects/project-status-bar";
+import {
+    PROJECTS_MOTION,
+    PROJECTS_UI,
+} from "@/components/apps/projects/projects-ui";
 import type { Project } from "@/config/projects";
 
 type ProjectWorkspaceProps = {
@@ -16,13 +20,41 @@ type ProjectWorkspaceProps = {
 export function ProjectWorkspace({ project }: ProjectWorkspaceProps) {
     return (
         <section className="flex min-w-0 flex-1 flex-col">
-            <header className="flex h-14 shrink-0 items-center justify-between gap-4 border-b border-foreground/10 px-5">
-                <div className="min-w-0">
-                    <div className="truncate text-[13px] font-semibold tracking-tight text-foreground/90">
+            <header
+                className={`
+                    flex
+                    shrink-0
+                    items-center
+                    justify-between
+                    border-b
+                    border-foreground/10
+
+                    ${PROJECTS_UI.chrome.headerHeight}
+                    ${PROJECTS_UI.workspace.headerPadding}
+                    ${PROJECTS_UI.workspace.headerGap}
+                `}
+            >
+                <div className="min-w-0 flex-1">
+                    <div
+                        className={`
+                            truncate
+                            font-semibold
+                            tracking-tight
+                            text-foreground/90
+                            ${PROJECTS_UI.workspace.titleText}
+                        `}
+                    >
                         {project.name}
                     </div>
 
-                    <div className="mt-0.5 truncate text-[10px] text-foreground/40">
+                    <div
+                        className={`
+                            mt-0.5
+                            truncate
+                            text-foreground/40
+                            ${PROJECTS_UI.workspace.categoryText}
+                        `}
+                    >
                         {project.category}
                     </div>
                 </div>
@@ -36,7 +68,7 @@ export function ProjectWorkspace({ project }: ProjectWorkspaceProps) {
                         key={project.id}
                         initial={{
                             opacity: 0,
-                            y: 4,
+                            y: PROJECTS_MOTION.enterY,
                         }}
                         animate={{
                             opacity: 1,
@@ -44,17 +76,31 @@ export function ProjectWorkspace({ project }: ProjectWorkspaceProps) {
                         }}
                         exit={{
                             opacity: 0,
-                            y: -2,
+                            y: PROJECTS_MOTION.exitY,
                         }}
                         transition={{
-                            duration: 0.13,
+                            duration: PROJECTS_MOTION.duration,
                             ease: "easeOut",
                         }}
-                        className="flex min-h-full flex-col p-5"
+                        className={`
+                            flex
+                            min-h-full
+                            flex-col
+                            ${PROJECTS_UI.workspace.contentPadding}
+                        `}
                     >
                         <ProjectPreview project={project} />
 
-                        <div className="mt-5 grid grid-cols-[minmax(0,1.45fr)_minmax(220px,0.8fr)] border-t border-foreground/10">
+                        <div
+                            className={`
+                                grid
+                                border-t
+                                border-foreground/10
+
+                                ${PROJECTS_UI.workspace.sectionMargin}
+                                ${PROJECTS_UI.workspace.sectionGrid}
+                            `}
+                        >
                             <ProjectOverview project={project} />
                             <ProjectDetails project={project} />
                         </div>

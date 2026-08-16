@@ -1,3 +1,4 @@
+import { PROJECTS_UI } from "@/components/apps/projects/projects-ui";
 import type { Project } from "@/config/projects";
 
 type ProjectsSidebarProps = {
@@ -8,11 +9,38 @@ type ProjectsSidebarProps = {
 
 function EmptySidebarItems() {
     return (
-        <div className="space-y-1">
-            <div className="h-10 rounded-md bg-foreground/[0.07]" />
-            <div className="h-10 rounded-md bg-foreground/[0.025]" />
-            <div className="h-10 rounded-md bg-foreground/[0.025]" />
-            <div className="h-10 rounded-md bg-foreground/[0.025]" />
+        <div className={PROJECTS_UI.sidebar.listGap}>
+            <div
+                className={`
+                    rounded-md
+                    bg-foreground/[0.07]
+                    ${PROJECTS_UI.sidebar.emptyItemHeight}
+                `}
+            />
+
+            <div
+                className={`
+                    rounded-md
+                    bg-foreground/[0.025]
+                    ${PROJECTS_UI.sidebar.emptyItemHeight}
+                `}
+            />
+
+            <div
+                className={`
+                    rounded-md
+                    bg-foreground/[0.025]
+                    ${PROJECTS_UI.sidebar.emptyItemHeight}
+                `}
+            />
+
+            <div
+                className={`
+                    rounded-md
+                    bg-foreground/[0.025]
+                    ${PROJECTS_UI.sidebar.emptyItemHeight}
+                `}
+            />
         </div>
     );
 }
@@ -23,18 +51,51 @@ export function ProjectsSidebar({
     onSelectProject,
 }: ProjectsSidebarProps) {
     return (
-        <aside className="flex w-[190px] shrink-0 flex-col border-r border-foreground/10 bg-foreground/[0.025]">
-            <div className="flex h-14 shrink-0 items-center border-b border-foreground/10 px-4">
-                <span className="text-xs font-semibold tracking-tight">
+        <aside
+            className={`
+                flex
+                shrink-0
+                flex-col
+                border-r
+                border-foreground/10
+                bg-foreground/[0.025]
+                ${PROJECTS_UI.sidebar.width}
+            `}
+        >
+            <div
+                className={`
+                    flex
+                    shrink-0
+                    items-center
+                    border-b
+                    border-foreground/10
+                    ${PROJECTS_UI.chrome.headerHeight}
+                    ${PROJECTS_UI.sidebar.headerPadding}
+                `}
+            >
+                <span
+                    className={`
+                        font-semibold
+                        tracking-tight
+                        ${PROJECTS_UI.sidebar.headerText}
+                    `}
+                >
                     Projects
                 </span>
             </div>
 
-            <div className="min-h-0 flex-1 overflow-auto p-2">
+            <div
+                className={`
+                    min-h-0
+                    flex-1
+                    overflow-auto
+                    ${PROJECTS_UI.sidebar.bodyPadding}
+                `}
+            >
                 {projects.length === 0 ? (
                     <EmptySidebarItems />
                 ) : (
-                    <div className="space-y-1">
+                    <div className={PROJECTS_UI.sidebar.listGap}>
                         {projects.map((project) => {
                             const selected = project.id === selectedProjectId;
 
@@ -46,11 +107,12 @@ export function ProjectsSidebar({
                                     className={`
                                         w-full
                                         rounded-md
-                                        px-2.5
-                                        py-2
                                         text-left
                                         transition-colors
                                         duration-100
+
+                                        ${PROJECTS_UI.sidebar.itemPadding}
+
                                         ${
                                             selected
                                                 ? "bg-foreground/[0.08]"
@@ -58,11 +120,25 @@ export function ProjectsSidebar({
                                         }
                                     `}
                                 >
-                                    <div className="truncate text-[12px] font-medium text-foreground/85">
+                                    <div
+                                        className={`
+                                            truncate
+                                            font-medium
+                                            text-foreground/85
+                                            ${PROJECTS_UI.sidebar.itemNameText}
+                                        `}
+                                    >
                                         {project.name}
                                     </div>
 
-                                    <div className="mt-0.5 truncate text-[10px] text-foreground/40">
+                                    <div
+                                        className={`
+                                            mt-0.5
+                                            truncate
+                                            text-foreground/40
+                                            ${PROJECTS_UI.sidebar.itemCategoryText}
+                                        `}
+                                    >
                                         {project.category}
                                     </div>
                                 </button>
@@ -72,7 +148,20 @@ export function ProjectsSidebar({
                 )}
             </div>
 
-            <div className="flex h-10 shrink-0 items-center border-t border-foreground/10 px-4 text-[10px] text-foreground/40">
+            <div
+                className={`
+                    flex
+                    shrink-0
+                    items-center
+                    border-t
+                    border-foreground/10
+                    text-foreground/40
+
+                    ${PROJECTS_UI.chrome.statusHeight}
+                    ${PROJECTS_UI.sidebar.footerPadding}
+                    ${PROJECTS_UI.sidebar.footerText}
+                `}
+            >
                 {projects.length === 0 ? (
                     <div className="h-2 w-20 rounded-full bg-foreground/10" />
                 ) : (

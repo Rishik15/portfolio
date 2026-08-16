@@ -4,6 +4,7 @@ import { useState } from "react";
 
 import { ProjectsEmptyWorkspace } from "@/components/apps/projects/projects-empty";
 import { ProjectsSidebar } from "@/components/apps/projects/projects-sidebar";
+import { PROJECTS_UI } from "@/components/apps/projects/projects-ui";
 import { ProjectWorkspace } from "@/components/apps/projects/project-workspace";
 import { PROJECTS } from "@/config/projects";
 
@@ -18,7 +19,7 @@ export function Projects() {
         null;
 
     return (
-        <div className="flex h-full min-h-0 w-full bg-background text-foreground">
+        <div className={PROJECTS_UI.root}>
             <ProjectsSidebar
                 projects={PROJECTS}
                 selectedProjectId={selectedProject?.id ?? null}
