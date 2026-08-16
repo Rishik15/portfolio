@@ -15,6 +15,11 @@ export type WindowPosition = {
     y: number;
 };
 
+export type WindowPlacement = {
+    x: number;
+    y: number;
+};
+
 export type AppWindowConfig = {
     id: string;
     title: string;
@@ -22,11 +27,14 @@ export type AppWindowConfig = {
 
     width?: string;
     height?: string;
+
     minWidth?: number;
     minHeight?: number;
 
-    initialX?: number;
-    initialY?: number;
+    maxWidth?: number;
+    maxHeight?: number;
+
+    initialPlacement?: WindowPlacement;
 
     canMinimize?: boolean;
     canMaximize?: boolean;

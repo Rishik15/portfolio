@@ -20,11 +20,16 @@ export const WINDOW_CONFIGS = [
         width: "70vw",
         height: "68vh",
 
-        minWidth: 760,
-        minHeight: 440,
+        minWidth: 620,
+        minHeight: 400,
 
-        initialX: 210,
-        initialY: 100,
+        maxWidth: 1360,
+        maxHeight: 820,
+
+        initialPlacement: {
+            x: 0.5,
+            y: 0.45,
+        },
 
         canMinimize: true,
         canMaximize: true,
@@ -38,14 +43,19 @@ export const WINDOW_CONFIGS = [
         id: WINDOW_IDS.about,
         title: "About Me",
 
-        width: "520px",
-        height: "470px",
+        width: "36vw",
+        height: "52vh",
 
-        minWidth: 420,
-        minHeight: 360,
+        minWidth: 380,
+        minHeight: 340,
 
-        initialX: 120,
-        initialY: 280,
+        maxWidth: 600,
+        maxHeight: 560,
+
+        initialPlacement: {
+            x: 0.06,
+            y: 0.8,
+        },
 
         canMinimize: true,
         canMaximize: true,
@@ -59,35 +69,19 @@ export const WINDOW_CONFIGS = [
         id: WINDOW_IDS.notes,
         title: "Notes",
 
-        width: "760px",
-        height: "600px",
+        width: "58vw",
+        height: "66vh",
 
-        minWidth: 600,
-        minHeight: 440,
-
-        initialX: 650,
-        initialY: 60,
-
-        canMinimize: true,
-        canMaximize: true,
-        canResize: true,
-
-        hideTitleBar: false,
-        openMaximized: false,
-    },
-
-    {
-        id: WINDOW_IDS.images,
-        title: "Photos",
-
-        width: "860px",
-        height: "560px",
-
-        minWidth: 640,
+        minWidth: 540,
         minHeight: 420,
 
-        initialX: 50,
-        initialY: 50,
+        maxWidth: 1080,
+        maxHeight: 760,
+
+        initialPlacement: {
+            x: 0.92,
+            y: 0.08,
+        },
 
         canMinimize: true,
         canMaximize: true,
@@ -101,14 +95,19 @@ export const WINDOW_CONFIGS = [
         id: WINDOW_IDS.resume,
         title: "Resume",
 
-        width: "760px",
-        height: "650px",
+        width: "54vw",
+        height: "72vh",
 
-        minWidth: 560,
+        minWidth: 500,
         minHeight: 420,
 
-        initialX: 360,
-        initialY: 70,
+        maxWidth: 920,
+        maxHeight: 900,
+
+        initialPlacement: {
+            x: 0.5,
+            y: 0.45,
+        },
 
         canMinimize: true,
         canMaximize: true,
@@ -124,14 +123,19 @@ export const WINDOW_CONFIGS = [
         id: WINDOW_IDS.projects,
         title: "Projects",
 
-        width: "1040px",
-        height: "680px",
+        width: "74vw",
+        height: "72vh",
 
-        minWidth: 820,
-        minHeight: 520,
+        minWidth: 680,
+        minHeight: 480,
 
-        initialX: 180,
-        initialY: 70,
+        maxWidth: 1440,
+        maxHeight: 900,
+
+        initialPlacement: {
+            x: 0.7,
+            y: 0.65,
+        },
 
         canMinimize: true,
         canMaximize: true,
@@ -147,14 +151,19 @@ export const WINDOW_CONFIGS = [
         id: WINDOW_IDS.experience,
         title: "Experience",
 
-        width: "960px",
-        height: "640px",
+        width: "68vw",
+        height: "68vh",
 
-        minWidth: 760,
-        minHeight: 480,
+        minWidth: 640,
+        minHeight: 460,
 
-        initialX: 240,
-        initialY: 90,
+        maxWidth: 1280,
+        maxHeight: 840,
+
+        initialPlacement: {
+            x: 0.10,
+            y: 0.20,
+        },
 
         canMinimize: true,
         canMaximize: true,
