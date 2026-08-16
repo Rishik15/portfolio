@@ -1,13 +1,14 @@
+import { TERMINAL_UI } from "@/components/apps/terminal/terminal-ui";
 import { TERMINAL_PROMPT } from "@/config/terminal";
 
 export function TerminalPrompt() {
     return (
-        <span className="flex shrink-0 items-center whitespace-nowrap">
-            <span className="font-medium text-red-400 dark:text-red-400">
+        <span className={TERMINAL_UI.prompt.root}>
+            <span className={TERMINAL_UI.prompt.user}>
                 {TERMINAL_PROMPT.user}
             </span>
 
-            <span className="ml-1 text-foreground/90">
+            <span className={TERMINAL_UI.prompt.symbol}>
                 {TERMINAL_PROMPT.symbol}
             </span>
         </span>

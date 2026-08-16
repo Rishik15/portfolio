@@ -1,19 +1,16 @@
+import { ABOUT_UI } from "@/components/apps/about/about-ui";
 import { ABOUT } from "@/config/about";
 
 export function AboutMap() {
     return (
-        <section className="border-t border-foreground/10 pt-4">
-            <div className="mb-3">
-                <h2 className="text-lg font-semibold text-foreground">
-                    Location
-                </h2>
+        <section className={ABOUT_UI.map.section}>
+            <div className={ABOUT_UI.map.header}>
+                <h2 className={ABOUT_UI.map.title}>Location</h2>
 
-                <p className="mt-1 text-sm text-foreground/55">
-                    {ABOUT.location.label}
-                </p>
+                <p className={ABOUT_UI.map.location}>{ABOUT.location.label}</p>
             </div>
 
-            <div className="h-59 overflow-hidden rounded-xl border border-foreground/10">
+            <div className={ABOUT_UI.map.frame}>
                 <iframe
                     src={ABOUT.location.mapUrl}
                     title={`Map of ${ABOUT.location.label}`}

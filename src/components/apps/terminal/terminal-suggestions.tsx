@@ -1,3 +1,4 @@
+import { TERMINAL_UI } from "@/components/apps/terminal/terminal-ui";
 import type { TerminalCommand } from "@/config/terminal";
 
 type TerminalSuggestionsProps = {
@@ -16,35 +17,38 @@ export function TerminalSuggestions({
     }
 
     return (
-        <div className="mt-2 w-full border-y border-foreground/15 py-1">
-            {suggestions.map((suggestion, index) => (
-                <button
-                    key={suggestion.name}
-                    type="button"
-                    onMouseDown={(event) => event.preventDefault()}
-                    onClick={() => onSelect(suggestion.name)}
-                    className={`
-                        grid
-                        w-full
-                        grid-cols-[10rem_1fr]
-                        gap-4
-                        px-3
-                        py-1.5
-                        text-left
-                        transition-colors
-                        ${
-                            index === activeIndex
-                                ? "bg-foreground/8 text-foreground"
-                                : "text-foreground/45 hover:bg-foreground/4"
-                        }
-                    `}
-                >
-                    <span>{suggestion.name}</span>
-                    <span>{suggestion.description}</span>
-                </button>
-            ))}
+        <div className={TERMINAL_UI.suggestions.root}>
+            {suggestions.map((suggestion, index) => {
+                const active = index === activeIndex;
 
-            <div className="border-t border-foreground/10 px-3 pt-1.5 text-xs text-foreground/50">
+                return (
+                    <button
+                        key={suggestion.name}
+                        type="button"
+                        onMouseDown={(event) => event.preventDefault()}
+                        onClick={() => onSelect(suggestion.name)}
+                        className={`
+                            ${TERMINAL_UI.suggestions.row}
+
+                            ${
+                                active
+                                    ? TERMINAL_UI.suggestions.active
+                                    : TERMINAL_UI.suggestions.inactive
+                            }
+                        `}
+                    >
+                        <span className={TERMINAL_UI.suggestions.command}>
+                            {suggestion.name}
+                        </span>
+
+                        <span className={TERMINAL_UI.suggestions.description}>
+                            {suggestion.description}
+                        </span>
+                    </button>
+                );
+            })}
+
+            <div className={TERMINAL_UI.suggestions.hint}>
                 Press Tab to cycle · Press Enter to select
             </div>
         </div>

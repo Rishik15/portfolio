@@ -1,10 +1,11 @@
-import { AboutCopy } from "./about-copy";
-import { AboutMap } from "./about-map";
+import { AboutCopy } from "@/components/apps/about/about-copy";
+import { AboutMap } from "@/components/apps/about/about-map";
+import { ABOUT_UI } from "@/components/apps/about/about-ui";
 
 export function About() {
     return (
-        <div className="min-h-full bg-transparent px-5 py-5 font-sans">
-            <div className="mx-auto max-w-2xl space-y-5">
+        <div className={ABOUT_UI.root}>
+            <div className={ABOUT_UI.content}>
                 <AboutCopy />
                 <AboutMap />
             </div>

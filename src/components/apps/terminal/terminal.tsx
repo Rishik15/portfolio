@@ -2,10 +2,11 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { TerminalInput } from "./terminal-input";
-import { TerminalOutput } from "./terminal-output";
-import type { TerminalEntry } from "./terminal-types";
-import { useTerminal } from "./use-terminal";
+import { TerminalInput } from "@/components/apps/terminal/terminal-input";
+import { TerminalOutput } from "@/components/apps/terminal/terminal-output";
+import type { TerminalEntry } from "@/components/apps/terminal/terminal-types";
+import { TERMINAL_UI } from "@/components/apps/terminal/terminal-ui";
+import { useTerminal } from "@/components/apps/terminal/use-terminal";
 
 export function Terminal() {
     const terminal = useTerminal();
@@ -46,19 +47,7 @@ export function Terminal() {
         <div
             ref={viewportRef}
             onClick={focusInput}
-            className="
-                h-full
-                w-full
-                cursor-text
-                overflow-x-hidden
-                overflow-y-auto
-                p-4
-                font-mono
-                text-sm
-                leading-5
-                text-foreground
-                selection:bg-foreground/15
-            "
+            className={TERMINAL_UI.root}
         >
             <TerminalOutput
                 entries={terminal.entries}
@@ -67,7 +56,13 @@ export function Terminal() {
             />
 
             {!isCertificatesPrinting && (
-                <div className={hasContent ? "mt-2 w-full" : "w-full"}>
+                <div
+                    className={
+                        hasContent
+                            ? TERMINAL_UI.output.inputWithContent
+                            : TERMINAL_UI.output.input
+                    }
+                >
                     <TerminalInput
                         history={terminal.history}
                         inputRef={inputRef}

@@ -1,3 +1,4 @@
+import { TERMINAL_UI } from "@/components/apps/terminal/terminal-ui";
 import { TERMINAL_COMMANDS } from "@/config/terminal";
 
 const HELP_COMMANDS = TERMINAL_COMMANDS.filter(
@@ -6,87 +7,42 @@ const HELP_COMMANDS = TERMINAL_COMMANDS.filter(
 
 export function TerminalHelp() {
     return (
-        <div
-            className="
-                w-full
-                border
-                border-foreground/25
-                bg-background/20
-            "
-        >
-            <div
-                className="
-                                  grid
-                                  grid-cols-[12rem_minmax(0,1fr)]
-                                  gap-4
-                                  px-4
-                                  py-1
-                                  text-[10px]
-                                  border-b
-                                  border-foreground/15
-                                  uppercase
-                                  tracking-[0.16em]
-                                  text-foreground/55
-                              "
-            >
+        <div className={TERMINAL_UI.help.root}>
+            <div className={TERMINAL_UI.help.header}>
                 <span>Command</span>
                 <span>What it does</span>
             </div>
-            <div className="px-2 pb-2 mt-1">
+
+            <div className={TERMINAL_UI.help.body}>
                 {HELP_COMMANDS.map((command) => (
-                    <div
-                        key={command.name}
-                        className="
-                            grid
-                            grid-cols-[12rem_minmax(0,1fr)]
-                            items-center
-                            gap-4
-                            px-2
-                            py-1.5
-                        "
-                    >
-                        <span
-                            className="
-                                text-sm
-                                font-medium
-                                text-foreground/90
-                            "
-                        >
+                    <div key={command.name} className={TERMINAL_UI.help.row}>
+                        <span className={TERMINAL_UI.help.command}>
                             {command.name}
                         </span>
 
-                        <span className="text-sm text-foreground/50">
+                        <span className={TERMINAL_UI.help.description}>
                             {command.description}
                         </span>
                     </div>
                 ))}
             </div>
 
-            <div
-                className="
-                    grid
-                    grid-cols-3
-                    gap-4
-                    border-t
-                    border-foreground/15
-                    px-4
-                    py-2.5
-                    text-[11px]
-                    text-foreground/35
-                "
-            >
-                <div className="flex items-center gap-2">
-                    <span className="text-foreground/55">↑</span>
+            <div className={TERMINAL_UI.help.footer}>
+                <div className={TERMINAL_UI.help.footerItem}>
+                    <span className={TERMINAL_UI.help.footerKey}>↑</span>
+
                     <span>Up Arrow for previous command</span>
                 </div>
 
-                <div className="flex items-center gap-2">
-                    <span className="text-foreground/55">↓</span>
+                <div className={TERMINAL_UI.help.footerItem}>
+                    <span className={TERMINAL_UI.help.footerKey}>↓</span>
+
                     <span>Down Arrow for next command</span>
                 </div>
 
-                <div className="flex items-center gap-2">
-                    <span className="text-foreground/55">Esc</span>
+                <div className={TERMINAL_UI.help.footerItem}>
+                    <span className={TERMINAL_UI.help.footerKey}>Esc</span>
+
                     <span>Clears current input</span>
                 </div>
             </div>

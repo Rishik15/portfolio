@@ -5,9 +5,10 @@ import {
     type SyntheticEvent,
 } from "react";
 
-import { TerminalPrompt } from "./terminal-prompt";
-import { TerminalSuggestions } from "./terminal-suggestions";
-import { useTerminalInput } from "./use-terminal-input";
+import { TerminalPrompt } from "@/components/apps/terminal/terminal-prompt";
+import { TerminalSuggestions } from "@/components/apps/terminal/terminal-suggestions";
+import { TERMINAL_UI } from "@/components/apps/terminal/terminal-ui";
+import { useTerminalInput } from "@/components/apps/terminal/use-terminal-input";
 
 type TerminalInputProps = {
     history: readonly string[];
@@ -74,14 +75,11 @@ export function TerminalInput({
     const cursorCharacter = input.value[caretIndex] ?? "\u00A0";
 
     return (
-        <div className="w-full">
-            <form
-                onSubmit={handleSubmit}
-                className="flex w-full items-center gap-2"
-            >
+        <div className={TERMINAL_UI.input.root}>
+            <form onSubmit={handleSubmit} className={TERMINAL_UI.input.form}>
                 <TerminalPrompt />
 
-                <div className="relative min-w-0 flex-1">
+                <div className={TERMINAL_UI.input.fieldWrapper}>
                     <input
                         ref={inputRef}
                         value={input.value}
@@ -106,15 +104,7 @@ export function TerminalInput({
                         autoComplete="off"
                         spellCheck={false}
                         autoFocus
-                        className="
-                            w-full
-                            min-w-0
-                            bg-transparent
-                            p-0
-                            text-foreground
-                            caret-transparent
-                            outline-none
-                        "
+                        className={TERMINAL_UI.input.field}
                     />
 
                     {isFocused && (
@@ -123,16 +113,7 @@ export function TerminalInput({
                             style={{
                                 left: `${caretIndex}ch`,
                             }}
-                            className="
-                                pointer-events-none
-                                absolute
-                                top-0
-                                h-4.5
-                                w-[0.85ch]
-                                bg-foreground/60
-                                text-background
-                                leading-5
-                            "
+                            className={TERMINAL_UI.input.caret}
                         >
                             {cursorCharacter}
                         </span>

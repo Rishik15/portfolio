@@ -1,5 +1,6 @@
 import { ArrowUpRight, Building2, CalendarDays, MapPin } from "lucide-react";
 
+import { EXPERIENCE_UI } from "@/components/apps/experience/experience-ui";
 import type { Experience } from "@/config/experience";
 
 type ExperienceDetailProps = {
@@ -7,76 +8,64 @@ type ExperienceDetailProps = {
 };
 
 function EmptyLine({ width }: { width: string }) {
-    return (
-        <div
-            className="h-2.5 rounded-sm bg-foreground/[0.065]"
-            style={{ width }}
-        />
-    );
+    return <div className={EXPERIENCE_UI.detail.emptyLine} style={{ width }} />;
 }
 
 function EmptyDetail() {
     return (
-        <div className="mx-auto w-full max-w-3xl px-8 py-8">
-            <div className="flex items-start gap-4">
-                <div className="min-w-0 flex-1 pt-1">
-                    <div className="mb-3">
-                        <EmptyLine width="38%" />
-                    </div>
+        <div className={EXPERIENCE_UI.detail.content}>
+            <div className="min-w-0">
+                <div className="mb-3">
+                    <EmptyLine width="38%" />
+                </div>
 
-                    <EmptyLine width="24%" />
+                <EmptyLine width="24%" />
+            </div>
+
+            <div className={EXPERIENCE_UI.detail.metadata}>
+                <div>
+                    <div className={EXPERIENCE_UI.detail.label}>DATES</div>
+
+                    <EmptyLine width="55%" />
+                </div>
+
+                <div>
+                    <div className={EXPERIENCE_UI.detail.label}>LOCATION</div>
+
+                    <EmptyLine width="50%" />
+                </div>
+
+                <div>
+                    <div className={EXPERIENCE_UI.detail.label}>TYPE</div>
+
+                    <EmptyLine width="35%" />
                 </div>
             </div>
 
-            <div className="mt-8 border-t border-foreground/10 pt-6">
-                <div className="grid grid-cols-2 gap-x-10 gap-y-5">
-                    <div>
-                        <div className="mb-2 text-[10px] font-medium tracking-[0.08em] text-foreground/35">
-                            DATES
-                        </div>
-
-                        <EmptyLine width="55%" />
-                    </div>
-
-                    <div>
-                        <div className="mb-2 text-[10px] font-medium tracking-[0.08em] text-foreground/35">
-                            LOCATION
-                        </div>
-
-                        <EmptyLine width="50%" />
-                    </div>
-
-                    <div>
-                        <div className="mb-2 text-[10px] font-medium tracking-[0.08em] text-foreground/35">
-                            TYPE
-                        </div>
-
-                        <EmptyLine width="35%" />
-                    </div>
-                </div>
-            </div>
-
-            <div className="mt-8 border-t border-foreground/10 pt-6">
-                <div className="mb-3 text-[10px] font-medium tracking-[0.08em] text-foreground/35">
-                    ABOUT
-                </div>
+            <section className={EXPERIENCE_UI.detail.section}>
+                <div className={EXPERIENCE_UI.detail.sectionTitle}>ABOUT</div>
 
                 <div className="space-y-2.5">
                     <EmptyLine width="94%" />
                     <EmptyLine width="88%" />
                     <EmptyLine width="67%" />
                 </div>
-            </div>
+            </section>
 
-            <div className="mt-8 border-t border-foreground/10 pt-6">
-                <div className="mb-3 text-[10px] font-medium tracking-[0.08em] text-foreground/35">
+            <section className={EXPERIENCE_UI.detail.section}>
+                <div className={EXPERIENCE_UI.detail.sectionTitle}>
                     HIGHLIGHTS
                 </div>
 
-                <div className="space-y-3">
+                <div className={EXPERIENCE_UI.detail.highlights}>
                     {[0, 1, 2].map((item) => (
-                        <div key={item} className="flex items-center gap-3">
-                            <div className="size-1 shrink-0 rounded-full bg-foreground/15" />
+                        <div
+                            key={item}
+                            className={EXPERIENCE_UI.detail.highlightRow}
+                        >
+                            <div
+                                className={EXPERIENCE_UI.detail.highlightDot}
+                            />
 
                             <EmptyLine
                                 width={
@@ -90,15 +79,15 @@ function EmptyDetail() {
                         </div>
                     ))}
                 </div>
-            </div>
+            </section>
 
-            <div className="mt-8 border-t border-foreground/10 pt-6">
-                <div className="mb-3 text-[10px] font-medium tracking-[0.08em] text-foreground/35">
+            <section className={EXPERIENCE_UI.detail.section}>
+                <div className={EXPERIENCE_UI.detail.sectionTitle}>
                     TECHNOLOGIES
                 </div>
 
                 <EmptyLine width="48%" />
-            </div>
+            </section>
         </div>
     );
 }
@@ -106,124 +95,136 @@ function EmptyDetail() {
 export function ExperienceDetail({ experience }: ExperienceDetailProps) {
     if (!experience) {
         return (
-            <div className="min-h-0 flex-1 overflow-y-auto">
+            <div className={EXPERIENCE_UI.detail.root}>
                 <EmptyDetail />
             </div>
         );
     }
 
     return (
-        <div className="min-h-0 flex-1 overflow-y-auto">
-            <div className="mx-auto w-full max-w-3xl px-8 py-8">
-                <div className="flex items-start gap-4">
-                    <div className="min-w-0 flex-1">
-                        <div className="flex items-start gap-3">
-                            <div className="min-w-0 flex-1">
-                                <h2 className="truncate text-xl font-semibold tracking-[-0.02em] text-foreground">
-                                    {experience.role}
-                                </h2>
+        <div className={EXPERIENCE_UI.detail.root}>
+            <div className={EXPERIENCE_UI.detail.content}>
+                <div className="min-w-0">
+                    <h2 className={EXPERIENCE_UI.detail.role}>
+                        {experience.role}
+                    </h2>
 
-                                <div className="mt-1 flex items-center gap-1.5 text-[13px] text-foreground/55">
-                                    <Building2
-                                        className="size-3.5"
-                                        strokeWidth={1.6}
-                                    />
+                    <div className={EXPERIENCE_UI.detail.companyRow}>
+                        <Building2
+                            className={EXPERIENCE_UI.detail.companyIcon}
+                            strokeWidth={1.6}
+                        />
 
-                                    {experience.companyUrl ? (
-                                        <a
-                                            href={experience.companyUrl}
-                                            target="_blank"
-                                            rel="noreferrer"
-                                            className="inline-flex min-w-0 items-center gap-1 transition-colors hover:text-foreground"
-                                        >
-                                            <span className="truncate">
-                                                {experience.company}
-                                            </span>
+                        {experience.companyUrl ? (
+                            <a
+                                href={experience.companyUrl}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="
+                                    inline-flex
+                                    min-w-0
+                                    items-center
+                                    gap-1
 
-                                            <ArrowUpRight
-                                                className="size-3"
-                                                strokeWidth={1.6}
-                                            />
-                                        </a>
-                                    ) : (
-                                        <span className="truncate">
-                                            {experience.company}
-                                        </span>
-                                    )}
-                                </div>
-                            </div>
-                        </div>
+                                    transition-colors
+                                    duration-100
+
+                                    hover:text-foreground
+                                "
+                            >
+                                <span className="truncate">
+                                    {experience.company}
+                                </span>
+
+                                <ArrowUpRight
+                                    className={
+                                        EXPERIENCE_UI.detail.externalIcon
+                                    }
+                                    strokeWidth={1.6}
+                                />
+                            </a>
+                        ) : (
+                            <span className="truncate">
+                                {experience.company}
+                            </span>
+                        )}
                     </div>
                 </div>
 
-                <div className="mt-8 grid grid-cols-2 gap-x-10 gap-y-5 border-t border-foreground/10 pt-6">
+                <div className={EXPERIENCE_UI.detail.metadata}>
                     <div>
-                        <div className="mb-1.5 text-[10px] font-medium tracking-[0.08em] text-foreground/35">
-                            DATES
-                        </div>
+                        <div className={EXPERIENCE_UI.detail.label}>DATES</div>
 
-                        <div className="flex items-center gap-1.5 text-[12px] text-foreground/65">
+                        <div className={EXPERIENCE_UI.detail.metadataValue}>
                             <CalendarDays
-                                className="size-3.5 shrink-0 text-foreground/40"
+                                className={EXPERIENCE_UI.detail.metadataIcon}
                                 strokeWidth={1.6}
                             />
 
-                            <span>
+                            <span className="min-w-0">
                                 {experience.startDate} — {experience.endDate}
                             </span>
                         </div>
                     </div>
 
                     <div>
-                        <div className="mb-1.5 text-[10px] font-medium tracking-[0.08em] text-foreground/35">
+                        <div className={EXPERIENCE_UI.detail.label}>
                             LOCATION
                         </div>
 
-                        <div className="flex items-center gap-1.5 text-[12px] text-foreground/65">
+                        <div className={EXPERIENCE_UI.detail.metadataValue}>
                             <MapPin
-                                className="size-3.5 shrink-0 text-foreground/40"
+                                className={EXPERIENCE_UI.detail.metadataIcon}
                                 strokeWidth={1.6}
                             />
 
-                            <span>{experience.location}</span>
+                            <span className="min-w-0">
+                                {experience.location}
+                            </span>
                         </div>
                     </div>
 
                     <div>
-                        <div className="mb-1.5 text-[10px] font-medium tracking-[0.08em] text-foreground/35">
-                            TYPE
-                        </div>
+                        <div className={EXPERIENCE_UI.detail.label}>TYPE</div>
 
-                        <div className="text-[12px] text-foreground/65">
+                        <div className={EXPERIENCE_UI.detail.metadataValue}>
                             {experience.type}
                         </div>
                     </div>
                 </div>
 
-                <section className="mt-8 border-t border-foreground/10 pt-6">
-                    <div className="mb-3 text-[10px] font-medium tracking-[0.08em] text-foreground/35">
+                <section className={EXPERIENCE_UI.detail.section}>
+                    <div className={EXPERIENCE_UI.detail.sectionTitle}>
                         ABOUT
                     </div>
 
-                    <p className="max-w-2xl text-[13px] leading-6 text-foreground/65">
+                    <p className={EXPERIENCE_UI.detail.summary}>
                         {experience.summary}
                     </p>
                 </section>
 
-                <section className="mt-8 border-t border-foreground/10 pt-6">
-                    <div className="mb-3 text-[10px] font-medium tracking-[0.08em] text-foreground/35">
+                <section className={EXPERIENCE_UI.detail.section}>
+                    <div className={EXPERIENCE_UI.detail.sectionTitle}>
                         HIGHLIGHTS
                     </div>
 
-                    <div className="space-y-3">
+                    <div className={EXPERIENCE_UI.detail.highlights}>
                         {experience.highlights.map((highlight) => (
                             <div
                                 key={highlight}
-                                className="flex items-start gap-3"
+                                className={EXPERIENCE_UI.detail.highlightRow}
                             >
-                                <div className="mt-[7px] size-1 shrink-0 rounded-full bg-foreground/35" />
+                                <div
+                                    className={
+                                        EXPERIENCE_UI.detail.highlightDot
+                                    }
+                                />
 
-                                <p className="text-[13px] leading-5 text-foreground/65">
+                                <p
+                                    className={
+                                        EXPERIENCE_UI.detail.highlightText
+                                    }
+                                >
                                     {highlight}
                                 </p>
                             </div>
@@ -231,12 +232,12 @@ export function ExperienceDetail({ experience }: ExperienceDetailProps) {
                     </div>
                 </section>
 
-                <section className="mt-8 border-t border-foreground/10 pt-6">
-                    <div className="mb-3 text-[10px] font-medium tracking-[0.08em] text-foreground/35">
+                <section className={EXPERIENCE_UI.detail.section}>
+                    <div className={EXPERIENCE_UI.detail.sectionTitle}>
                         TECHNOLOGIES
                     </div>
 
-                    <p className="text-[12px] leading-5 text-foreground/60">
+                    <p className={EXPERIENCE_UI.detail.technologies}>
                         {experience.technologies.join(" · ")}
                     </p>
                 </section>

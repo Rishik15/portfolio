@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 
 import { NotesMarkdown } from "@/components/apps/notes/notes-markdown";
 import { NotesPaneToggle } from "@/components/apps/notes/notes-pane-toggle";
+import { NOTES_UI } from "@/components/apps/notes/notes-ui";
 import { formatLongNoteDate } from "@/components/apps/notes/notes-utils";
 import type { NoteDocument, NotesLoadStatus } from "@/lib/notes/notes-types";
 
@@ -19,30 +20,14 @@ export function NoteViewer({
     onToggleSidebars,
 }: NoteViewerProps) {
     return (
-        <section
-            className="
-                flex
-                min-h-0
-                min-w-0
-                flex-col
-                overflow-hidden
-                bg-white
-                dark:bg-[#1c1c1c]
-            "
-        >
+        <section className={NOTES_UI.viewer.root}>
             <ViewerToolbar
                 note={note}
                 sidebarsVisible={sidebarsVisible}
                 onToggleSidebars={onToggleSidebars}
             />
 
-            <div
-                className="
-                    min-h-0
-                    flex-1
-                    overflow-y-auto
-                "
-            >
+            <div className={NOTES_UI.viewer.scroller}>
                 <ViewerContent note={note} status={status} />
             </div>
         </section>
@@ -61,16 +46,7 @@ function ViewerToolbar({
     onToggleSidebars,
 }: ViewerToolbarProps) {
     return (
-        <header
-            className="
-                flex
-                h-12
-                shrink-0
-                items-center
-                justify-between
-                px-5
-            "
-        >
+        <header className={NOTES_UI.viewer.toolbar}>
             <NotesPaneToggle
                 direction={sidebarsVisible ? "left" : "right"}
                 label={sidebarsVisible ? "Hide sidebars" : "Show sidebars"}
@@ -78,16 +54,7 @@ function ViewerToolbar({
             />
 
             {note?.date ? (
-                <time
-                    dateTime={note.date}
-                    className="
-                        text-right
-                        text-[12px]
-                        font-medium
-                        tabular-nums
-                        text-foreground/40
-                    "
-                >
+                <time dateTime={note.date} className={NOTES_UI.viewer.date}>
                     {formatLongNoteDate(note.date)}
                 </time>
             ) : (
@@ -117,27 +84,8 @@ function ViewerContent({
     }
 
     return (
-        <article
-            className="
-                mx-auto
-                w-full
-                max-w-4xl
-                px-10
-                pb-16
-                pt-2
-            "
-        >
-            <h1
-                className="
-                    text-[30px]
-                    font-semibold
-                    leading-tight
-                    tracking-tight
-                    text-foreground
-                "
-            >
-                {note.title}
-            </h1>
+        <article className={NOTES_UI.viewer.article}>
+            <h1 className={NOTES_UI.viewer.title}>{note.title}</h1>
 
             <NotesMarkdown html={note.html} />
         </article>
@@ -145,18 +93,5 @@ function ViewerContent({
 }
 
 function ViewerMessage({ children }: { children: ReactNode }) {
-    return (
-        <div
-            className="
-                flex
-                h-full
-                items-center
-                justify-center
-                text-sm
-                text-foreground/40
-            "
-        >
-            {children}
-        </div>
-    );
+    return <div className={NOTES_UI.viewer.message}>{children}</div>;
 }

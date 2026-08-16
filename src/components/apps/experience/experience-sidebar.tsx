@@ -1,10 +1,6 @@
 "use client";
 
-import {
-    ChevronRight,
-    Folder,
-    FolderOpen,
-} from "lucide-react";
+import { ChevronRight, Folder, FolderOpen } from "lucide-react";
 import {
     useMemo,
     useRef,
@@ -12,6 +8,10 @@ import {
     type PointerEvent as ReactPointerEvent,
 } from "react";
 
+import {
+    EXPERIENCE_SIDEBAR,
+    EXPERIENCE_UI,
+} from "@/components/apps/experience/experience-ui";
 import type { Experience } from "@/config/experience";
 
 type ExperienceSidebarProps = {
@@ -31,18 +31,11 @@ type ResizeState = {
     startWidth: number;
 };
 
-const DEFAULT_SIDEBAR_WIDTH = 270;
-const MIN_SIDEBAR_WIDTH = 220;
-const MAX_SIDEBAR_WIDTH = 380;
-
 function EmptySidebar() {
     return (
-        <div className="px-2 py-1">
+        <div className={EXPERIENCE_UI.sidebar.empty}>
             {[0, 1, 2].map((item) => (
-                <div
-                    key={item}
-                    className="flex h-8 items-center gap-2 rounded-md px-2"
-                >
+                <div key={item} className={EXPERIENCE_UI.sidebar.emptyRow}>
                     <ChevronRight
                         className="size-3.5 shrink-0 text-foreground/15"
                         strokeWidth={1.7}
@@ -113,7 +106,9 @@ export function ExperienceSidebar({
     }
 
     function handleResizeStart(event: ReactPointerEvent<HTMLDivElement>) {
-        if (!sidebarRef.current) {
+        const sidebar = sidebarRef.current;
+
+        if (!sidebar) {
             return;
         }
 
@@ -122,7 +117,7 @@ export function ExperienceSidebar({
         resizeStateRef.current = {
             pointerId: event.pointerId,
             startX: event.clientX,
-            startWidth: sidebarRef.current.getBoundingClientRect().width,
+            startWidth: sidebar.getBoundingClientRect().width,
         };
 
         event.currentTarget.setPointerCapture(event.pointerId);
@@ -140,11 +135,28 @@ export function ExperienceSidebar({
             return;
         }
 
+        const parentWidth =
+            sidebar.parentElement?.getBoundingClientRect().width ?? 0;
+
+        const minimumDetailWidth =
+            EXPERIENCE_SIDEBAR.getMinDetailWidth(parentWidth);
+
+        const maximumSidebarWidth = Math.min(
+            EXPERIENCE_SIDEBAR.maxWidth,
+            Math.max(
+                EXPERIENCE_SIDEBAR.minWidth,
+                parentWidth - minimumDetailWidth,
+            ),
+        );
+
         const delta = event.clientX - resizeState.startX;
 
         const nextWidth = Math.min(
-            MAX_SIDEBAR_WIDTH,
-            Math.max(MIN_SIDEBAR_WIDTH, resizeState.startWidth + delta),
+            maximumSidebarWidth,
+            Math.max(
+                EXPERIENCE_SIDEBAR.minWidth,
+                resizeState.startWidth + delta,
+            ),
         );
 
         sidebar.style.width = `${nextWidth}px`;
@@ -165,18 +177,12 @@ export function ExperienceSidebar({
     }
 
     return (
-        <aside
-            ref={sidebarRef}
-            className="relative flex h-full shrink-0 flex-col border-r border-foreground/10 bg-foreground/[0.025]"
-            style={{
-                width: DEFAULT_SIDEBAR_WIDTH,
-            }}
-        >
-            <div className="min-h-0 flex-1 overflow-y-auto py-1.5">
+        <aside ref={sidebarRef} className={EXPERIENCE_UI.sidebar.root}>
+            <div className={EXPERIENCE_UI.sidebar.scroller}>
                 {groups.length === 0 ? (
                     <EmptySidebar />
                 ) : (
-                    <div className="px-1.5">
+                    <div className={EXPERIENCE_UI.sidebar.content}>
                         {groups.map((group) => {
                             const expanded = expandedYears.has(group.year);
 
@@ -185,19 +191,13 @@ export function ExperienceSidebar({
                                     <button
                                         type="button"
                                         onClick={() => toggleYear(group.year)}
-                                        className="
-                                            flex h-8 w-full items-center gap-1.5
-                                            rounded-md px-1.5 text-left
-                                            text-[13px] text-foreground/75
-                                            transition-colors duration-100
-                                            hover:bg-foreground/[0.055]
-                                            hover:text-foreground
-                                        "
+                                        className={
+                                            EXPERIENCE_UI.sidebar.yearButton
+                                        }
                                     >
                                         <ChevronRight
                                             className={[
-                                                "size-3.5 shrink-0 text-foreground/45",
-                                                "transition-transform duration-150",
+                                                EXPERIENCE_UI.sidebar.chevron,
                                                 expanded ? "rotate-90" : "",
                                             ].join(" ")}
                                             strokeWidth={1.8}
@@ -205,12 +205,18 @@ export function ExperienceSidebar({
 
                                         {expanded ? (
                                             <FolderOpen
-                                                className="size-4 shrink-0 text-foreground/55"
+                                                className={
+                                                    EXPERIENCE_UI.sidebar
+                                                        .folderIcon
+                                                }
                                                 strokeWidth={1.6}
                                             />
                                         ) : (
                                             <Folder
-                                                className="size-4 shrink-0 text-foreground/55"
+                                                className={
+                                                    EXPERIENCE_UI.sidebar
+                                                        .folderIcon
+                                                }
                                                 strokeWidth={1.6}
                                             />
                                         )}
@@ -219,13 +225,22 @@ export function ExperienceSidebar({
                                             {group.year}
                                         </span>
 
-                                        <span className="ml-auto pr-1 text-[10px] tabular-nums text-foreground/30">
+                                        <span
+                                            className={
+                                                EXPERIENCE_UI.sidebar.yearCount
+                                            }
+                                        >
                                             {group.experiences.length}
                                         </span>
                                     </button>
 
                                     {expanded ? (
-                                        <div className="pb-1 pl-5 flex flex-col gap-1">
+                                        <div
+                                            className={
+                                                EXPERIENCE_UI.sidebar
+                                                    .experienceList
+                                            }
+                                        >
                                             {group.experiences.map(
                                                 (experience) => {
                                                     const selected =
@@ -241,23 +256,36 @@ export function ExperienceSidebar({
                                                                     experience.id,
                                                                 )
                                                             }
-                                                            className={[
-                                                                "flex min-h-9 w-full items-center gap-2",
-                                                                "rounded-md px-4 py-2 text-left",
-                                                                "transition-colors duration-100",
-                                                                selected
-                                                                    ? "bg-foreground/10 text-foreground"
-                                                                    : "text-foreground/60 hover:bg-foreground/[0.05] hover:text-foreground",
-                                                            ].join(" ")}
+                                                            className={`
+                                                                ${EXPERIENCE_UI.sidebar.experienceButton}
+
+                                                                ${
+                                                                    selected
+                                                                        ? "bg-foreground/10 text-foreground"
+                                                                        : "text-foreground/60 hover:bg-foreground/[0.05] hover:text-foreground"
+                                                                }
+                                                            `}
                                                         >
                                                             <div className="min-w-0 flex-1">
-                                                                <div className="truncate text-[12px] font-medium">
+                                                                <div
+                                                                    className={
+                                                                        EXPERIENCE_UI
+                                                                            .sidebar
+                                                                            .role
+                                                                    }
+                                                                >
                                                                     {
                                                                         experience.role
                                                                     }
                                                                 </div>
 
-                                                                <div className="truncate text-[11px] text-foreground/55">
+                                                                <div
+                                                                    className={
+                                                                        EXPERIENCE_UI
+                                                                            .sidebar
+                                                                            .company
+                                                                    }
+                                                                >
                                                                     {
                                                                         experience.company
                                                                     }
@@ -284,19 +312,9 @@ export function ExperienceSidebar({
                 onPointerMove={handleResizeMove}
                 onPointerUp={handleResizeEnd}
                 onPointerCancel={handleResizeEnd}
-                className="
-                    group absolute right-[-3px] top-0 z-20 h-full w-[6px]
-                    cursor-col-resize touch-none
-                "
+                className={EXPERIENCE_UI.sidebar.resizer}
             >
-                <div
-                    className="
-                        absolute right-[2px] top-0 h-full w-px
-                        bg-transparent
-                        transition-colors duration-100
-                        group-hover:bg-foreground/20
-                    "
-                />
+                <div className={EXPERIENCE_UI.sidebar.resizerLine} />
             </div>
         </aside>
     );

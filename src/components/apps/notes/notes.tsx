@@ -1,38 +1,102 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { NoteViewer } from "@/components/apps/notes/note-viewer";
 import { NotesList } from "@/components/apps/notes/notes-list";
+import {
+    getNotesPaneProfile,
+    getNotesPreferredPaneWidths,
+    NOTES_LAYOUT,
+    NOTES_UI,
+    type NotesPaneWidths,
+} from "@/components/apps/notes/notes-ui";
 import { NotesResizer } from "@/components/apps/notes/notes-resizer";
 import { NotesSidebar } from "@/components/apps/notes/notes-sidebar";
 import { useNotes } from "@/components/apps/notes/use-notes";
 
-const DEFAULT_SIDEBAR_WIDTH = 150;
-const DEFAULT_LIST_WIDTH = 190;
-
-const MIN_SIDEBAR_WIDTH = 120;
-const MAX_SIDEBAR_WIDTH = 230;
-
-const MIN_LIST_WIDTH = 170;
-const MAX_LIST_WIDTH = 360;
-
-const MIN_VIEWER_WIDTH = 360;
-const RESIZER_WIDTH = 1;
-
 type NotesLayout = "all" | "notes" | "viewer";
 type SidebarLayout = Exclude<NotesLayout, "viewer">;
 
+const INITIAL_PANE_WIDTHS = getNotesPreferredPaneWidths(
+    NOTES_LAYOUT.fallbackContainerWidth,
+);
+
 export function Notes() {
     const notes = useNotes();
+
     const containerRef = useRef<HTMLDivElement>(null);
 
+    const adjustedPanesRef = useRef({
+        sidebar: false,
+        list: false,
+    });
+
+    const desiredPaneWidthsRef = useRef<NotesPaneWidths>(INITIAL_PANE_WIDTHS);
+
     const [layout, setLayout] = useState<NotesLayout>("all");
+
     const [previousSidebarLayout, setPreviousSidebarLayout] =
         useState<SidebarLayout>("all");
 
-    const [sidebarWidth, setSidebarWidth] = useState(DEFAULT_SIDEBAR_WIDTH);
-    const [listWidth, setListWidth] = useState(DEFAULT_LIST_WIDTH);
+    const [paneWidths, setPaneWidths] =
+        useState<NotesPaneWidths>(INITIAL_PANE_WIDTHS);
+
+    useEffect(() => {
+        const container = containerRef.current;
+
+        if (!container || typeof ResizeObserver === "undefined") {
+            return;
+        }
+
+        let frameId = 0;
+
+        const applyContainerWidth = (containerWidth: number) => {
+            const preferred = getNotesPreferredPaneWidths(containerWidth);
+
+            if (!adjustedPanesRef.current.sidebar) {
+                desiredPaneWidthsRef.current.sidebar = preferred.sidebar;
+            }
+
+            if (!adjustedPanesRef.current.list) {
+                desiredPaneWidthsRef.current.list = preferred.list;
+            }
+
+            setPaneWidths((current) => {
+                const next = fitPaneWidths(
+                    desiredPaneWidthsRef.current,
+                    containerWidth,
+                    layout,
+                );
+
+                if (samePaneWidths(current, next)) {
+                    return current;
+                }
+
+                return next;
+            });
+        };
+
+        applyContainerWidth(container.clientWidth);
+
+        const resizeObserver = new ResizeObserver((entries) => {
+            const containerWidth =
+                entries[0]?.contentRect.width ?? container.clientWidth;
+
+            window.cancelAnimationFrame(frameId);
+
+            frameId = window.requestAnimationFrame(() => {
+                applyContainerWidth(containerWidth);
+            });
+        });
+
+        resizeObserver.observe(container);
+
+        return () => {
+            window.cancelAnimationFrame(frameId);
+            resizeObserver.disconnect();
+        };
+    }, [layout]);
 
     const toggleFolders = () => {
         if (layout === "all") {
@@ -58,61 +122,99 @@ export function Notes() {
     };
 
     const resizeSidebar = (delta: number) => {
-        const containerWidth = containerRef.current?.clientWidth ?? 0;
+        if (layout !== "all") {
+            return;
+        }
 
-        const availableWidth =
-            containerWidth - listWidth - MIN_VIEWER_WIDTH - RESIZER_WIDTH * 2;
+        const containerWidth =
+            containerRef.current?.clientWidth ??
+            NOTES_LAYOUT.fallbackContainerWidth;
 
-        const maxWidth = Math.min(
-            MAX_SIDEBAR_WIDTH,
-            Math.max(MIN_SIDEBAR_WIDTH, availableWidth),
-        );
+        const profile = getNotesPaneProfile(containerWidth);
 
-        setSidebarWidth((width) =>
-            clamp(width + delta, MIN_SIDEBAR_WIDTH, maxWidth),
-        );
+        setPaneWidths((current) => {
+            const availableMaximum =
+                containerWidth -
+                current.list -
+                profile.viewerMin -
+                NOTES_LAYOUT.resizerWidth * 2;
+
+            const maximum = Math.min(
+                profile.sidebar.max,
+                Math.max(profile.sidebar.min, availableMaximum),
+            );
+
+            const nextSidebar = clamp(
+                current.sidebar + delta,
+                profile.sidebar.min,
+                maximum,
+            );
+
+            if (nextSidebar === current.sidebar) {
+                return current;
+            }
+
+            adjustedPanesRef.current.sidebar = true;
+            desiredPaneWidthsRef.current.sidebar = nextSidebar;
+
+            return {
+                ...current,
+                sidebar: nextSidebar,
+            };
+        });
     };
 
     const resizeList = (delta: number) => {
-        const containerWidth = containerRef.current?.clientWidth ?? 0;
+        if (layout === "viewer") {
+            return;
+        }
 
-        const occupiedWidth =
-            layout === "all" ? sidebarWidth + RESIZER_WIDTH * 2 : RESIZER_WIDTH;
+        const containerWidth =
+            containerRef.current?.clientWidth ??
+            NOTES_LAYOUT.fallbackContainerWidth;
 
-        const availableWidth =
-            containerWidth - occupiedWidth - MIN_VIEWER_WIDTH;
+        const profile = getNotesPaneProfile(containerWidth);
 
-        const maxWidth = Math.min(
-            MAX_LIST_WIDTH,
-            Math.max(MIN_LIST_WIDTH, availableWidth),
-        );
+        setPaneWidths((current) => {
+            const occupiedWidth =
+                layout === "all"
+                    ? current.sidebar + NOTES_LAYOUT.resizerWidth * 2
+                    : NOTES_LAYOUT.resizerWidth;
 
-        setListWidth((width) => clamp(width + delta, MIN_LIST_WIDTH, maxWidth));
+            const availableMaximum =
+                containerWidth - occupiedWidth - profile.viewerMin;
+
+            const maximum = Math.min(
+                profile.list.max,
+                Math.max(profile.list.min, availableMaximum),
+            );
+
+            const nextList = clamp(
+                current.list + delta,
+                profile.list.min,
+                maximum,
+            );
+
+            if (nextList === current.list) {
+                return current;
+            }
+
+            adjustedPanesRef.current.list = true;
+            desiredPaneWidthsRef.current.list = nextList;
+
+            return {
+                ...current,
+                list: nextList,
+            };
+        });
     };
 
     return (
         <div
             ref={containerRef}
-            className="
-                grid
-                h-full
-                min-h-0
-                w-full
-                overflow-hidden
-                bg-white
-                font-sans
-                text-foreground
-                transition-[grid-template-columns]
-                duration-150
-                ease-out
-                dark:bg-[#1c1c1c]
-            "
+            className={NOTES_UI.root}
             style={{
-                gridTemplateColumns: getGridColumns(
-                    layout,
-                    sidebarWidth,
-                    listWidth,
-                ),
+                gridTemplateColumns: getGridColumns(layout, paneWidths),
             }}
         >
             <NotesSidebar
@@ -146,18 +248,14 @@ export function Notes() {
     );
 }
 
-function getGridColumns(
-    layout: NotesLayout,
-    sidebarWidth: number,
-    listWidth: number,
-) {
+function getGridColumns(layout: NotesLayout, widths: NotesPaneWidths) {
     switch (layout) {
         case "all":
             return `
-                ${sidebarWidth}px
-                ${RESIZER_WIDTH}px
-                ${listWidth}px
-                ${RESIZER_WIDTH}px
+                ${widths.sidebar}px
+                ${NOTES_LAYOUT.resizerWidth}px
+                ${widths.list}px
+                ${NOTES_LAYOUT.resizerWidth}px
                 minmax(0, 1fr)
             `;
 
@@ -165,8 +263,8 @@ function getGridColumns(
             return `
                 0px
                 0px
-                ${listWidth}px
-                ${RESIZER_WIDTH}px
+                ${widths.list}px
+                ${NOTES_LAYOUT.resizerWidth}px
                 minmax(0, 1fr)
             `;
 
@@ -179,6 +277,64 @@ function getGridColumns(
                 minmax(0, 1fr)
             `;
     }
+}
+
+function fitPaneWidths(
+    desiredWidths: NotesPaneWidths,
+    containerWidth: number,
+    layout: NotesLayout,
+): NotesPaneWidths {
+    const profile = getNotesPaneProfile(containerWidth);
+
+    let sidebar = clamp(
+        desiredWidths.sidebar,
+        profile.sidebar.min,
+        profile.sidebar.max,
+    );
+
+    let list = clamp(desiredWidths.list, profile.list.min, profile.list.max);
+
+    if (layout === "all") {
+        const availableForSidePanes =
+            containerWidth - profile.viewerMin - NOTES_LAYOUT.resizerWidth * 2;
+
+        const combinedWidth = sidebar + list;
+
+        if (combinedWidth > availableForSidePanes) {
+            let overflow = combinedWidth - availableForSidePanes;
+
+            const sidebarShrinkCapacity = sidebar - profile.sidebar.min;
+
+            const sidebarReduction = Math.min(overflow, sidebarShrinkCapacity);
+
+            sidebar -= sidebarReduction;
+            overflow -= sidebarReduction;
+
+            if (overflow > 0) {
+                const listShrinkCapacity = list - profile.list.min;
+
+                const listReduction = Math.min(overflow, listShrinkCapacity);
+
+                list -= listReduction;
+            }
+        }
+    }
+
+    if (layout === "notes") {
+        const availableForList =
+            containerWidth - profile.viewerMin - NOTES_LAYOUT.resizerWidth;
+
+        list = Math.min(list, Math.max(profile.list.min, availableForList));
+    }
+
+    return {
+        sidebar,
+        list,
+    };
+}
+
+function samePaneWidths(first: NotesPaneWidths, second: NotesPaneWidths) {
+    return first.sidebar === second.sidebar && first.list === second.list;
 }
 
 function clamp(value: number, minimum: number, maximum: number) {

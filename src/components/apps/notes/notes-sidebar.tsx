@@ -1,3 +1,4 @@
+import { NOTES_UI } from "@/components/apps/notes/notes-ui";
 import type { NoteFolder } from "@/lib/notes/notes-types";
 
 type NotesSidebarProps = {
@@ -14,30 +15,10 @@ export function NotesSidebar({
     onSelectFolder,
 }: NotesSidebarProps) {
     return (
-        <aside
-            className="
-                min-h-0
-                min-w-0
-                overflow-y-auto
-                bg-[#f1f1f1]
-                px-2.5
-                py-4
-                dark:bg-[#262626]
-            "
-        >
-            <p
-                className="
-                    mb-2
-                    px-2
-                    text-[14px]
-                    font-semibold
-                    text-foreground/45
-                "
-            >
-                Folders
-            </p>
+        <aside className={NOTES_UI.sidebar.root}>
+            <p className={NOTES_UI.sidebar.heading}>Folders</p>
 
-            <nav className="space-y-0.5">
+            <nav className={NOTES_UI.sidebar.nav}>
                 <FolderButton
                     label="All Notes"
                     count={totalCount}
@@ -81,20 +62,12 @@ function FolderButton({
             onClick={onClick}
             aria-pressed={selected}
             style={{
-                paddingLeft: 10 + depth * 14,
+                paddingLeft:
+                    NOTES_UI.sidebar.indentBase +
+                    depth * NOTES_UI.sidebar.indentStep,
             }}
             className={`
-                flex
-                h-8
-                w-full
-                items-center
-                gap-2
-                rounded-lg
-                pr-2
-                text-left
-                text-[13px]
-                transition-colors
-                duration-100
+                ${NOTES_UI.sidebar.button}
 
                 ${
                     selected
@@ -105,27 +78,9 @@ function FolderButton({
         >
             <FolderIcon />
 
-            <span
-                className="
-                    min-w-0
-                    flex-1
-                    truncate
-                    font-medium
-                "
-            >
-                {label}
-            </span>
+            <span className={NOTES_UI.sidebar.label}>{label}</span>
 
-            <span
-                className="
-                    shrink-0
-                    text-[11px]
-                    tabular-nums
-                    text-foreground/35
-                "
-            >
-                {count}
-            </span>
+            <span className={NOTES_UI.sidebar.count}>{count}</span>
         </button>
     );
 }
@@ -135,12 +90,7 @@ function FolderIcon() {
         <svg
             viewBox="0 0 24 24"
             aria-hidden="true"
-            className="
-                size-4
-                shrink-0
-                fill-[#f4bf3a]
-                text-[#d9a729]
-            "
+            className={NOTES_UI.sidebar.icon}
         >
             <path
                 d="

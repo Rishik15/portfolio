@@ -1,3 +1,4 @@
+import { NOTES_UI } from "@/components/apps/notes/notes-ui";
 import type { NoteDocument } from "@/lib/notes/notes-types";
 
 type NotesListItemProps = {
@@ -17,14 +18,7 @@ export function NotesListItem({
             onClick={onSelect}
             aria-pressed={selected}
             className={`
-                mb-1
-                w-full
-                rounded-xl
-                px-3
-                py-2.5
-                text-left
-                transition-colors
-                duration-100
+                ${NOTES_UI.list.item}
 
                 ${
                     selected
@@ -33,15 +27,7 @@ export function NotesListItem({
                 }
             `}
         >
-            <p
-                className="
-                    truncate
-                    text-[14px]
-                    font-semibold
-                "
-            >
-                {note.title}
-            </p>
+            <p className={NOTES_UI.list.itemTitle}>{note.title}</p>
         </button>
     );
 }

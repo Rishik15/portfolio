@@ -1,16 +1,13 @@
+import { ABOUT_UI } from "@/components/apps/about/about-ui";
 import { ABOUT } from "@/config/about";
 
 export function AboutCopy() {
     return (
         <section>
-            <h1 className="text-[26px] font-semibold tracking-tight text-foreground">
-                About me
-            </h1>
+            <h1 className={ABOUT_UI.copy.heading}>About me</h1>
 
-            <div className="mt-4 max-w-xl space-y-3 leading-6 text-foreground/75">
-                <p className="font-medium text-foreground/90">
-                    {ABOUT.greeting}
-                </p>
+            <div className={ABOUT_UI.copy.body}>
+                <p className={ABOUT_UI.copy.greeting}>{ABOUT.greeting}</p>
 
                 {ABOUT.paragraphs.map((paragraph) => (
                     <p key={paragraph}>{paragraph}</p>

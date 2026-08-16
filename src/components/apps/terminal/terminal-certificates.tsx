@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect } from "react";
 import { motion, useReducedMotion, type MotionProps } from "motion/react";
-import type { ReactNode } from "react";
+import { useEffect, type ReactNode } from "react";
 
+import {
+    TERMINAL_MOTION,
+    TERMINAL_UI,
+} from "@/components/apps/terminal/terminal-ui";
 import { CERTIFICATES } from "@/config/certificates";
-
-const LINE_DELAY_SECONDS = 0.04;
 
 type PrintedLineProps = {
     children: ReactNode;
@@ -28,12 +29,20 @@ function PrintedLine({
               initial: false,
           }
         : {
-              initial: { opacity: 0 },
-              animate: { opacity: 1 },
-              transition: {
-                  duration: 0.01,
-                  delay: index * LINE_DELAY_SECONDS,
+              initial: {
+                  opacity: 0,
               },
+
+              animate: {
+                  opacity: 1,
+              },
+
+              transition: {
+                  duration: TERMINAL_MOTION.certificateLineDurationSeconds,
+
+                  delay: index * TERMINAL_MOTION.certificateLineDelaySeconds,
+              },
+
               onAnimationComplete: onComplete,
           };
 
@@ -67,28 +76,33 @@ export function TerminalCertificates({
     let lineIndex = 1;
 
     return (
-        <div className="w-full py-1 font-mono text-sm leading-6">
+        <div className={TERMINAL_UI.certificates.root}>
             <PrintedLine
                 index={0}
                 reduceMotion={reduceMotion}
                 onComplete={lastLineIndex === 0 ? onComplete : undefined}
-                className="text-blue-500/80 dark:text-blue-400/80"
+                className={TERMINAL_UI.certificates.heading}
             >
                 certificates/
             </PrintedLine>
 
             {CERTIFICATES.map((certificate, index) => {
                 const isLast = index === CERTIFICATES.length - 1;
+
                 const hasCredential = Boolean(certificate.credentialUrl);
 
                 const certificateLineIndex = lineIndex++;
+
                 const issuerLineIndex = lineIndex++;
+
                 const credentialLineIndex = hasCredential
                     ? lineIndex++
                     : undefined;
 
                 const branch = isLast ? "└──" : "├──";
+
                 const childPrefix = isLast ? "    " : "│   ";
+
                 const issuerBranch = hasCredential ? "├──" : "└──";
 
                 return (
@@ -101,16 +115,20 @@ export function TerminalCertificates({
                                     ? onComplete
                                     : undefined
                             }
-                            className="grid grid-cols-[4ch_minmax(0,1fr)]"
+                            className={TERMINAL_UI.certificates.certificateLine}
                         >
                             <span
                                 aria-hidden="true"
-                                className="select-none text-foreground/25"
+                                className={TERMINAL_UI.certificates.branch}
                             >
                                 {branch}
                             </span>
 
-                            <span className="min-w-0 text-foreground/95">
+                            <span
+                                className={
+                                    TERMINAL_UI.certificates.certificateName
+                                }
+                            >
                                 {certificate.name}
                             </span>
                         </PrintedLine>
@@ -123,20 +141,24 @@ export function TerminalCertificates({
                                     ? onComplete
                                     : undefined
                             }
-                            className="grid grid-cols-[7ch_7rem_minmax(0,1fr)]"
+                            className={TERMINAL_UI.certificates.detailLine}
                         >
                             <span
                                 aria-hidden="true"
-                                className="select-none whitespace-pre text-foreground/25"
+                                className={TERMINAL_UI.certificates.branch}
                             >
                                 {`${childPrefix}${issuerBranch}`}
                             </span>
 
-                            <span className="select-none text-foreground/55">
+                            <span
+                                className={TERMINAL_UI.certificates.detailLabel}
+                            >
                                 issuer
                             </span>
 
-                            <span className="min-w-0 text-foreground/75">
+                            <span
+                                className={TERMINAL_UI.certificates.detailValue}
+                            >
                                 {certificate.issuer}
                             </span>
                         </PrintedLine>
@@ -151,16 +173,25 @@ export function TerminalCertificates({
                                             ? onComplete
                                             : undefined
                                     }
-                                    className="grid grid-cols-[7ch_7rem_minmax(0,1fr)]"
+                                    className={
+                                        TERMINAL_UI.certificates.detailLine
+                                    }
                                 >
                                     <span
                                         aria-hidden="true"
-                                        className="select-none whitespace-pre text-foreground/25"
+                                        className={
+                                            TERMINAL_UI.certificates.branch
+                                        }
                                     >
                                         {`${childPrefix}└──`}
                                     </span>
 
-                                    <span className="select-none text-foreground/35">
+                                    <span
+                                        className={
+                                            TERMINAL_UI.certificates
+                                                .credentialLabel
+                                        }
+                                    >
                                         credential
                                     </span>
 
@@ -168,14 +199,10 @@ export function TerminalCertificates({
                                         href={certificate.credentialUrl}
                                         target="_blank"
                                         rel="noreferrer"
-                                        className="
-                                            w-fit
-                                            text-blue-500/80
-                                            transition-colors
-                                            hover:text-blue-500
-                                            dark:text-blue-400/80
-                                            dark:hover:text-blue-400
-                                        "
+                                        className={
+                                            TERMINAL_UI.certificates
+                                                .credentialLink
+                                        }
                                     >
                                         verify ↗
                                     </a>

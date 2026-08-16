@@ -2,14 +2,14 @@
 
 import { useMemo, useState } from "react";
 
+import { ExperienceDetail } from "@/components/apps/experience/experience-detail";
+import { ExperienceSidebar } from "@/components/apps/experience/experience-sidebar";
+import { ExperienceStatusBar } from "@/components/apps/experience/experience-status-bar";
+import { EXPERIENCE_UI } from "@/components/apps/experience/experience-ui";
 import {
     EXPERIENCES,
     type Experience as ExperienceItem,
 } from "@/config/experience";
-
-import { ExperienceDetail } from "./experience-detail";
-import { ExperienceSidebar } from "./experience-sidebar";
-import { ExperienceStatusBar } from "./experience-status-bar";
 
 export function Experience() {
     const [selectedExperienceId, setSelectedExperienceId] = useState<
@@ -29,8 +29,8 @@ export function Experience() {
     }, [selectedExperienceId]);
 
     return (
-        <div className="flex h-full min-h-0 flex-col bg-background">
-            <div className="flex min-h-0 flex-1">
+        <div className={EXPERIENCE_UI.root}>
+            <div className={EXPERIENCE_UI.main}>
                 <ExperienceSidebar
                     experiences={EXPERIENCES}
                     selectedExperienceId={selectedExperienceId}

@@ -1,3 +1,5 @@
+import { NOTES_UI } from "@/components/apps/notes/notes-ui";
+
 type NotesPaneToggleProps = {
     direction: "left" | "right";
     label: string;
@@ -15,27 +17,12 @@ export function NotesPaneToggle({
             onClick={onClick}
             aria-label={label}
             title={label}
-            className="
-                flex
-                size-7
-                shrink-0
-                items-center
-                justify-center
-                rounded-md
-                text-foreground/40
-                transition-colors
-                duration-100
-
-                hover:bg-black/[0.05]
-                hover:text-foreground/70
-
-                dark:hover:bg-white/[0.06]
-            "
+            className={NOTES_UI.toggle.button}
         >
             <svg
                 viewBox="0 0 20 20"
                 aria-hidden="true"
-                className="size-[17px]"
+                className={NOTES_UI.toggle.icon}
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="1.7"

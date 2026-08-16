@@ -3,6 +3,8 @@
 import { useRef } from "react";
 import type { PointerEvent } from "react";
 
+import { NOTES_UI } from "@/components/apps/notes/notes-ui";
+
 type NotesResizerProps = {
     onResize: (delta: number) => void;
 };
@@ -44,37 +46,9 @@ export function NotesResizer({ onResize }: NotesResizerProps) {
             onPointerMove={handlePointerMove}
             onPointerUp={handlePointerEnd}
             onPointerCancel={handlePointerEnd}
-            className="
-                group
-                relative
-                z-20
-                h-full
-                w-full
-                cursor-col-resize
-                touch-none
-                select-none
-                overflow-visible
-                bg-black/10
-
-                dark:bg-white/10
-            "
+            className={NOTES_UI.resizer.root}
         >
-            <div
-                className="
-                    absolute
-                    inset-y-0
-                    left-1/2
-                    w-3
-                    -translate-x-1/2
-                    cursor-col-resize
-
-                    group-hover:bg-black/[0.025]
-                    group-active:bg-black/[0.04]
-
-                    dark:group-hover:bg-white/[0.025]
-                    dark:group-active:bg-white/[0.04]
-                "
-            />
+            <div className={NOTES_UI.resizer.hitArea} />
         </div>
     );
 }

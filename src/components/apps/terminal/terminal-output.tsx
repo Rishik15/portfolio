@@ -1,13 +1,17 @@
-import { TerminalCertificates } from "./terminal-certificates";
-import { TerminalHelp } from "./terminal-help";
-import { TerminalPrompt } from "./terminal-prompt";
-import { TerminalSkills } from "./terminal-skills";
-import type { TerminalEntry, TerminalResult } from "./terminal-types";
-import { TerminalWelcome } from "./terminal-welcome";
+import { TerminalCertificates } from "@/components/apps/terminal/terminal-certificates";
+import { TerminalHelp } from "@/components/apps/terminal/terminal-help";
+import { TerminalPrompt } from "@/components/apps/terminal/terminal-prompt";
+import { TerminalSkills } from "@/components/apps/terminal/terminal-skills";
+import type {
+    TerminalEntry,
+    TerminalResult,
+} from "@/components/apps/terminal/terminal-types";
+import { TERMINAL_UI } from "@/components/apps/terminal/terminal-ui";
+import { TerminalWelcome } from "@/components/apps/terminal/terminal-welcome";
 
 function TextResult({ lines }: { lines: readonly string[] }) {
     return (
-        <div className="text-foreground/55">
+        <div className={TERMINAL_UI.output.textResult}>
             {lines.map((line, index) => (
                 <div key={`${line}-${index}`}>{line}</div>
             ))}
@@ -43,13 +47,14 @@ type EntryProps = {
 
 function Entry({ entry, onCertificatesComplete }: EntryProps) {
     return (
-        <div className="w-full">
-            <div className="flex items-center gap-2">
+        <div className={TERMINAL_UI.output.entry}>
+            <div className={TERMINAL_UI.output.commandRow}>
                 <TerminalPrompt />
-                <span>{entry.command}</span>
+
+                <span className="min-w-0 break-words">{entry.command}</span>
             </div>
 
-            <div className="mt-2 w-full">
+            <div className={TERMINAL_UI.output.result}>
                 <Result
                     result={entry.result}
                     onCertificatesComplete={
@@ -75,11 +80,17 @@ export function TerminalOutput({
     onCertificatesComplete,
 }: TerminalOutputProps) {
     return (
-        <div className="w-full">
+        <div className={TERMINAL_UI.output.root}>
             {showWelcome && <TerminalWelcome />}
 
             {entries.length > 0 && (
-                <div className={showWelcome ? "mt-2 space-y-2" : "space-y-2"}>
+                <div
+                    className={
+                        showWelcome
+                            ? TERMINAL_UI.output.entriesWithWelcome
+                            : TERMINAL_UI.output.entries
+                    }
+                >
                     {entries.map((entry, index) => (
                         <Entry
                             key={`${entry.command}-${index}`}
