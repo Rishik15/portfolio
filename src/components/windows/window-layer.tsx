@@ -3,8 +3,10 @@
 import { useEffect } from "react";
 
 import { About } from "@/components/apps/about/about";
+import { Experience } from "@/components/apps/experience/experience";
 import { preloadNotesLibrary } from "@/components/apps/notes/notes-cache";
 import { Notes } from "@/components/apps/notes/notes";
+import { Projects } from "@/components/apps/projects/projects";
 import { Resume } from "@/components/apps/resume/resume";
 import { Terminal } from "@/components/apps/terminal/terminal";
 import { AppWindow } from "@/components/windows/app-window";
@@ -26,6 +28,12 @@ function getWindowContent(windowId: string) {
 
         case "resume":
             return <Resume />;
+
+        case "projects":
+            return <Projects />;
+
+        case "experience":
+            return <Experience />;
 
         default:
             return null;

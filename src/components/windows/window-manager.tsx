@@ -156,6 +156,11 @@ export function WindowManagerProvider({
 
     const launcherElementsRef = useRef(new Map<string, HTMLElement>());
 
+    const configuredWindowIds = useMemo(
+        () => new Set(configs.map((config) => config.id)),
+        [configs],
+    );
+
     const [windowStates, setWindowStates] = useState<Map<string, WindowState>>(
         () => {
             const initialStates = new Map<string, WindowState>();
@@ -168,82 +173,102 @@ export function WindowManagerProvider({
         },
     );
 
-    const activateWindow = useCallback((id: string) => {
-        setWindowStates((previousStates) => {
-            const currentState = previousStates.get(id);
-
-            if (!currentState) {
+    const activateWindow = useCallback(
+        (id: string) => {
+            if (!configuredWindowIds.has(id)) {
                 console.warn(`WindowManager: Window "${id}" was not found.`);
-
-                return previousStates;
+                return;
             }
 
-            const nextStates = new Map(previousStates);
+            setWindowStates((previousStates) => {
+                const currentState =
+                    previousStates.get(id) ?? createClosedState();
 
-            deactivateOpenWindows(nextStates);
+                const nextStates = new Map(previousStates);
 
-            const zIndex = nextZIndexRef.current++;
+                deactivateOpenWindows(nextStates);
 
-            if (isWindowOpen(currentState)) {
-                nextStates.set(id, {
-                    ...currentState,
-                    isActive: true,
-                    zIndex,
-                });
+                const zIndex = nextZIndexRef.current++;
+
+                if (isWindowOpen(currentState)) {
+                    nextStates.set(id, {
+                        ...currentState,
+                        isActive: true,
+                        zIndex,
+                    });
+
+                    return nextStates;
+                }
+
+                nextStates.set(id, createOpenState(true, false, zIndex));
 
                 return nextStates;
-            }
+            });
+        },
+        [configuredWindowIds],
+    );
 
-            nextStates.set(id, createOpenState(true, false, zIndex));
-
-            return nextStates;
-        });
-    }, []);
-
-    const openWindow = useCallback((id: string) => {
-        setWindowStates((previousStates) => {
-            const currentState = previousStates.get(id);
-
-            if (!currentState) {
+    const openWindow = useCallback(
+        (id: string) => {
+            if (!configuredWindowIds.has(id)) {
                 console.warn(`WindowManager: Window "${id}" was not found.`);
-
-                return previousStates;
+                return;
             }
 
-            if (isWindowOpen(currentState)) {
-                return previousStates;
-            }
+            setWindowStates((previousStates) => {
+                const currentState =
+                    previousStates.get(id) ?? createClosedState();
 
-            const nextStates = new Map(previousStates);
+                if (isWindowOpen(currentState)) {
+                    return previousStates;
+                }
 
-            deactivateOpenWindows(nextStates);
+                const nextStates = new Map(previousStates);
 
-            const zIndex = nextZIndexRef.current++;
+                deactivateOpenWindows(nextStates);
 
-            nextStates.set(id, createOpenState(true, false, zIndex));
+                const zIndex = nextZIndexRef.current++;
 
-            return nextStates;
-        });
-    }, []);
+                nextStates.set(id, createOpenState(true, false, zIndex));
 
-    const closeWindow = useCallback((id: string) => {
-        setWindowStates((previousStates) => {
-            if (!previousStates.has(id)) {
+                return nextStates;
+            });
+        },
+        [configuredWindowIds],
+    );
+
+    const closeWindow = useCallback(
+        (id: string) => {
+            if (!configuredWindowIds.has(id)) {
                 console.warn(`WindowManager: Window "${id}" was not found.`);
-
-                return previousStates;
+                return;
             }
 
-            const nextStates = new Map(previousStates);
+            setWindowStates((previousStates) => {
+                const currentState =
+                    previousStates.get(id) ?? createClosedState();
 
-            nextStates.set(id, createClosedState());
+                if (currentState.status === "closed") {
+                    return previousStates;
+                }
 
-            return nextStates;
-        });
-    }, []);
+                const nextStates = new Map(previousStates);
+
+                nextStates.set(id, createClosedState());
+
+                return nextStates;
+            });
+        },
+        [configuredWindowIds],
+    );
 
     const minimizeWindow = useCallback(
         (id: string) => {
+            if (!configuredWindowIds.has(id)) {
+                console.warn(`WindowManager: Window "${id}" was not found.`);
+                return;
+            }
+
             setWindowStates((previousStates) => {
                 const currentState = previousStates.get(id);
 
@@ -251,9 +276,9 @@ export function WindowManagerProvider({
                     return previousStates;
                 }
 
-                const config = configs.find((windowConfig) => {
-                    return windowConfig.id === id;
-                });
+                const config = configs.find(
+                    (windowConfig) => windowConfig.id === id,
+                );
 
                 const nextStates = new Map(previousStates);
 
@@ -268,56 +293,72 @@ export function WindowManagerProvider({
                 return nextStates;
             });
         },
-        [configs],
+        [configs, configuredWindowIds],
     );
 
-    const restoreWindow = useCallback((id: string) => {
-        setWindowStates((previousStates) => {
-            const currentState = previousStates.get(id);
-
-            if (!currentState || !isWindowMinimized(currentState)) {
-                return previousStates;
+    const restoreWindow = useCallback(
+        (id: string) => {
+            if (!configuredWindowIds.has(id)) {
+                console.warn(`WindowManager: Window "${id}" was not found.`);
+                return;
             }
 
-            const nextStates = new Map(previousStates);
+            setWindowStates((previousStates) => {
+                const currentState = previousStates.get(id);
 
-            deactivateOpenWindows(nextStates);
+                if (!currentState || !isWindowMinimized(currentState)) {
+                    return previousStates;
+                }
 
-            const zIndex = nextZIndexRef.current++;
+                const nextStates = new Map(previousStates);
 
-            nextStates.set(id, createOpenState(true, false, zIndex));
+                deactivateOpenWindows(nextStates);
 
-            return nextStates;
-        });
-    }, []);
+                const zIndex = nextZIndexRef.current++;
 
-    const focusWindow = useCallback((id: string) => {
-        setWindowStates((previousStates) => {
-            const currentState = previousStates.get(id);
+                nextStates.set(id, createOpenState(true, false, zIndex));
 
-            if (!currentState || !isWindowOpen(currentState)) {
-                return previousStates;
-            }
-
-            if (currentState.isActive) {
-                return previousStates;
-            }
-
-            const nextStates = new Map(previousStates);
-
-            deactivateOpenWindows(nextStates);
-
-            const zIndex = nextZIndexRef.current++;
-
-            nextStates.set(id, {
-                ...currentState,
-                isActive: true,
-                zIndex,
+                return nextStates;
             });
+        },
+        [configuredWindowIds],
+    );
 
-            return nextStates;
-        });
-    }, []);
+    const focusWindow = useCallback(
+        (id: string) => {
+            if (!configuredWindowIds.has(id)) {
+                console.warn(`WindowManager: Window "${id}" was not found.`);
+                return;
+            }
+
+            setWindowStates((previousStates) => {
+                const currentState = previousStates.get(id);
+
+                if (!currentState || !isWindowOpen(currentState)) {
+                    return previousStates;
+                }
+
+                if (currentState.isActive) {
+                    return previousStates;
+                }
+
+                const nextStates = new Map(previousStates);
+
+                deactivateOpenWindows(nextStates);
+
+                const zIndex = nextZIndexRef.current++;
+
+                nextStates.set(id, {
+                    ...currentState,
+                    isActive: true,
+                    zIndex,
+                });
+
+                return nextStates;
+            });
+        },
+        [configuredWindowIds],
+    );
 
     const deactivateAll = useCallback(() => {
         setWindowStates((previousStates) => {
@@ -366,12 +407,10 @@ export function WindowManagerProvider({
             const rect = element.getBoundingClientRect();
 
             const centerX = rect.left + rect.width / 2;
-
             const centerY = rect.top + rect.height / 2;
 
             return {
                 x: centerX - MINIMIZED_WINDOW_SIZE / 2,
-
                 y: centerY - MINIMIZED_WINDOW_SIZE / 2,
             };
         },

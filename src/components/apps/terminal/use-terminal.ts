@@ -13,6 +13,8 @@ import type { TerminalEntry } from "./terminal-types";
 const TERMINAL_WINDOW_COMMANDS: Readonly<Record<string, WindowId>> = {
     "/about": WINDOW_IDS.about,
     "/resume": WINDOW_IDS.resume,
+    "/projects": WINDOW_IDS.projects,
+    "/experience": WINDOW_IDS.experience,
 };
 
 export function useTerminal() {

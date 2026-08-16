@@ -6,6 +6,8 @@ export const WINDOW_IDS = {
     notes: "notes",
     images: "images",
     resume: "resume",
+    projects: "projects",
+    experience: "experience",
 } as const;
 
 export type WindowId = (typeof WINDOW_IDS)[keyof typeof WINDOW_IDS];
@@ -107,6 +109,52 @@ export const WINDOW_CONFIGS = [
 
         initialX: 360,
         initialY: 70,
+
+        canMinimize: true,
+        canMaximize: true,
+        canResize: true,
+
+        closeOnMinimize: true,
+
+        hideTitleBar: false,
+        openMaximized: false,
+    },
+
+    {
+        id: WINDOW_IDS.projects,
+        title: "Projects",
+
+        width: "1040px",
+        height: "680px",
+
+        minWidth: 820,
+        minHeight: 520,
+
+        initialX: 180,
+        initialY: 70,
+
+        canMinimize: true,
+        canMaximize: true,
+        canResize: true,
+
+        closeOnMinimize: true,
+
+        hideTitleBar: false,
+        openMaximized: false,
+    },
+
+    {
+        id: WINDOW_IDS.experience,
+        title: "Experience",
+
+        width: "960px",
+        height: "640px",
+
+        minWidth: 760,
+        minHeight: 480,
+
+        initialX: 240,
+        initialY: 90,
 
         canMinimize: true,
         canMaximize: true,

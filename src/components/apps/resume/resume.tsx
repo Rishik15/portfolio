@@ -34,7 +34,7 @@ export function Resume() {
                 >
                     <img
                         src="/resume/resume.webp"
-                        alt="Rishik Resume"
+                        alt="Rishik's Resume"
                         width={1582}
                         height={2048}
                         loading="eager"

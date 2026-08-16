@@ -53,6 +53,9 @@ const CASCADE_OFFSET = 30;
 const SNAP_THRESHOLD = 10;
 const DRAG_THRESHOLD = 1;
 
+const FALLBACK_OPEN_OFFSET_Y = 6;
+const FALLBACK_OPEN_SCALE = 0.985;
+
 function parseSize(value: string): number {
     if (typeof window === "undefined") {
         return Number.parseFloat(value);
@@ -130,6 +133,10 @@ export function useWindowFrame({
 
     const hasIconAnimation = iconPosition !== undefined;
 
+    const hasFallbackOpenAnimation = !hasIconAnimation && !shouldOpenMaximized;
+
+    const shouldAnimateOpen = hasIconAnimation || hasFallbackOpenAnimation;
+
     const [position, setPosition] = useState<WindowPosition>(() => {
         if (hasIconAnimation) {
             return iconPosition;
@@ -144,7 +151,7 @@ export function useWindowFrame({
 
         return {
             x: defaultX,
-            y: defaultY,
+            y: defaultY + FALLBACK_OPEN_OFFSET_Y,
         };
     });
 
@@ -170,6 +177,10 @@ export function useWindowFrame({
         };
     });
 
+    const [scale, setScale] = useState(
+        hasFallbackOpenAnimation ? FALLBACK_OPEN_SCALE : 1,
+    );
+
     const [isDragging, setIsDragging] = useState(false);
 
     const [isResizing, setIsResizing] = useState<ResizeDirection>(null);
@@ -182,11 +193,11 @@ export function useWindowFrame({
 
     const [isTransitioning, setIsTransitioning] = useState(false);
 
-    const [isOpening, setIsOpening] = useState(hasIconAnimation);
+    const [isOpening, setIsOpening] = useState(shouldAnimateOpen);
 
     const [isClosing, setIsClosing] = useState(false);
 
-    const [opacity, setOpacity] = useState(hasIconAnimation ? 0 : 1);
+    const [opacity, setOpacity] = useState(shouldAnimateOpen ? 0 : 1);
 
     const isAnimating = useRef(false);
 
@@ -277,6 +288,7 @@ export function useWindowFrame({
 
         window.setTimeout(() => {
             isAnimating.current = false;
+
             actions.minimize();
         }, 300);
     }, [actions, canMinimize, getIconPosition, iconPosition, position, size]);
@@ -334,7 +346,7 @@ export function useWindowFrame({
     }, [actions, canMaximize, isMaximized, isSnapped, position, size]);
 
     useEffect(() => {
-        if (!isOpening || !hasIconAnimation) {
+        if (!isOpening) {
             return;
         }
 
@@ -359,7 +371,11 @@ export function useWindowFrame({
 
                 setPosition(nextPosition);
 
-                setSize(nextSize);
+                if (hasIconAnimation) {
+                    setSize(nextSize);
+                }
+
+                setScale(1);
                 setOpacity(1);
 
                 transitionTimeout = window.setTimeout(() => {
@@ -412,6 +428,7 @@ export function useWindowFrame({
 
                 setSize(savedSize.current);
 
+                setScale(1);
                 setOpacity(1);
 
                 transitionTimeout = window.setTimeout(() => {
@@ -510,7 +527,6 @@ export function useWindowFrame({
 
                 setSize({
                     width: previousWidth,
-
                     height: previousHeight,
                 });
 
@@ -872,6 +888,7 @@ export function useWindowFrame({
     return {
         position,
         size,
+        scale,
         opacity,
         zIndex,
 

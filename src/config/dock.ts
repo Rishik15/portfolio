@@ -39,13 +39,6 @@ export const APP_DOCK_ITEMS = [
         icon: "/icons/notes.webp",
         windowId: WINDOW_IDS.notes,
     },
-    {
-        id: "photos",
-        type: "window",
-        label: "Photos",
-        icon: "/icons/photos.webp",
-        windowId: WINDOW_IDS.images,
-    },
 ] as const satisfies readonly DockItemConfig[];
 
 export const CONTACT_DOCK_ITEMS = [

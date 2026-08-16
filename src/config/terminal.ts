@@ -36,6 +36,16 @@ export const TERMINAL_COMMANDS: readonly TerminalCommand[] = [
         visibleInHelp: true,
     },
     {
+        name: "/projects",
+        description: "Browse my projects",
+        visibleInHelp: true,
+    },
+    {
+        name: "/experience",
+        description: "View my experience",
+        visibleInHelp: true,
+    },
+    {
         name: "/skills",
         description: "View my technical skills",
         visibleInHelp: true,

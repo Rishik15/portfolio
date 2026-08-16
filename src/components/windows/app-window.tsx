@@ -118,9 +118,13 @@ export function AppWindow({
                     ${frame.isMaximized ? "" : "rounded-2xl"}
                 `}
                 style={{
-                    transform: `translate3d(${frame.position.x}px, ${frame.position.y}px, 0)`,
+                    transform: `translate3d(${frame.position.x}px, ${frame.position.y}px, 0) scale(${frame.scale})`,
+                    transformOrigin: "center center",
+
                     width: frame.size.width,
+
                     height: frame.size.height,
+
                     opacity: frame.opacity,
 
                     zIndex: frame.isActive

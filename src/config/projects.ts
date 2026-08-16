@@ -1,173 +1,247 @@
-export type ProjectFile = {
+export type ProjectRepository = {
+    label: string;
+    url: string;
+};
+
+export type ProjectLanguage = {
     name: string;
-    content: string;
+    percentage: number;
+};
+
+export type ProjectHighlight = {
+    label: string;
+    value: string;
+};
+
+export type ProjectImage = {
+    src: string;
+    alt: string;
 };
 
 export type Project = {
-    slug: string;
+    id: string;
     name: string;
+    category: string;
+
     description: string;
-    files: ProjectFile[];
-    githubUrl?: string;
+
+    image: ProjectImage;
+
+    status: string;
+    year: string;
+    role: string;
+
+    technologies: readonly string[];
+
+    repositories: readonly ProjectRepository[];
+
+    languages: readonly ProjectLanguage[];
+
+    highlights: readonly ProjectHighlight[];
 };
 
-export const PROJECTS: Project[] = [
+export const PROJECTS: readonly Project[] = [
     {
-        slug: "nlp-to-sql",
-        name: "NLP to SQL",
+        id: "nlp-to-sql",
+        name: "NLP-to-SQL",
+        category: "Agentic AI · Data",
+
         description:
-            "A read-only natural-language-to-SQL system built around deterministic agent routing, schema retrieval, validation, and AWS Bedrock.",
-        files: [
+            "A read-only natural-language-to-SQL system that converts database questions into validated SQL using an agentic workflow, schema retrieval, semantic caching, deterministic execution, and response synthesis.",
+
+        image: {
+            src: "/projects/nlp-to-sql.webp",
+            alt: "NLP-to-SQL project interface",
+        },
+
+        status: "Active",
+        year: "2026",
+        role: "AI Engineer",
+
+        technologies: [
+            "Python",
+            "Amazon Bedrock",
+            "PostgreSQL",
+            "Strands Agents",
+            "Psycopg2",
+            "SQLGlot",
+        ],
+
+        repositories: [
             {
-                name: "README.md",
-                content: `NLP to SQL
-
-A read-only natural-language-to-SQL system for querying large relational databases from plain English.
-
-The pipeline includes:
-- Security guardrails
-- Intent interpretation
-- Schema retrieval
-- SQL generation
-- Query execution
-- SQL validation
-- Response synthesis
-
-The system uses deterministic routing and request-scoped state so each stage has a clear responsibility.`,
+                label: "Frontend",
+                url: "https://github.com/Rishik15",
             },
             {
-                name: "stack.txt",
-                content: `Python
-AWS Bedrock
-PostgreSQL
-Strands Agents
-Pydantic
-sqlglot
-AWS Knowledge Bases`,
+                label: "Backend",
+                url: "https://github.com/Rishik15",
             },
             {
-                name: "architecture.txt",
-                content: `guardrail
-    ↓
-intent
-    ↓
-schema retrieval
-    ↓
-sql builder
-    ↓
-executor
-    ↓
-validator
-    ↓
-response synthesizer`,
+                label: "Database",
+                url: "https://github.com/Rishik15",
+            },
+        ],
+
+        languages: [
+            {
+                name: "Python",
+                percentage: 76,
+            },
+            {
+                name: "TypeScript",
+                percentage: 16,
+            },
+            {
+                name: "SQL",
+                percentage: 8,
+            },
+        ],
+
+        highlights: [
+            {
+                label: "Workflow",
+                value: "7 Agents",
+            },
+            {
+                label: "Mode",
+                value: "Read Only",
+            },
+            {
+                label: "Cache",
+                value: "Semantic",
             },
         ],
     },
+
     {
-        slug: "applypilot",
-        name: "ApplyPilot",
+        id: "erica",
+        name: "Erica",
+        category: "AI · Knowledge Graph",
+
         description:
-            "A local job discovery and application workflow focused on filtering realistic opportunities before expensive model scoring.",
-        files: [
+            "An AI tutoring system that combines retrieval-augmented generation with entity extraction, relationship modeling, knowledge graphs, graph traversal, and citation grounding to produce explainable responses.",
+
+        image: {
+            src: "/projects/erica.webp",
+            alt: "Erica AI tutor project interface",
+        },
+
+        status: "Completed",
+        year: "2026",
+        role: "AI Engineer",
+
+        technologies: [
+            "Python",
+            "LangChain",
+            "Neo4j",
+            "Ollama",
+            "Qwen",
+            "Docker",
+        ],
+
+        repositories: [
             {
-                name: "README.md",
-                content: `ApplyPilot
+                label: "GitHub",
+                url: "https://github.com/Rishik15",
+            },
+        ],
 
-A job discovery and application workflow designed to reduce repetitive job-search work.
-
-The system focuses on:
-- Job discovery
-- Early deterministic filtering
-- Relevance scoring
-- Application workflow automation
-- Tracking application progress
-
-The goal is to reject obviously incompatible roles before sending jobs into more expensive AI-based evaluation.`,
+        languages: [
+            {
+                name: "Python",
+                percentage: 88,
             },
             {
-                name: "stack.txt",
-                content: `Python
-Playwright
-Claude Code
-AWS
-Pydantic
-JobSpy`,
+                name: "JavaScript",
+                percentage: 8,
+            },
+            {
+                name: "CSS",
+                percentage: 4,
+            },
+        ],
+
+        highlights: [
+            {
+                label: "Architecture",
+                value: "RAG",
+            },
+            {
+                label: "Graph",
+                value: "Neo4j",
+            },
+            {
+                label: "Runtime",
+                value: "Docker",
             },
         ],
     },
+
     {
-        slug: "recommendation-system",
-        name: "Recommendation System",
+        id: "quickdraw",
+        name: "QuickDraw",
+        category: "Machine Learning · Web",
+
         description:
-            "A content-based recommendation system using TF-IDF features and cosine similarity.",
-        files: [
+            "A real-time sketch recognition application that serves a TensorFlow model through a Flask REST API and connects it to a React frontend for low-latency drawing classification.",
+
+        image: {
+            src: "/projects/quickdraw.webp",
+            alt: "QuickDraw sketch recognition project interface",
+        },
+
+        status: "Completed",
+        year: "2026",
+        role: "ML Engineer",
+
+        technologies: [
+            "Python",
+            "TensorFlow",
+            "Flask",
+            "React",
+            "REST APIs",
+            "MongoDB",
+        ],
+
+        repositories: [
             {
-                name: "README.md",
-                content: `Recommendation System
-
-A content-based recommendation system that converts item metadata into TF-IDF vectors and compares them using cosine similarity.
-
-The system returns items most similar to a selected item based on their textual features.`,
+                label: "Frontend",
+                url: "https://github.com/Rishik15",
             },
             {
-                name: "stack.txt",
-                content: `Python
-Pandas
-scikit-learn
-TF-IDF
-Cosine Similarity`,
+                label: "Backend",
+                url: "https://github.com/Rishik15",
             },
         ],
-    },
-    {
-        slug: "wids-2026",
-        name: "WiDS Datathon 2026",
-        description:
-            "A machine-learning competition solution using an ensemble of gradient-boosted models with monotonic survival predictions.",
-        files: [
+
+        languages: [
             {
-                name: "README.md",
-                content: `WiDS Datathon 2026
-
-Competition machine-learning pipeline created for the WiDS Datathon 2026.
-
-Result:
-3rd place
-
-Final score:
-0.97250
-
-The solution blended multiple gradient-boosted models and enforced monotonic predictions across forecast horizons.`,
+                name: "Python",
+                percentage: 55,
             },
             {
-                name: "stack.txt",
-                content: `Python
-LightGBM
-XGBoost
-CatBoost
-Pandas
-NumPy
-scikit-learn`,
+                name: "JavaScript",
+                percentage: 38,
             },
             {
-                name: "result.txt",
-                content: `Placement: 3rd
-Score: 0.97250`,
+                name: "CSS",
+                percentage: 7,
+            },
+        ],
+
+        highlights: [
+            {
+                label: "Model",
+                value: "TensorFlow",
+            },
+            {
+                label: "Inference",
+                value: "Real Time",
+            },
+            {
+                label: "API",
+                value: "REST",
             },
         ],
     },
 ];
-
-export function findProject(value: string) {
-    const normalized = value.trim().replace(/\/$/, "").toLowerCase();
-
-    return PROJECTS.find(
-        (project) =>
-            project.slug.toLowerCase() === normalized ||
-            project.name.toLowerCase() === normalized,
-    );
-}
-
-export function getProjectBySlug(slug: string) {
-    return PROJECTS.find((project) => project.slug === slug);
-}

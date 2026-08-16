@@ -52,6 +52,26 @@ export function resolveTerminalCommand(command: string): TerminalEntry {
         };
     }
 
+    if (normalized === "/projects") {
+        return {
+            command,
+            result: {
+                type: "text",
+                lines: ["Opening projects..."],
+            },
+        };
+    }
+
+    if (normalized === "/experience") {
+        return {
+            command,
+            result: {
+                type: "text",
+                lines: ["Opening experience..."],
+            },
+        };
+    }
+
     if (normalized === "/skills") {
         return {
             command,
