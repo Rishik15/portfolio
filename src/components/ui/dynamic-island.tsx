@@ -12,24 +12,10 @@ import { motion, useReducedMotion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 
 import { useMusic } from "@/components/providers/music-provider";
-
-const BOUNCE_VARIANTS = {
-    "compact-music": 0.42,
-    "music-compact": 0.34,
-} as const;
-
-const DEFAULT_BOUNCE = 0.4;
-
-const MUSIC_BAR_DELAYS = [0, 0.1, 0.2, 0.3] as const;
-
-const AUTO_COLLAPSE_DELAY_MS = 1000;
-
-const ISLAND_MORPH_DURATION_SECONDS = 0.25;
-
-const CONTENT_MORPH_DURATION_SECONDS = 0.23;
-
-const EXIT_TO_PILL_DELAY_MS = 130;
-const EXIT_SHRINK_DURATION_MS = 120;
+import {
+    DYNAMIC_ISLAND_MOTION,
+    DYNAMIC_ISLAND_UI,
+} from "@/components/ui/dynamic-island-ui";
 
 type View = "compact" | "music";
 
@@ -37,11 +23,11 @@ function MusicBars({ playing }: { playing: boolean }) {
     const shouldReduceMotion = useReducedMotion();
 
     return (
-        <div className="flex items-center justify-center gap-1 px-3 py-2">
-            {MUSIC_BAR_DELAYS.map((delay) => (
+        <div className={DYNAMIC_ISLAND_UI.bars.root}>
+            {DYNAMIC_ISLAND_MOTION.musicBarDelays.map((delay) => (
                 <motion.span
                     key={delay}
-                    className="h-4 w-[3px] origin-center rounded-full bg-pink-500"
+                    className={DYNAMIC_ISLAND_UI.bars.bar}
                     animate={
                         shouldReduceMotion || !playing
                             ? {
@@ -81,16 +67,16 @@ function MusicPlayer() {
     } = useMusic();
 
     return (
-        <div className="flex w-72 items-center gap-3 overflow-hidden px-4 py-2 text-white dark:text-black">
-            <Music2 className="h-5 w-5 shrink-0 text-pink-500" />
+        <div className={DYNAMIC_ISLAND_UI.player.root}>
+            <Music2 className={DYNAMIC_ISLAND_UI.player.musicIcon} />
 
-            <div className="min-w-0 flex-1">
-                <p className="pointer-events-none truncate text-sm font-medium text-white dark:text-black">
+            <div className={DYNAMIC_ISLAND_UI.player.trackInfo}>
+                <p className={DYNAMIC_ISLAND_UI.player.title}>
                     {currentTrack?.title ??
                         (isMusicLoading ? "Loading music..." : "Audius")}
                 </p>
 
-                <p className="pointer-events-none truncate text-xs text-white/70 dark:text-black/60">
+                <p className={DYNAMIC_ISLAND_UI.player.artist}>
                     {currentTrack?.artist ?? "Monthly Trending"}
                 </p>
             </div>
@@ -100,19 +86,9 @@ function MusicPlayer() {
                 aria-label="Previous track"
                 disabled={!currentTrack || isMusicLoading}
                 onClick={previousTrack}
-                className="
-                    rounded-full
-                    p-1
-                    text-white
-                    transition-colors
-                    hover:bg-white/30
-                    disabled:cursor-default
-                    disabled:opacity-35
-                    dark:text-black
-                    dark:hover:bg-black/10
-                "
+                className={DYNAMIC_ISLAND_UI.player.controlButton}
             >
-                <SkipBack className="h-4 w-4" />
+                <SkipBack className={DYNAMIC_ISLAND_UI.player.controlIcon} />
             </button>
 
             <button
@@ -126,23 +102,19 @@ function MusicPlayer() {
                 }
                 disabled={!currentTrack || isMusicLoading}
                 onClick={isMusicPlaying ? pauseMusic : playMusic}
-                className="
-                    rounded-full
-                    p-1
-                    text-white
-                    transition-colors
-                    hover:bg-white/30
-                    disabled:cursor-default
-                    dark:text-black
-                    dark:hover:bg-black/10
-                "
+                className={DYNAMIC_ISLAND_UI.player.controlButton}
             >
                 {isMusicLoading ? (
-                    <LoaderCircle className="h-4 w-4 animate-spin" />
+                    <LoaderCircle
+                        className={`
+                            animate-spin
+                            ${DYNAMIC_ISLAND_UI.player.controlIcon}
+                        `}
+                    />
                 ) : isMusicPlaying ? (
-                    <Pause className="h-4 w-4" />
+                    <Pause className={DYNAMIC_ISLAND_UI.player.controlIcon} />
                 ) : (
-                    <Play className="h-4 w-4" />
+                    <Play className={DYNAMIC_ISLAND_UI.player.controlIcon} />
                 )}
             </button>
 
@@ -151,29 +123,19 @@ function MusicPlayer() {
                 aria-label="Next track"
                 disabled={!currentTrack || isMusicLoading}
                 onClick={nextTrack}
-                className="
-                    rounded-full
-                    p-1
-                    text-white
-                    transition-colors
-                    hover:bg-white/30
-                    disabled:cursor-default
-                    disabled:opacity-35
-                    dark:text-black
-                    dark:hover:bg-black/10
-                "
+                className={DYNAMIC_ISLAND_UI.player.controlButton}
             >
-                <SkipForward className="h-4 w-4" />
+                <SkipForward className={DYNAMIC_ISLAND_UI.player.controlIcon} />
             </button>
         </div>
     );
 }
 
 type VisibleDynamicIslandProps = {
-    className: string;
+    className?: string;
 };
 
-function VisibleDynamicIsland({ className }: VisibleDynamicIslandProps) {
+function VisibleDynamicIsland({ className = "" }: VisibleDynamicIslandProps) {
     const {
         isMusicPlaying,
         isMusicClosing,
@@ -182,7 +144,6 @@ function VisibleDynamicIsland({ className }: VisibleDynamicIslandProps) {
     } = useMusic();
 
     const [view, setView] = useState<View>("music");
-
     const [isDisappearing, setIsDisappearing] = useState(false);
 
     const hoveredRef = useRef(false);
@@ -193,8 +154,8 @@ function VisibleDynamicIsland({ className }: VisibleDynamicIslandProps) {
 
     const bounce =
         visibleView === "music"
-            ? BOUNCE_VARIANTS["compact-music"]
-            : BOUNCE_VARIANTS["music-compact"];
+            ? DYNAMIC_ISLAND_MOTION.bounce.compactToMusic
+            : DYNAMIC_ISLAND_MOTION.bounce.musicToCompact;
 
     useEffect(() => {
         const collapseTimeout = window.setTimeout(() => {
@@ -203,7 +164,7 @@ function VisibleDynamicIsland({ className }: VisibleDynamicIslandProps) {
             }
 
             setView("compact");
-        }, AUTO_COLLAPSE_DELAY_MS);
+        }, DYNAMIC_ISLAND_MOTION.autoCollapseDelayMs);
 
         return () => {
             window.clearTimeout(collapseTimeout);
@@ -227,15 +188,14 @@ function VisibleDynamicIsland({ className }: VisibleDynamicIslandProps) {
 
         const disappearTimeout = window.setTimeout(() => {
             setIsDisappearing(true);
-        }, EXIT_TO_PILL_DELAY_MS);
+        }, DYNAMIC_ISLAND_MOTION.exitToPillDelayMs);
 
         const hideTimeout = window.setTimeout(() => {
             finishHideMusic();
-        }, EXIT_TO_PILL_DELAY_MS + EXIT_SHRINK_DURATION_MS);
+        }, DYNAMIC_ISLAND_MOTION.exitToPillDelayMs + DYNAMIC_ISLAND_MOTION.exitShrinkDurationMs);
 
         return () => {
             window.clearTimeout(disappearTimeout);
-
             window.clearTimeout(hideTimeout);
         };
     }, [finishHideMusic, isMusicClosing, shouldReduceMotion]);
@@ -266,7 +226,12 @@ function VisibleDynamicIsland({ className }: VisibleDynamicIslandProps) {
     }
 
     return (
-        <div className={className}>
+        <div
+            className={`
+                ${DYNAMIC_ISLAND_UI.position}
+                ${className}
+            `}
+        >
             <motion.div
                 animate={
                     isDisappearing
@@ -285,7 +250,9 @@ function VisibleDynamicIsland({ className }: VisibleDynamicIslandProps) {
                               duration: 0,
                           }
                         : {
-                              duration: EXIT_SHRINK_DURATION_MS / 1000,
+                              duration:
+                                  DYNAMIC_ISLAND_MOTION.exitShrinkDurationMs /
+                                  1000,
                               ease: [0.4, 0, 1, 1],
                           }
                 }
@@ -294,15 +261,7 @@ function VisibleDynamicIsland({ className }: VisibleDynamicIslandProps) {
                 }}
             >
                 <motion.div
-                    className="
-                        mx-auto
-                        w-fit
-                        min-w-25
-                        overflow-hidden
-                        rounded-[32px]
-                        bg-black
-                        dark:bg-white
-                    "
+                    className={DYNAMIC_ISLAND_UI.island}
                     layout
                     onHoverStart={handleHoverStart}
                     onHoverEnd={handleHoverEnd}
@@ -315,8 +274,11 @@ function VisibleDynamicIsland({ className }: VisibleDynamicIslandProps) {
                                   duration: 0,
                               }
                             : {
-                                  bounce: bounce ?? DEFAULT_BOUNCE,
-                                  duration: ISLAND_MORPH_DURATION_SECONDS,
+                                  bounce:
+                                      bounce ??
+                                      DYNAMIC_ISLAND_MOTION.bounce.fallback,
+                                  duration:
+                                      DYNAMIC_ISLAND_MOTION.islandMorphDurationSeconds,
                                   type: "spring" as const,
                               }
                     }
@@ -354,8 +316,11 @@ function VisibleDynamicIsland({ className }: VisibleDynamicIslandProps) {
                                       duration: 0,
                                   }
                                 : {
-                                      bounce: bounce ?? DEFAULT_BOUNCE,
-                                      duration: CONTENT_MORPH_DURATION_SECONDS,
+                                      bounce:
+                                          bounce ??
+                                          DYNAMIC_ISLAND_MOTION.bounce.fallback,
+                                      duration:
+                                          DYNAMIC_ISLAND_MOTION.contentMorphDurationSeconds,
                                       type: "spring" as const,
                                   }
                         }

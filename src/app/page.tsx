@@ -1,5 +1,5 @@
-import { Desktop } from "@/components/desktop/desktop";
+import { ScreenGate } from "@/components/screen/screen-gate";
 
 export default function Home() {
-    return <Desktop />;
+    return <ScreenGate />;
 }

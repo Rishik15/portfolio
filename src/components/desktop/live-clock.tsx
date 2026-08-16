@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 
+import { TOP_BAR_UI } from "@/components/desktop/top-bar-ui";
+
 const TIME_ZONE = "America/New_York";
 const ONE_MINUTE = 60_000;
 
@@ -64,17 +66,7 @@ export function LiveClock() {
 
     return (
         <div
-            className="
-                flex
-                items-center
-                gap-3
-                whitespace-nowrap
-                font-mono
-                text-[12px]
-                font-medium
-                uppercase
-                tracking-[0.12em]
-            "
+            className={TOP_BAR_UI.clock.root}
             aria-label="Current date and time in New York"
         >
             <time suppressHydrationWarning className="tabular-nums">

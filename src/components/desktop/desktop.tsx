@@ -39,16 +39,7 @@ export function Desktop() {
                     <div className={styles.content}>
                         <TopBar />
 
-                        <DynamicIsland
-                            className="
-                                pointer-events-auto
-                                fixed
-                                left-1/2
-                                top-4
-                                z-200
-                                -translate-x-1/2
-                            "
-                        />
+                        <DynamicIsland />
 
                         <DesktopIcons />
                         <WindowLayer />

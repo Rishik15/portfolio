@@ -4,6 +4,7 @@ import Image from "next/image";
 import { motion } from "motion/react";
 import { useRef, type KeyboardEvent, type Ref, type RefObject } from "react";
 
+import { DESKTOP_ICON_UI } from "@/components/desktop/desktop-icon-ui";
 import { cn } from "@/lib/utils";
 
 type DesktopIconProps = {
@@ -94,46 +95,32 @@ export function DesktopIcon({
                 top: position.top,
                 left: position.left,
             }}
-            className={cn(
-                "group absolute z-10 flex w-30 select-none flex-col items-center outline-none",
-                className,
-            )}
+            className={cn(DESKTOP_ICON_UI.root, className)}
         >
-            <div
-                className={cn(
-                    "flex h-fit w-fit flex-col items-center justify-center rounded-[18px]",
-                    "transition-[background-color,box-shadow,transform] duration-150 ease-out",
-                    "group-hover:scale-[1.02]",
-                )}
-            >
-                <Image
-                    src={icon}
-                    alt=""
-                    width={iconWidth}
-                    height={iconHeight}
-                    loading="eager"
-                    draggable={false}
-                    sizes={`${iconWidth}px`}
-                    className="pointer-events-none block shrink-0 object-contain drop-shadow-[0_5px_6px_rgba(0,0,0,0.16)]"
-                    style={{
-                        width: iconWidth,
-                        height: iconHeight,
-                    }}
-                />
+            <div className={DESKTOP_ICON_UI.responsiveScale}>
+                <div className={DESKTOP_ICON_UI.iconSurface}>
+                    <Image
+                        src={icon}
+                        alt=""
+                        width={iconWidth}
+                        height={iconHeight}
+                        loading="eager"
+                        draggable={false}
+                        sizes={`${iconWidth}px`}
+                        className={DESKTOP_ICON_UI.image}
+                        style={{
+                            width: iconWidth,
+                            height: iconHeight,
+                        }}
+                    />
+                </div>
             </div>
 
             <span
                 style={{
                     fontFamily: "var(--font-inter)",
                 }}
-                className={cn(
-                    "whitespace-nowrap text-center",
-                    "text-[14px] font-bold leading-[22.4px] tracking-[-0.6px]",
-                    "text-black",
-                    "[text-shadow:0_1px_2px_rgba(255,255,255,0.65),0_1px_3px_rgba(0,0,0,0.12)]",
-                    "dark:text-[#f7f7f7]",
-                    "dark:[text-shadow:0_1px_3px_rgba(0,0,0,0.75)]",
-                )}
+                className={DESKTOP_ICON_UI.label}
             >
                 {label}
             </span>
