@@ -35,9 +35,3 @@ export function loadNotesLibrary(): Promise<NotesLibrary> {
 
     return pendingRequest;
 }
-
-export function preloadNotesLibrary() {
-    void loadNotesLibrary().catch(() => {
-        // The Notes app can retry normally when opened.
-    });
-}

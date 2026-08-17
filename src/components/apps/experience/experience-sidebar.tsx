@@ -2,6 +2,7 @@
 
 import { ChevronRight, Folder, FolderOpen } from "lucide-react";
 import {
+    useEffect,
     useMemo,
     useRef,
     useState,
@@ -29,6 +30,7 @@ type ResizeState = {
     pointerId: number;
     startX: number;
     startWidth: number;
+    maximumSidebarWidth: number;
 };
 
 function EmptySidebar() {
@@ -66,6 +68,9 @@ export function ExperienceSidebar({
     const sidebarRef = useRef<HTMLElement>(null);
     const resizeStateRef = useRef<ResizeState | null>(null);
 
+    const pendingClientXRef = useRef<number | null>(null);
+    const animationFrameRef = useRef(0);
+
     const groups = useMemo<YearGroup[]>(() => {
         const grouped = new Map<number, Experience[]>();
 
@@ -91,6 +96,14 @@ export function ExperienceSidebar({
         () => new Set(groups[0] ? [groups[0].year] : []),
     );
 
+    useEffect(() => {
+        return () => {
+            if (animationFrameRef.current) {
+                window.cancelAnimationFrame(animationFrameRef.current);
+            }
+        };
+    }, []);
+
     function toggleYear(year: number) {
         setExpandedYears((current) => {
             const next = new Set(current);
@@ -105,6 +118,27 @@ export function ExperienceSidebar({
         });
     }
 
+    function applyResize(clientX: number) {
+        const resizeState = resizeStateRef.current;
+        const sidebar = sidebarRef.current;
+
+        if (!resizeState || !sidebar) {
+            return;
+        }
+
+        const delta = clientX - resizeState.startX;
+
+        const nextWidth = Math.min(
+            resizeState.maximumSidebarWidth,
+            Math.max(
+                EXPERIENCE_SIDEBAR.minWidth,
+                resizeState.startWidth + delta,
+            ),
+        );
+
+        sidebar.style.width = `${nextWidth}px`;
+    }
+
     function handleResizeStart(event: ReactPointerEvent<HTMLDivElement>) {
         const sidebar = sidebarRef.current;
 
@@ -113,27 +147,6 @@ export function ExperienceSidebar({
         }
 
         event.preventDefault();
-
-        resizeStateRef.current = {
-            pointerId: event.pointerId,
-            startX: event.clientX,
-            startWidth: sidebar.getBoundingClientRect().width,
-        };
-
-        event.currentTarget.setPointerCapture(event.pointerId);
-    }
-
-    function handleResizeMove(event: ReactPointerEvent<HTMLDivElement>) {
-        const resizeState = resizeStateRef.current;
-        const sidebar = sidebarRef.current;
-
-        if (
-            !resizeState ||
-            !sidebar ||
-            resizeState.pointerId !== event.pointerId
-        ) {
-            return;
-        }
 
         const parentWidth =
             sidebar.parentElement?.getBoundingClientRect().width ?? 0;
@@ -149,17 +162,42 @@ export function ExperienceSidebar({
             ),
         );
 
-        const delta = event.clientX - resizeState.startX;
-
-        const nextWidth = Math.min(
+        resizeStateRef.current = {
+            pointerId: event.pointerId,
+            startX: event.clientX,
+            startWidth: sidebar.getBoundingClientRect().width,
             maximumSidebarWidth,
-            Math.max(
-                EXPERIENCE_SIDEBAR.minWidth,
-                resizeState.startWidth + delta,
-            ),
-        );
+        };
 
-        sidebar.style.width = `${nextWidth}px`;
+        pendingClientXRef.current = null;
+
+        event.currentTarget.setPointerCapture(event.pointerId);
+    }
+
+    function handleResizeMove(event: ReactPointerEvent<HTMLDivElement>) {
+        const resizeState = resizeStateRef.current;
+
+        if (!resizeState || resizeState.pointerId !== event.pointerId) {
+            return;
+        }
+
+        pendingClientXRef.current = event.clientX;
+
+        if (animationFrameRef.current) {
+            return;
+        }
+
+        animationFrameRef.current = window.requestAnimationFrame(() => {
+            animationFrameRef.current = 0;
+
+            const clientX = pendingClientXRef.current;
+
+            pendingClientXRef.current = null;
+
+            if (clientX !== null) {
+                applyResize(clientX);
+            }
+        });
     }
 
     function handleResizeEnd(event: ReactPointerEvent<HTMLDivElement>) {
@@ -168,6 +206,15 @@ export function ExperienceSidebar({
         if (!resizeState || resizeState.pointerId !== event.pointerId) {
             return;
         }
+
+        if (animationFrameRef.current) {
+            window.cancelAnimationFrame(animationFrameRef.current);
+            animationFrameRef.current = 0;
+        }
+
+        pendingClientXRef.current = null;
+
+        applyResize(event.clientX);
 
         resizeStateRef.current = null;
 
@@ -262,7 +309,7 @@ export function ExperienceSidebar({
                                                                 ${
                                                                     selected
                                                                         ? "bg-foreground/10 text-foreground"
-                                                                        : "text-foreground/60 hover:bg-foreground/[0.05] hover:text-foreground"
+                                                                        : "text-foreground/60 hover:bg-foreground/5 hover:text-foreground"
                                                                 }
                                                             `}
                                                         >

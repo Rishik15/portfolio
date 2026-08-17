@@ -412,7 +412,7 @@ export const NOTES_UI = {
             truncate
 
             text-[12px]
-            font-semibold
+            font-medium
 
             @min-[160px]/note-list:text-[13px]
 

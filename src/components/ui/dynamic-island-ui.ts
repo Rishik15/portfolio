@@ -18,16 +18,14 @@ export const DYNAMIC_ISLAND_UI = {
         min-w-25
         overflow-hidden
 
-        rounded-[28px]
+        rounded-full
 
         bg-black
         dark:bg-white
 
         min-[1800px]:min-w-[108px]
-        min-[1800px]:rounded-[30px]
 
         min-[2400px]:min-w-[116px]
-        min-[2400px]:rounded-[32px]
     `,
 
     bars: {

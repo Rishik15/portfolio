@@ -79,7 +79,7 @@ export const WINDOW_CONFIGS = [
         maxHeight: 760,
 
         initialPlacement: {
-            x: 0.92,
+            x: 0.95,
             y: 0.08,
         },
 
@@ -161,8 +161,8 @@ export const WINDOW_CONFIGS = [
         maxHeight: 840,
 
         initialPlacement: {
-            x: 0.10,
-            y: 0.20,
+            x: 0.1,
+            y: 0.2,
         },
 
         canMinimize: true,

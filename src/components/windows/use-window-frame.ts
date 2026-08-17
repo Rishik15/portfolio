@@ -1,6 +1,7 @@
 import {
     useCallback,
     useEffect,
+    useMemo,
     useRef,
     useState,
     type MouseEvent as ReactMouseEvent,
@@ -66,6 +67,8 @@ const DRAG_THRESHOLD = 1;
 
 const FALLBACK_OPEN_OFFSET_Y = 6;
 const FALLBACK_OPEN_SCALE = 0.985;
+
+const MINIMIZE_ANIMATION_MS = 450;
 
 const DEFAULT_VIEWPORT_WIDTH = 1440;
 const DEFAULT_VIEWPORT_HEIGHT = 900;
@@ -159,7 +162,6 @@ function getResponsiveWindowSize(
 
     return {
         width: clamp(preferredWidth, limits.minWidth, limits.maxWidth),
-
         height: clamp(preferredHeight, limits.minHeight, limits.maxHeight),
     };
 }
@@ -172,7 +174,6 @@ function clampWindowFrame(
     const limits = getSizeLimits(config, bounds);
 
     const width = clamp(frame.size.width, limits.minWidth, limits.maxWidth);
-
     const height = clamp(frame.size.height, limits.minHeight, limits.maxHeight);
 
     const maxX = Math.max(0, bounds.width - width);
@@ -183,7 +184,6 @@ function clampWindowFrame(
             x: clamp(frame.position.x, 0, maxX),
             y: clamp(frame.position.y, 0, maxY),
         },
-
         size: {
             width,
             height,
@@ -196,7 +196,6 @@ function getDefaultWindowFrame(
     cascadeIndex: number,
 ): WindowFrame {
     const bounds = getViewportBounds();
-
     const size = getResponsiveWindowSize(config, bounds);
 
     const freeX = Math.max(0, bounds.width - size.width);
@@ -217,7 +216,6 @@ function getDefaultWindowFrame(
                 x: freeX * placementX + cascadeOffset,
                 y: freeY * placementY + cascadeOffset,
             },
-
             size,
         },
         bounds,
@@ -275,7 +273,6 @@ function scaleFrameBetweenViewports(
                 x: nextFreeX * horizontalProgress,
                 y: nextFreeY * verticalProgress,
             },
-
             size: {
                 width: nextWidth,
                 height: nextHeight,
@@ -293,7 +290,10 @@ export function useWindowFrame({
     iconPosition,
     getIconPosition,
 }: UseWindowFrameOptions) {
-    const defaultFrame = getDefaultWindowFrame(config, cascadeIndex);
+    const defaultFrame = useMemo(
+        () => getDefaultWindowFrame(config, cascadeIndex),
+        [cascadeIndex, config],
+    );
 
     const canMinimize = config.canMinimize !== false;
     const canMaximize = config.canMaximize !== false;
@@ -307,9 +307,7 @@ export function useWindowFrame({
     );
 
     const hasIconAnimation = iconPosition !== undefined;
-
     const hasFallbackOpenAnimation = !hasIconAnimation && !shouldOpenMaximized;
-
     const shouldAnimateOpen = hasIconAnimation || hasFallbackOpenAnimation;
 
     const [position, setPosition] = useState<WindowPosition>(() => {
@@ -353,27 +351,24 @@ export function useWindowFrame({
     );
 
     const [isDragging, setIsDragging] = useState(false);
-
     const [isResizing, setIsResizing] = useState<ResizeDirection>(null);
-
     const [isMaximized, setIsMaximized] = useState(shouldOpenMaximized);
-
     const [isSnapped, setIsSnapped] = useState<SnappedSide>(null);
-
     const [snapZone, setSnapZone] = useState<SnapZone>(null);
-
     const [isTransitioning, setIsTransitioning] = useState(false);
-
     const [isOpening, setIsOpening] = useState(shouldAnimateOpen);
-
     const [isClosing, setIsClosing] = useState(false);
-
     const [opacity, setOpacity] = useState(shouldAnimateOpen ? 0 : 1);
 
+    const positionRef = useRef(position);
+    const sizeRef = useRef(size);
+
+    const isMaximizedRef = useRef(isMaximized);
+    const isSnappedRef = useRef<SnappedSide>(isSnapped);
+    const snapZoneRef = useRef<SnapZone>(snapZone);
+
     const isAnimating = useRef(false);
-
     const hasUserAdjustedFrame = useRef(false);
-
     const viewportBoundsRef = useRef(getViewportBounds());
 
     const savedPosition = useRef<WindowPosition>({
@@ -408,10 +403,37 @@ export function useWindowFrame({
         startPosY: 0,
     });
 
+    const setFramePosition = useCallback((nextPosition: WindowPosition) => {
+        positionRef.current = nextPosition;
+        setPosition(nextPosition);
+    }, []);
+
+    const setFrameSize = useCallback((nextSize: WindowSize) => {
+        sizeRef.current = nextSize;
+        setSize(nextSize);
+    }, []);
+
+    const setFrameMaximized = useCallback((nextValue: boolean) => {
+        isMaximizedRef.current = nextValue;
+        setIsMaximized(nextValue);
+    }, []);
+
+    const setFrameSnapped = useCallback((nextValue: SnappedSide) => {
+        isSnappedRef.current = nextValue;
+        setIsSnapped(nextValue);
+    }, []);
+
+    const setFrameSnapZone = useCallback((nextValue: SnapZone) => {
+        if (snapZoneRef.current === nextValue) {
+            return;
+        }
+
+        snapZoneRef.current = nextValue;
+        setSnapZone(nextValue);
+    }, []);
+
     const isOpen = isWindowOpen(state);
-
     const isMinimized = isWindowMinimized(state);
-
     const isActive = isOpen && state.isActive;
 
     const zIndex = isOpen ? state.zIndex : isMinimized ? state.zIndex : 0;
@@ -434,22 +456,24 @@ export function useWindowFrame({
 
         isAnimating.current = true;
 
-        savedPosition.current = {
-            x: position.x,
-            y: position.y,
-        };
+        if (!isMaximizedRef.current && isSnappedRef.current === null) {
+            savedPosition.current = {
+                x: positionRef.current.x,
+                y: positionRef.current.y,
+            };
 
-        savedSize.current = {
-            width: size.width,
-            height: size.height,
-        };
+            savedSize.current = {
+                width: sizeRef.current.width,
+                height: sizeRef.current.height,
+            };
+        }
 
         setIsClosing(true);
         setIsTransitioning(true);
 
-        setPosition(currentIconPosition);
+        setFramePosition(currentIconPosition);
 
-        setSize({
+        setFrameSize({
             width: 60,
             height: 60,
         });
@@ -458,10 +482,16 @@ export function useWindowFrame({
 
         window.setTimeout(() => {
             isAnimating.current = false;
-
             actions.minimize();
-        }, 300);
-    }, [actions, canMinimize, getIconPosition, iconPosition, position, size]);
+        }, MINIMIZE_ANIMATION_MS);
+    }, [
+        actions,
+        canMinimize,
+        getIconPosition,
+        iconPosition,
+        setFramePosition,
+        setFrameSize,
+    ]);
 
     const handleMaximize = useCallback(() => {
         if (!canMaximize || typeof window === "undefined") {
@@ -470,7 +500,7 @@ export function useWindowFrame({
 
         setIsTransitioning(true);
 
-        if (isMaximized || isSnapped) {
+        if (isMaximizedRef.current || isSnappedRef.current) {
             const restoredFrame = clampWindowFrame(
                 config,
                 {
@@ -478,7 +508,6 @@ export function useWindowFrame({
                         x: previousState.current.x,
                         y: previousState.current.y,
                     },
-
                     size: {
                         width: previousState.current.width,
                         height: previousState.current.height,
@@ -487,34 +516,34 @@ export function useWindowFrame({
                 getViewportBounds(),
             );
 
-            setPosition(restoredFrame.position);
-            setSize(restoredFrame.size);
+            setFramePosition(restoredFrame.position);
+            setFrameSize(restoredFrame.size);
 
             savedPosition.current = restoredFrame.position;
             savedSize.current = restoredFrame.size;
 
-            setIsMaximized(false);
-            setIsSnapped(null);
+            setFrameMaximized(false);
+            setFrameSnapped(null);
         } else {
             previousState.current = {
-                x: position.x,
-                y: position.y,
-                width: size.width,
-                height: size.height,
+                x: positionRef.current.x,
+                y: positionRef.current.y,
+                width: sizeRef.current.width,
+                height: sizeRef.current.height,
             };
 
-            setPosition({
+            setFramePosition({
                 x: 0,
                 y: 0,
             });
 
-            setSize({
+            setFrameSize({
                 width: window.innerWidth,
                 height: window.innerHeight,
             });
 
-            setIsMaximized(true);
-            setIsSnapped(null);
+            setFrameMaximized(true);
+            setFrameSnapped(null);
         }
 
         window.setTimeout(() => {
@@ -522,7 +551,15 @@ export function useWindowFrame({
         }, 200);
 
         actions.toggleMaximize();
-    }, [actions, canMaximize, config, isMaximized, isSnapped, position, size]);
+    }, [
+        actions,
+        canMaximize,
+        config,
+        setFrameMaximized,
+        setFramePosition,
+        setFrameSize,
+        setFrameSnapped,
+    ]);
 
     useEffect(() => {
         if (!isOpening) {
@@ -538,10 +575,10 @@ export function useWindowFrame({
             secondFrame = requestAnimationFrame(() => {
                 const nextFrame = getDefaultFrame();
 
-                setPosition(nextFrame.position);
+                setFramePosition(nextFrame.position);
 
                 if (hasIconAnimation) {
-                    setSize(nextFrame.size);
+                    setFrameSize(nextFrame.size);
                 }
 
                 setScale(1);
@@ -549,7 +586,6 @@ export function useWindowFrame({
 
                 transitionTimeout = window.setTimeout(() => {
                     setIsTransitioning(false);
-
                     setIsOpening(false);
 
                     savedPosition.current = nextFrame.position;
@@ -576,7 +612,13 @@ export function useWindowFrame({
                 window.clearTimeout(transitionTimeout);
             }
         };
-    }, [getDefaultFrame, hasIconAnimation, isOpening]);
+    }, [
+        getDefaultFrame,
+        hasIconAnimation,
+        isOpening,
+        setFramePosition,
+        setFrameSize,
+    ]);
 
     useEffect(() => {
         if (isMinimized || !isClosing || isAnimating.current) {
@@ -592,31 +634,68 @@ export function useWindowFrame({
             setIsTransitioning(true);
 
             secondFrame = requestAnimationFrame(() => {
-                const restoredFrame = clampWindowFrame(
-                    config,
-                    {
-                        position: savedPosition.current,
-                        size: savedSize.current,
-                    },
-                    getViewportBounds(),
-                );
+                const bounds = getViewportBounds();
 
-                setPosition(restoredFrame.position);
-                setSize(restoredFrame.size);
+                let restoredFrame: WindowFrame;
 
-                savedPosition.current = restoredFrame.position;
-                savedSize.current = restoredFrame.size;
+                if (isMaximizedRef.current) {
+                    restoredFrame = {
+                        position: {
+                            x: 0,
+                            y: 0,
+                        },
+                        size: {
+                            width: bounds.width,
+                            height: bounds.height,
+                        },
+                    };
+                } else if (isSnappedRef.current === "left") {
+                    restoredFrame = {
+                        position: {
+                            x: 0,
+                            y: 0,
+                        },
+                        size: {
+                            width: bounds.width / 2,
+                            height: bounds.height,
+                        },
+                    };
+                } else if (isSnappedRef.current === "right") {
+                    restoredFrame = {
+                        position: {
+                            x: bounds.width / 2,
+                            y: 0,
+                        },
+                        size: {
+                            width: bounds.width / 2,
+                            height: bounds.height,
+                        },
+                    };
+                } else {
+                    restoredFrame = clampWindowFrame(
+                        config,
+                        {
+                            position: savedPosition.current,
+                            size: savedSize.current,
+                        },
+                        bounds,
+                    );
+
+                    savedPosition.current = restoredFrame.position;
+                    savedSize.current = restoredFrame.size;
+                }
+
+                setFramePosition(restoredFrame.position);
+                setFrameSize(restoredFrame.size);
 
                 setScale(1);
                 setOpacity(1);
 
                 transitionTimeout = window.setTimeout(() => {
                     setIsTransitioning(false);
-
                     setIsClosing(false);
-
                     isAnimating.current = false;
-                }, 300);
+                }, MINIMIZE_ANIMATION_MS);
             });
         });
 
@@ -631,7 +710,7 @@ export function useWindowFrame({
                 window.clearTimeout(transitionTimeout);
             }
         };
-    }, [config, isClosing, isMinimized]);
+    }, [config, isClosing, isMinimized, setFramePosition, setFrameSize]);
 
     const handleDragMouseDown = useCallback(
         (event: ReactMouseEvent<HTMLDivElement>) => {
@@ -642,20 +721,19 @@ export function useWindowFrame({
             event.preventDefault();
 
             dragRef.current = {
-                startX: event.clientX - position.x,
+                startX: event.clientX - positionRef.current.x,
+                startY: event.clientY - positionRef.current.y,
 
-                startY: event.clientY - position.y,
-
-                needsRestore: isMaximized || isSnapped !== null,
+                needsRestore:
+                    isMaximizedRef.current || isSnappedRef.current !== null,
 
                 initialClientX: event.clientX,
-
                 initialClientY: event.clientY,
             };
 
             setIsDragging(true);
         },
-        [actions, isActive, isMaximized, isSnapped, position],
+        [actions, isActive],
     );
 
     const handleTitleBarDoubleClick = useCallback(() => {
@@ -669,14 +747,21 @@ export function useWindowFrame({
             return;
         }
 
-        const handleMouseMove = (event: MouseEvent) => {
+        let animationFrame = 0;
+
+        let pendingPointer: {
+            x: number;
+            y: number;
+        } | null = null;
+
+        const applyDragPosition = (clientX: number, clientY: number) => {
             if (dragRef.current.needsRestore) {
                 const deltaX = Math.abs(
-                    event.clientX - dragRef.current.initialClientX,
+                    clientX - dragRef.current.initialClientX,
                 );
 
                 const deltaY = Math.abs(
-                    event.clientY - dragRef.current.initialClientY,
+                    clientY - dragRef.current.initialClientY,
                 );
 
                 if (deltaX <= DRAG_THRESHOLD && deltaY <= DRAG_THRESHOLD) {
@@ -684,48 +769,41 @@ export function useWindowFrame({
                 }
 
                 const previousWidth = previousState.current.width;
-
                 const previousHeight = previousState.current.height;
 
-                const cursorRatioX = event.clientX / window.innerWidth;
+                const cursorRatioX = clientX / window.innerWidth;
 
-                const newX = event.clientX - previousWidth * cursorRatioX;
-
-                const newY = event.clientY - 24;
+                const newX = clientX - previousWidth * cursorRatioX;
+                const newY = clientY - 24;
 
                 const restoredX = Math.max(0, newX);
-
                 const restoredY = Math.max(0, newY);
 
                 setIsTransitioning(true);
 
-                setPosition({
+                setFramePosition({
                     x: restoredX,
                     y: restoredY,
                 });
 
-                setSize({
+                setFrameSize({
                     width: previousWidth,
                     height: previousHeight,
                 });
 
-                setIsMaximized(false);
-                setIsSnapped(null);
+                setFrameMaximized(false);
+                setFrameSnapped(null);
 
                 window.setTimeout(() => {
                     setIsTransitioning(false);
                 }, 150);
 
                 dragRef.current = {
-                    startX: event.clientX - restoredX,
-
-                    startY: event.clientY - restoredY,
-
+                    startX: clientX - restoredX,
+                    startY: clientY - restoredY,
                     needsRestore: false,
-
-                    initialClientX: event.clientX,
-
-                    initialClientY: event.clientY,
+                    initialClientX: clientX,
+                    initialClientY: clientY,
                 };
 
                 hasUserAdjustedFrame.current = true;
@@ -733,120 +811,154 @@ export function useWindowFrame({
                 return;
             }
 
-            const newX = event.clientX - dragRef.current.startX;
+            const newX = clientX - dragRef.current.startX;
+            const newY = Math.max(0, clientY - dragRef.current.startY);
 
-            const newY = Math.max(0, event.clientY - dragRef.current.startY);
-
-            setPosition({
+            setFramePosition({
                 x: newX,
                 y: newY,
             });
 
             hasUserAdjustedFrame.current = true;
 
-            if (event.clientY <= SNAP_THRESHOLD) {
-                setSnapZone("top");
+            if (clientY <= SNAP_THRESHOLD) {
+                setFrameSnapZone("top");
                 return;
             }
 
-            if (event.clientX <= SNAP_THRESHOLD) {
-                setSnapZone("left");
+            if (clientX <= SNAP_THRESHOLD) {
+                setFrameSnapZone("left");
                 return;
             }
 
-            if (event.clientX >= window.innerWidth - SNAP_THRESHOLD) {
-                setSnapZone("right");
+            if (clientX >= window.innerWidth - SNAP_THRESHOLD) {
+                setFrameSnapZone("right");
                 return;
             }
 
-            setSnapZone(null);
+            setFrameSnapZone(null);
+        };
+
+        const flushPendingPointer = () => {
+            if (!pendingPointer) {
+                return;
+            }
+
+            const pointer = pendingPointer;
+            pendingPointer = null;
+
+            applyDragPosition(pointer.x, pointer.y);
+        };
+
+        const handleMouseMove = (event: MouseEvent) => {
+            pendingPointer = {
+                x: event.clientX,
+                y: event.clientY,
+            };
+
+            if (animationFrame) {
+                return;
+            }
+
+            animationFrame = window.requestAnimationFrame(() => {
+                animationFrame = 0;
+                flushPendingPointer();
+            });
         };
 
         const handleMouseUp = () => {
+            if (animationFrame) {
+                window.cancelAnimationFrame(animationFrame);
+                animationFrame = 0;
+            }
+
+            flushPendingPointer();
+
             dragRef.current.needsRestore = false;
 
-            if (snapZone) {
+            const currentSnapZone = snapZoneRef.current;
+
+            if (currentSnapZone) {
                 setIsTransitioning(true);
 
-                if (!isMaximized && !isSnapped) {
+                if (!isMaximizedRef.current && isSnappedRef.current === null) {
                     previousState.current = {
                         x: savedPosition.current.x,
-
                         y: savedPosition.current.y,
-
                         width: savedSize.current.width,
-
                         height: savedSize.current.height,
                     };
                 }
 
-                if (snapZone === "top") {
-                    setPosition({
+                if (currentSnapZone === "top") {
+                    setFramePosition({
                         x: 0,
                         y: 0,
                     });
 
-                    setSize({
+                    setFrameSize({
                         width: window.innerWidth,
                         height: window.innerHeight,
                     });
 
-                    setIsMaximized(true);
-                    setIsSnapped(null);
+                    setFrameMaximized(true);
+                    setFrameSnapped(null);
                 }
 
-                if (snapZone === "left") {
-                    setPosition({
+                if (currentSnapZone === "left") {
+                    setFramePosition({
                         x: 0,
                         y: 0,
                     });
 
-                    setSize({
+                    setFrameSize({
                         width: window.innerWidth / 2,
                         height: window.innerHeight,
                     });
 
-                    setIsSnapped("left");
-                    setIsMaximized(false);
+                    setFrameSnapped("left");
+                    setFrameMaximized(false);
                 }
 
-                if (snapZone === "right") {
-                    setPosition({
+                if (currentSnapZone === "right") {
+                    setFramePosition({
                         x: window.innerWidth / 2,
                         y: 0,
                     });
 
-                    setSize({
+                    setFrameSize({
                         width: window.innerWidth / 2,
                         height: window.innerHeight,
                     });
 
-                    setIsSnapped("right");
-
-                    setIsMaximized(false);
+                    setFrameSnapped("right");
+                    setFrameMaximized(false);
                 }
 
                 window.setTimeout(() => {
                     setIsTransitioning(false);
                 }, 200);
 
-                setSnapZone(null);
-            } else if (!isMaximized && !isSnapped) {
+                setFrameSnapZone(null);
+            } else if (
+                !isMaximizedRef.current &&
+                isSnappedRef.current === null
+            ) {
                 savedPosition.current = {
-                    x: position.x,
-                    y: position.y,
+                    x: positionRef.current.x,
+                    y: positionRef.current.y,
                 };
 
                 savedSize.current = {
-                    width: size.width,
-                    height: size.height,
+                    width: sizeRef.current.width,
+                    height: sizeRef.current.height,
                 };
 
                 previousState.current = {
-                    x: position.x,
-                    y: position.y,
-                    width: size.width,
-                    height: size.height,
+                    x: positionRef.current.x,
+                    y: positionRef.current.y,
+                    width: sizeRef.current.width,
+                    height: sizeRef.current.height,
                 };
             }
 
@@ -854,15 +966,24 @@ export function useWindowFrame({
         };
 
         document.addEventListener("mousemove", handleMouseMove);
-
         document.addEventListener("mouseup", handleMouseUp);
 
         return () => {
-            document.removeEventListener("mousemove", handleMouseMove);
+            if (animationFrame) {
+                window.cancelAnimationFrame(animationFrame);
+            }
 
+            document.removeEventListener("mousemove", handleMouseMove);
             document.removeEventListener("mouseup", handleMouseUp);
         };
-    }, [isDragging, isMaximized, isSnapped, position, size, snapZone]);
+    }, [
+        isDragging,
+        setFrameMaximized,
+        setFramePosition,
+        setFrameSize,
+        setFrameSnapped,
+        setFrameSnapZone,
+    ]);
 
     const handleResizeMouseDown = useCallback(
         (
@@ -884,19 +1005,14 @@ export function useWindowFrame({
 
             resizeRef.current = {
                 startX: event.clientX,
-
                 startY: event.clientY,
-
-                startWidth: size.width,
-
-                startHeight: size.height,
-
-                startPosX: position.x,
-
-                startPosY: position.y,
+                startWidth: sizeRef.current.width,
+                startHeight: sizeRef.current.height,
+                startPosX: positionRef.current.x,
+                startPosY: positionRef.current.y,
             };
         },
-        [actions, canResize, isActive, position, size],
+        [actions, canResize, isActive],
     );
 
     useEffect(() => {
@@ -904,21 +1020,24 @@ export function useWindowFrame({
             return;
         }
 
-        const handleMouseMove = (event: MouseEvent) => {
-            const bounds = getViewportBounds();
+        let animationFrame = 0;
 
+        let pendingPointer: {
+            x: number;
+            y: number;
+        } | null = null;
+
+        const applyResize = (clientX: number, clientY: number) => {
+            const bounds = getViewportBounds();
             const limits = getSizeLimits(config, bounds);
 
-            const deltaX = event.clientX - resizeRef.current.startX;
-
-            const deltaY = event.clientY - resizeRef.current.startY;
+            const deltaX = clientX - resizeRef.current.startX;
+            const deltaY = clientY - resizeRef.current.startY;
 
             let newWidth = resizeRef.current.startWidth;
-
             let newHeight = resizeRef.current.startHeight;
 
             let newX = resizeRef.current.startPosX;
-
             let newY = resizeRef.current.startPosY;
 
             if (isResizing.includes("right")) {
@@ -965,12 +1084,12 @@ export function useWindowFrame({
                 }
             }
 
-            setSize({
+            setFrameSize({
                 width: newWidth,
                 height: newHeight,
             });
 
-            setPosition({
+            setFramePosition({
                 x: newX,
                 y: newY,
             });
@@ -978,37 +1097,73 @@ export function useWindowFrame({
             hasUserAdjustedFrame.current = true;
         };
 
+        const flushPendingPointer = () => {
+            if (!pendingPointer) {
+                return;
+            }
+
+            const pointer = pendingPointer;
+            pendingPointer = null;
+
+            applyResize(pointer.x, pointer.y);
+        };
+
+        const handleMouseMove = (event: MouseEvent) => {
+            pendingPointer = {
+                x: event.clientX,
+                y: event.clientY,
+            };
+
+            if (animationFrame) {
+                return;
+            }
+
+            animationFrame = window.requestAnimationFrame(() => {
+                animationFrame = 0;
+                flushPendingPointer();
+            });
+        };
+
         const handleMouseUp = () => {
+            if (animationFrame) {
+                window.cancelAnimationFrame(animationFrame);
+                animationFrame = 0;
+            }
+
+            flushPendingPointer();
+
             setIsResizing(null);
 
             savedPosition.current = {
-                x: position.x,
-                y: position.y,
+                x: positionRef.current.x,
+                y: positionRef.current.y,
             };
 
             savedSize.current = {
-                width: size.width,
-                height: size.height,
+                width: sizeRef.current.width,
+                height: sizeRef.current.height,
             };
 
             previousState.current = {
-                x: position.x,
-                y: position.y,
-                width: size.width,
-                height: size.height,
+                x: positionRef.current.x,
+                y: positionRef.current.y,
+                width: sizeRef.current.width,
+                height: sizeRef.current.height,
             };
         };
 
         document.addEventListener("mousemove", handleMouseMove);
-
         document.addEventListener("mouseup", handleMouseUp);
 
         return () => {
-            document.removeEventListener("mousemove", handleMouseMove);
+            if (animationFrame) {
+                window.cancelAnimationFrame(animationFrame);
+            }
 
+            document.removeEventListener("mousemove", handleMouseMove);
             document.removeEventListener("mouseup", handleMouseUp);
         };
-    }, [config, isResizing, position, size]);
+    }, [config, isResizing, setFramePosition, setFrameSize]);
 
     useEffect(() => {
         let animationFrame = 0;
@@ -1029,7 +1184,6 @@ export function useWindowFrame({
                         x: previousState.current.x,
                         y: previousState.current.y,
                     },
-
                     size: {
                         width: previousState.current.width,
                         height: previousState.current.height,
@@ -1056,12 +1210,12 @@ export function useWindowFrame({
                 savedSize.current = nextRestoredFrame.size;
 
                 if (isMaximized) {
-                    setPosition({
+                    setFramePosition({
                         x: 0,
                         y: 0,
                     });
 
-                    setSize({
+                    setFrameSize({
                         width: nextBounds.width,
                         height: nextBounds.height,
                     });
@@ -1070,12 +1224,12 @@ export function useWindowFrame({
                 }
 
                 if (isSnapped === "left") {
-                    setPosition({
+                    setFramePosition({
                         x: 0,
                         y: 0,
                     });
 
-                    setSize({
+                    setFrameSize({
                         width: nextBounds.width / 2,
                         height: nextBounds.height,
                     });
@@ -1084,12 +1238,12 @@ export function useWindowFrame({
                 }
 
                 if (isSnapped === "right") {
-                    setPosition({
+                    setFramePosition({
                         x: nextBounds.width / 2,
                         y: 0,
                     });
 
-                    setSize({
+                    setFrameSize({
                         width: nextBounds.width / 2,
                         height: nextBounds.height,
                     });
@@ -1097,8 +1251,8 @@ export function useWindowFrame({
                     return;
                 }
 
-                setPosition(nextRestoredFrame.position);
-                setSize(nextRestoredFrame.size);
+                setFramePosition(nextRestoredFrame.position);
+                setFrameSize(nextRestoredFrame.size);
             });
         };
 
@@ -1111,7 +1265,14 @@ export function useWindowFrame({
 
             window.removeEventListener("resize", handleBrowserResize);
         };
-    }, [cascadeIndex, config, isMaximized, isSnapped]);
+    }, [
+        cascadeIndex,
+        config,
+        isMaximized,
+        isSnapped,
+        setFramePosition,
+        setFrameSize,
+    ]);
 
     const handleWindowMouseDown = useCallback(() => {
         if (!isActive) {

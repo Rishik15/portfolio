@@ -10,7 +10,7 @@
 .wallpaper {
     z-index: -1;
     object-fit: cover;
-    object-position: center;
+    object-position: center 70%;
     pointer-events: none;
     user-select: none;
 }

@@ -87,18 +87,18 @@ export function AppWindow({
             {frame.snapZone && frame.snapPreviewStyle && (
                 <div
                     className="
-                            pointer-events-none
-                            fixed
-                            z-100
-                            rounded-xl
-                            border
-                            border-black/15
-                            bg-white/35
-                            dark:border-white/20
-                            dark:bg-black/35
-                            transition-all
-                            duration-150
-                        "
+                        pointer-events-none
+                        fixed
+                        z-100
+                        rounded-xl
+                        border
+                        border-black/15
+                        bg-white/35
+                        dark:border-white/20
+                        dark:bg-black/35
+                        transition-all
+                        duration-150
+                    "
                     style={frame.snapPreviewStyle}
                 />
             )}
@@ -110,9 +110,11 @@ export function AppWindow({
                     absolute
                     ${
                         frame.isTransitioning
-                            ? frame.isOpening || frame.isClosing
-                                ? "transition-[transform,width,height,opacity] duration-300 ease-out"
-                                : "transition-[transform,width,height,opacity] duration-200"
+                            ? frame.isClosing
+                                ? "transition-[transform,width,height,opacity] duration-[450ms] ease-[cubic-bezier(0.4,0,0.2,1)]"
+                                : frame.isOpening
+                                  ? "transition-[transform,width,height,opacity] duration-300 ease-out"
+                                  : "transition-[transform,width,height,opacity] duration-200"
                             : ""
                     }
                     ${frame.isMaximized ? "" : "rounded-2xl"}

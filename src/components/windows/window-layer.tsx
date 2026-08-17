@@ -4,7 +4,6 @@ import { useEffect } from "react";
 
 import { About } from "@/components/apps/about/about";
 import { Experience } from "@/components/apps/experience/experience";
-import { preloadNotesLibrary } from "@/components/apps/notes/notes-cache";
 import { Notes } from "@/components/apps/notes/notes";
 import { Projects } from "@/components/apps/projects/projects";
 import { Resume } from "@/components/apps/resume/resume";
@@ -12,8 +11,6 @@ import { Terminal } from "@/components/apps/terminal/terminal";
 import { AppWindow } from "@/components/windows/app-window";
 import { useWindowManager } from "@/components/windows/window-manager";
 import { WINDOW_CONFIGS, WINDOW_IDS } from "@/config/windows";
-
-const NOTES_PRELOAD_DELAY = 700;
 
 function getWindowContent(windowId: string) {
     switch (windowId) {
@@ -45,15 +42,6 @@ export function WindowLayer() {
 
     useEffect(() => {
         openWindow(WINDOW_IDS.terminal);
-
-        const timeout = window.setTimeout(
-            preloadNotesLibrary,
-            NOTES_PRELOAD_DELAY,
-        );
-
-        return () => {
-            window.clearTimeout(timeout);
-        };
     }, [openWindow]);
 
     return (

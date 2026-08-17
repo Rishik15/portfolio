@@ -266,7 +266,7 @@ function VisibleDynamicIsland({ className = "" }: VisibleDynamicIslandProps) {
                     onHoverStart={handleHoverStart}
                     onHoverEnd={handleHoverEnd}
                     style={{
-                        borderRadius: 48,
+                        borderRadius: 32,
                     }}
                     transition={
                         shouldReduceMotion

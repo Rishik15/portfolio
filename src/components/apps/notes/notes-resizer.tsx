@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { memo, useEffect, useRef } from "react";
 import type { PointerEvent } from "react";
 
 import { NOTES_UI } from "@/components/apps/notes/notes-ui";
@@ -9,34 +9,77 @@ type NotesResizerProps = {
     onResize: (delta: number) => void;
 };
 
-export function NotesResizer({ onResize }: NotesResizerProps) {
-    const previousX = useRef<number | null>(null);
+function NotesResizerComponent({ onResize }: NotesResizerProps) {
+    const previousXRef = useRef<number | null>(null);
+    const pendingDeltaRef = useRef(0);
+    const animationFrameRef = useRef(0);
+
+    const flushPendingResize = () => {
+        if (pendingDeltaRef.current === 0) {
+            return;
+        }
+
+        const delta = pendingDeltaRef.current;
+
+        pendingDeltaRef.current = 0;
+
+        onResize(delta);
+    };
+
+    const scheduleResize = () => {
+        if (animationFrameRef.current) {
+            return;
+        }
+
+        animationFrameRef.current = window.requestAnimationFrame(() => {
+            animationFrameRef.current = 0;
+
+            flushPendingResize();
+        });
+    };
 
     const handlePointerDown = (event: PointerEvent<HTMLDivElement>) => {
-        previousX.current = event.clientX;
+        previousXRef.current = event.clientX;
+        pendingDeltaRef.current = 0;
 
         event.currentTarget.setPointerCapture(event.pointerId);
     };
 
     const handlePointerMove = (event: PointerEvent<HTMLDivElement>) => {
-        if (previousX.current === null) {
+        const previousX = previousXRef.current;
+
+        if (previousX === null) {
             return;
         }
 
-        const delta = event.clientX - previousX.current;
+        pendingDeltaRef.current += event.clientX - previousX;
+        previousXRef.current = event.clientX;
 
-        previousX.current = event.clientX;
-
-        onResize(delta);
+        scheduleResize();
     };
 
     const handlePointerEnd = (event: PointerEvent<HTMLDivElement>) => {
-        previousX.current = null;
+        if (animationFrameRef.current) {
+            window.cancelAnimationFrame(animationFrameRef.current);
+            animationFrameRef.current = 0;
+        }
+
+        flushPendingResize();
+
+        previousXRef.current = null;
 
         if (event.currentTarget.hasPointerCapture(event.pointerId)) {
             event.currentTarget.releasePointerCapture(event.pointerId);
         }
     };
+
+    useEffect(() => {
+        return () => {
+            if (animationFrameRef.current) {
+                window.cancelAnimationFrame(animationFrameRef.current);
+            }
+        };
+    }, []);
 
     return (
         <div
@@ -52,3 +95,5 @@ export function NotesResizer({ onResize }: NotesResizerProps) {
         </div>
     );
 }
+
+export const NotesResizer = memo(NotesResizerComponent);

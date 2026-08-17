@@ -309,7 +309,7 @@ export const TERMINAL_UI = {
         `,
 
         muted: `
-            text-foreground/45
+            text-foreground/65
         `,
 
         command: `

@@ -113,7 +113,7 @@ export const EXPERIENCE_UI = {
 
             text-left
             text-[12px]
-            text-foreground/85
+            text-foreground/90
 
             transition-colors
             duration-100
@@ -135,7 +135,7 @@ export const EXPERIENCE_UI = {
         chevron: `
             size-3.5
             shrink-0
-            text-foreground/55
+            text-foreground/65
 
             transition-transform
             duration-150
@@ -148,7 +148,7 @@ export const EXPERIENCE_UI = {
         folderIcon: `
             size-4
             shrink-0
-            text-foreground/65
+            text-foreground/75
 
             @min-[280px]/experience-sidebar:size-[18px]
 
@@ -162,7 +162,7 @@ export const EXPERIENCE_UI = {
 
             text-[9px]
             tabular-nums
-            text-foreground/40
+            text-foreground/50
 
             @min-[240px]/experience-sidebar:text-[10px]
 
@@ -218,7 +218,7 @@ export const EXPERIENCE_UI = {
         `,
 
         inactiveExperience: `
-            text-foreground/70
+            text-foreground/80
 
             hover:bg-foreground/[0.05]
             hover:text-foreground
@@ -241,7 +241,7 @@ export const EXPERIENCE_UI = {
             truncate
 
             text-[10px]
-            text-foreground/65
+            text-foreground/75
 
             @min-[240px]/experience-sidebar:text-[11px]
 
@@ -362,7 +362,7 @@ export const EXPERIENCE_UI = {
             gap-1.5
 
             text-[11px]
-            text-foreground/65
+            text-foreground/75
 
             @min-[420px]/experience-detail:text-[12px]
 
@@ -437,7 +437,7 @@ export const EXPERIENCE_UI = {
             text-[9px]
             font-medium
             tracking-[0.08em]
-            text-foreground/45
+            text-foreground/55
 
             @min-[560px]/experience-detail:text-[10px]
 
@@ -455,7 +455,7 @@ export const EXPERIENCE_UI = {
             gap-1.5
 
             text-[11px]
-            text-foreground/75
+            text-foreground/85
 
             @min-[560px]/experience-detail:text-[12px]
 
@@ -469,7 +469,7 @@ export const EXPERIENCE_UI = {
         metadataIcon: `
             size-3
             shrink-0
-            text-foreground/50
+            text-foreground/60
 
             @min-[560px]/experience-detail:size-3.5
 
@@ -505,7 +505,7 @@ export const EXPERIENCE_UI = {
             text-[9px]
             font-medium
             tracking-[0.08em]
-            text-foreground/45
+            text-foreground/55
 
             @min-[560px]/experience-detail:text-[10px]
 
@@ -523,7 +523,7 @@ export const EXPERIENCE_UI = {
 
             text-[12px]
             leading-5
-            text-foreground/75
+            text-foreground/85
 
             @min-[560px]/experience-detail:text-[13px]
             @min-[560px]/experience-detail:leading-6
@@ -567,7 +567,7 @@ export const EXPERIENCE_UI = {
             size-1
             shrink-0
             rounded-full
-            bg-foreground/45
+            bg-foreground/55
 
             @min-[760px]/experience-detail:mt-[9px]
             @min-[760px]/experience-detail:size-[5px]
@@ -581,7 +581,7 @@ export const EXPERIENCE_UI = {
         highlightText: `
             text-[12px]
             leading-5
-            text-foreground/75
+            text-foreground/85
 
             @min-[560px]/experience-detail:text-[13px]
             @min-[560px]/experience-detail:leading-6
@@ -599,7 +599,7 @@ export const EXPERIENCE_UI = {
         technologies: `
             text-[11px]
             leading-5
-            text-foreground/70
+            text-foreground/80
 
             @min-[560px]/experience-detail:text-[12px]
 
@@ -639,7 +639,7 @@ export const EXPERIENCE_UI = {
             px-4
 
             text-[10px]
-            text-foreground/45
+            text-foreground/55
 
             @min-[900px]/experience:px-8
             @min-[900px]/experience:text-[11px]
@@ -664,7 +664,7 @@ export const EXPERIENCE_UI = {
             gap-2
 
             tabular-nums
-            text-foreground/50
+            text-foreground/60
 
             @min-[1150px]/experience:gap-2.5
 

@@ -30,7 +30,7 @@ const desktopApps = [
         iconHeight: 72,
 
         position: {
-            top: "43%",
+            top: "40%",
             left: "1%",
         }, 
     },
