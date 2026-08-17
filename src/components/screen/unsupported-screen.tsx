@@ -70,12 +70,14 @@ export function UnsupportedScreen() {
 
             <div className={UNSUPPORTED_SCREEN_UI.layout}>
                 <div className={UNSUPPORTED_SCREEN_UI.content}>
-                    <div className={UNSUPPORTED_SCREEN_UI.hero.iconWrapper}>
-                        <MonitorUp
-                            className={UNSUPPORTED_SCREEN_UI.hero.icon}
-                            strokeWidth={1.6}
-                            aria-hidden="true"
-                        />
+                    <div className="mb-5 text-center">
+                        <p className="text-[15px] font-semibold text-foreground">
+                            Rishik Yesgari
+                        </p>
+
+                        <p className="mt-0.5 text-[12px] text-foreground/60">
+                            Software Engineer
+                        </p>
                     </div>
 
                     <h1 className={UNSUPPORTED_SCREEN_UI.hero.heading}>
@@ -84,9 +86,62 @@ export function UnsupportedScreen() {
 
                     <p className={UNSUPPORTED_SCREEN_UI.hero.description}>
                         This portfolio is built as an interactive desktop
-                        experience with movable windows, apps, and a dock. Open
+                        experience. Open
                         it on a larger screen to explore everything properly.
                     </p>
+
+                    <nav
+                        className="mt-5 flex items-center justify-center gap-2"
+                        aria-label="Rishik Yesgari profiles"
+                    >
+                        <a
+                            href="https://github.com/Rishik15"
+                            target="_blank"
+                            rel="noreferrer"
+                            className="
+                                inline-flex
+                                items-center
+                                rounded-lg
+                                border
+                                border-foreground/15
+                                px-3
+                                py-2
+                                text-[12px]
+                                font-medium
+                                text-foreground/75
+                                transition-colors
+                                duration-150
+                                hover:bg-foreground/5
+                                hover:text-foreground
+                            "
+                        >
+                            GitHub
+                        </a>
+
+                        <a
+                            href="https://www.linkedin.com/in/rishikreddyyesgari"
+                            target="_blank"
+                            rel="noreferrer"
+                            className="
+                                inline-flex
+                                items-center
+                                rounded-lg
+                                border
+                                border-foreground/15
+                                px-3
+                                py-2
+                                text-[12px]
+                                font-medium
+                                text-foreground/75
+                                transition-colors
+                                duration-150
+                                hover:bg-foreground/5
+                                hover:text-foreground
+                            "
+                        >
+                            LinkedIn
+                        </a>
+                    </nav>
 
                     <section
                         className={UNSUPPORTED_SCREEN_UI.support.section}
@@ -166,10 +221,7 @@ export function UnsupportedScreen() {
                     </section>
 
                     <div className={UNSUPPORTED_SCREEN_UI.footer.root}>
-                        <span className={UNSUPPORTED_SCREEN_UI.footer.minimum}>
-                            Minimum supported viewport: 720 × 500
-                        </span>
-
+                        
                         <span>
                             Try a tablet, laptop, desktop, or larger display.
                         </span>

@@ -20,6 +20,36 @@ function ScreenLoading() {
     );
 }
 
+function InitialScreen() {
+    return (
+        <>
+            <div className="screen-gate-unsupported">
+                <UnsupportedScreen />
+            </div>
+
+            <div className="screen-gate-supported-loading">
+                <ScreenLoading />
+            </div>
+
+            <style>{`
+                .screen-gate-supported-loading {
+                    display: none;
+                }
+
+                @media (min-width: 720px) and (min-height: 500px) {
+                    .screen-gate-unsupported {
+                        display: none;
+                    }
+
+                    .screen-gate-supported-loading {
+                        display: block;
+                    }
+                }
+            `}</style>
+        </>
+    );
+}
+
 const Desktop = dynamic(
     () =>
         import("@/components/desktop/desktop").then((module) => module.Desktop),
@@ -49,7 +79,7 @@ export function ScreenGate() {
     }, []);
 
     if (isSupported === null) {
-        return <ScreenLoading />;
+        return <InitialScreen />;
     }
 
     if (!isSupported) {
