@@ -15,7 +15,7 @@ export const DYNAMIC_ISLAND_UI = {
     island: `
         mx-auto
         w-fit
-        min-w-25
+        min-w-18
         overflow-hidden
 
         rounded-full
@@ -23,9 +23,9 @@ export const DYNAMIC_ISLAND_UI = {
         bg-black
         dark:bg-white
 
-        min-[1800px]:min-w-[108px]
+        min-[1800px]:min-w-[84px]
 
-        min-[2400px]:min-w-[116px]
+        min-[2400px]:min-w-[96px]
     `,
 
     bars: {
@@ -47,16 +47,16 @@ export const DYNAMIC_ISLAND_UI = {
         `,
 
         bar: `
-            h-4
+            h-2.5
             w-[3px]
             origin-center
 
             rounded-full
             bg-pink-500
 
-            min-[1800px]:h-[18px]
+            min-[1800px]:h-[14px]
 
-            min-[2400px]:h-5
+            min-[2400px]:h-3.5
             min-[2400px]:w-[3.5px]
         `,
     },

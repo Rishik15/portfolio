@@ -234,7 +234,7 @@ export function ExperienceSidebar({
                             const expanded = expandedYears.has(group.year);
 
                             return (
-                                <div key={group.year}>
+                                <div className="flex flex-col gap-1" key={group.year}>
                                     <button
                                         type="button"
                                         onClick={() => toggleYear(group.year)}
