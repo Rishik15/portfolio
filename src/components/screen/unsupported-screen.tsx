@@ -1,12 +1,6 @@
 "use client";
 
-import {
-    Laptop,
-    Monitor,
-    MonitorUp,
-    Tablet,
-    type LucideIcon,
-} from "lucide-react";
+import { Laptop, Monitor, Tablet, type LucideIcon } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useSyncExternalStore } from "react";
 
@@ -81,13 +75,13 @@ export function UnsupportedScreen() {
                     </div>
 
                     <h1 className={UNSUPPORTED_SCREEN_UI.hero.heading}>
-                        A little more room, please.
+                        Mobile view is still in the works.
                     </h1>
 
                     <p className={UNSUPPORTED_SCREEN_UI.hero.description}>
-                        This portfolio is built as an interactive desktop
-                        experience. Open
-                        it on a larger screen to explore everything properly.
+                        I&apos;m still working on a version of my portfolio that
+                        feels right on phones. For now, if you&apos;d like to
+                        look around, open it on a tablet, laptop, or desktop.
                     </p>
 
                     <nav
@@ -151,7 +145,7 @@ export function UnsupportedScreen() {
                             id="supported-devices"
                             className={UNSUPPORTED_SCREEN_UI.support.label}
                         >
-                            Designed for
+                            Available right now on
                         </p>
 
                         <div className={UNSUPPORTED_SCREEN_UI.support.grid}>
@@ -219,13 +213,6 @@ export function UnsupportedScreen() {
                             })}
                         </div>
                     </section>
-
-                    <div className={UNSUPPORTED_SCREEN_UI.footer.root}>
-                        
-                        <span>
-                            Try a tablet, laptop, desktop, or larger display.
-                        </span>
-                    </div>
                 </div>
             </div>
         </main>

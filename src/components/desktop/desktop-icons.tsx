@@ -26,13 +26,13 @@ const desktopApps = [
         windowId: WINDOW_IDS.terminal,
         label: "Terminal",
         icon: "/icons/terminal.webp",
-        iconWidth: 72,
-        iconHeight: 72,
+        iconWidth: 64,
+        iconHeight: 64,
 
         position: {
-            top: "40%",
+            top: "43%",
             left: "1%",
-        }, 
+        },
     },
 ] as const satisfies readonly DesktopApp[];
 
