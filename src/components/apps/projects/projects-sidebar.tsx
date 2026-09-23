@@ -80,7 +80,7 @@ export function ProjectsSidebar({
                         ${PROJECTS_UI.sidebar.headerText}
                     `}
                 >
-                    Projects
+                    Index
                 </span>
             </div>
 
