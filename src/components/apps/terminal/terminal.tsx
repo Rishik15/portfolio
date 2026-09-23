@@ -66,6 +66,7 @@ export function Terminal() {
                     <TerminalInput
                         history={terminal.history}
                         inputRef={inputRef}
+                        viewportRef={viewportRef}
                         onCommand={terminal.submitCommand}
                     />
                 </div>

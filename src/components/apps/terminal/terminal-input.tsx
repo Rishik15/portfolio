@@ -1,4 +1,7 @@
 import {
+    useCallback,
+    useLayoutEffect,
+    useRef,
     useState,
     type KeyboardEvent,
     type RefObject,
@@ -13,18 +16,64 @@ import { useTerminalInput } from "@/components/apps/terminal/use-terminal-input"
 type TerminalInputProps = {
     history: readonly string[];
     inputRef: RefObject<HTMLInputElement | null>;
+    viewportRef: RefObject<HTMLDivElement | null>;
     onCommand: (command: string) => void;
 };
 
 export function TerminalInput({
     history,
     inputRef,
+    viewportRef,
     onCommand,
 }: TerminalInputProps) {
     const input = useTerminalInput(history);
+    const containerRef = useRef<HTMLDivElement>(null);
 
     const [isFocused, setIsFocused] = useState(false);
     const [caretIndex, setCaretIndex] = useState(0);
+    const hasSuggestions = input.suggestions.length > 0;
+
+    const revealSuggestions = useCallback(() => {
+        const viewport = viewportRef.current;
+        const container = containerRef.current;
+
+        if (!viewport || !container) {
+            return;
+        }
+
+        const bottomPadding = parseFloat(getComputedStyle(viewport).paddingBottom) || 0;
+        const visibleBottom =
+            viewport.getBoundingClientRect().top +
+            viewport.clientHeight -
+            bottomPadding;
+        const hiddenHeight =
+            container.getBoundingClientRect().bottom - visibleBottom;
+
+        if (hiddenHeight > 0) {
+            viewport.scrollTop += Math.ceil(hiddenHeight);
+        }
+    }, [viewportRef]);
+
+    useLayoutEffect(() => {
+        if (hasSuggestions) {
+            revealSuggestions();
+        }
+    }, [input.value, hasSuggestions, revealSuggestions]);
+
+    useLayoutEffect(() => {
+        const viewport = viewportRef.current;
+        const container = containerRef.current;
+
+        if (!viewport || !container || !hasSuggestions) {
+            return;
+        }
+
+        const observer = new ResizeObserver(revealSuggestions);
+        observer.observe(viewport);
+        observer.observe(container);
+
+        return () => observer.disconnect();
+    }, [hasSuggestions, revealSuggestions, viewportRef]);
 
     function updateCaretPosition() {
         const element = inputRef.current;
@@ -75,7 +124,7 @@ export function TerminalInput({
     const cursorCharacter = input.value[caretIndex] ?? "\u00A0";
 
     return (
-        <div className={TERMINAL_UI.input.root}>
+        <div ref={containerRef} className={TERMINAL_UI.input.root}>
             <form onSubmit={handleSubmit} className={TERMINAL_UI.input.form}>
                 <TerminalPrompt />
 
