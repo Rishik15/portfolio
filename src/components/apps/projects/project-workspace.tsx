@@ -4,7 +4,6 @@ import { AnimatePresence, motion } from "motion/react";
 
 import { ProjectDetails } from "@/components/apps/projects/project-details";
 import { ProjectOverview } from "@/components/apps/projects/project-overview";
-import { ProjectPreview } from "@/components/apps/projects/project-preview";
 import { ProjectRepositoryLinks } from "@/components/apps/projects/project-repository-links";
 import { ProjectStatusBar } from "@/components/apps/projects/project-status-bar";
 import {
@@ -89,13 +88,11 @@ export function ProjectWorkspace({ project }: ProjectWorkspaceProps) {
                             ${PROJECTS_UI.workspace.contentPadding}
                         `}
                     >
-                        <ProjectPreview project={project} />
-
                         <div
                             className={`
                                 grid
-                                border-t
-                                border-foreground/10
+                                divide-x
+                                divide-foreground/10
 
                                 ${PROJECTS_UI.workspace.sectionMargin}
                                 ${PROJECTS_UI.workspace.sectionGrid}

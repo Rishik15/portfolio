@@ -28,7 +28,7 @@ export const WINDOW_CONFIGS = [
 
         initialPlacement: {
             x: 0.5,
-            y: 0.45,
+            y: 0.40,
         },
 
         canMinimize: true,

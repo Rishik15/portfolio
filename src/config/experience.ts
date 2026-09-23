@@ -36,29 +36,24 @@ export const EXPERIENCES: readonly Experience[] = [
         type: "Internship",
 
         startDate: "June 2026",
-        endDate: "August 2026",
+        endDate: "September 2026",
         location: "Edison, NJ",
 
         summary:
-            "Built and led development of multi-agent AI systems using Strands Agents, Amazon Bedrock, and AWS.",
+            "Built a client-facing agentic AI platform that transformed complex enterprise analysis into fast, self-service workflows across large databases.",
 
         highlights: [
-            "Built an agentic AI workflow with 10+ specialized agents for reasoning, retrieval, validation, execution, and response generation.",
-            "Designed reusable orchestration patterns combining LLM agents with deterministic validation, structured state, and controlled tool execution.",
-            "Built semantic retrieval and caching workflows using Amazon Bedrock Knowledge Bases and S3.",
-            "Deployed and monitored AI services with AWS Lambda, S3, and CloudWatch.",
-            "Led intern development, coordinated integrations, reviewed contributions, and resolved system-level engineering issues.",
+            "Built a client-facing agentic AI platform that transformed multi-person enterprise analysis into sub-2-minute self-service workflows across large enterprise databases using 15+ specialized AI agents.",
+            "Engineered the platform with Amazon Bedrock, Strands Agents, Python, and AWS SDK, converting natural-language requests into coordinated SQL, analytics, math, and sandboxed-code workflows.",
+            "Redesigned the execution architecture with dependency-aware parallelism, cache and schema reuse, and targeted retries, reducing projected execution time by approximately 45% while reducing redundant LLM and database operations.",
         ],
 
         technologies: [
             "Python",
             "Strands Agents",
             "Amazon Bedrock",
-            "AWS Lambda",
-            "Amazon S3",
-            "Amazon CloudWatch",
-            "PostgreSQL",
-            "Git",
+            "AWS SDK",
+            "SQL",
             "Agentic AI",
         ],
     },
@@ -66,8 +61,8 @@ export const EXPERIENCES: readonly Experience[] = [
         id: "njit-data-science-research-assistant",
         year: 2025,
 
-        role: "Undergraduate Research Assistant",
-        company: "Department of Data Science, NJIT",
+        role: "Deep Learning Forecasting Research Intern",
+        company: "Department of Data Science (Grace Hopper AI Research), NJIT",
         type: "Research",
 
         startDate: "August 2025",
@@ -75,14 +70,13 @@ export const EXPERIENCES: readonly Experience[] = [
         location: "Newark, NJ",
 
         summary:
-            "Built scalable machine learning research workflows for epidemic forecasting across real-world time-series datasets.",
+            "Built scalable deep learning forecasting workflows across real-world multi-location epidemic time-series datasets.",
 
         highlights: [
-            "Built reusable data pipelines for preprocessing and standardizing 20+ real-world epidemic time-series datasets.",
-            "Developed a benchmarking framework for evaluating 10+ forecasting models, including LSTM, GNN, and VAR approaches.",
-            "Standardized model evaluation across datasets using forecasting metrics including RMSE and MAE.",
-            "Parallelized training and evaluation workloads, reducing end-to-end experimentation runtime by approximately 75%.",
-            "Presented the research and forecasting framework at the NEBEC Conference.",
+            "Engineered modular Python preprocessing pipelines with NumPy and Pandas for cleaning, trimming, interpolating, and splitting 10+ multi-location epidemic datasets with 900 weekly observations each across 5 disease types.",
+            "Developed rolling-origin forecasting and evaluation workflows across 10+ models, standardizing experimentation and model comparison across datasets and hyperparameters.",
+            "Parallelized forecasting workloads with multi-threaded Python execution, reducing experimentation runtime by 75–80%.",
+            "Built reusable logging and recovery utilities for automated metric collection and reproducible experiments, and presented the scalable forecasting workflow at the NEBEC Conference.",
         ],
 
         technologies: [
@@ -90,37 +84,32 @@ export const EXPERIENCES: readonly Experience[] = [
             "Pandas",
             "NumPy",
             "PyTorch",
-            "PyTorch Geometric",
-            "Statsmodels",
-            "LSTM",
-            "Graph Neural Networks",
-            "VAR",
-            "Multiprocessing",
             "Time-Series Forecasting",
+            "Deep Learning",
+            "Model Evaluation",
+            "Multithreading",
         ],
     },
     {
         id: "break-through-tech-ai-ml-fellow",
         year: 2025,
 
-        role: "Artificial Intelligence and Machine Learning Fellow",
+        role: "AI and ML Intern",
         company:
-            "Break Through Tech @ Cornell Tech | Chambers Capital Ventures",
-        type: "Fellowship",
+            "Chambers Capital Ventures | Break Through Tech @ Cornell Tech",
+        type: "Internship",
 
         startDate: "June 2025",
-        endDate: "May 2026",
+        endDate: "December 2025",
         location: "Remote",
 
         summary:
-            "Applied end-to-end machine learning and data science through a selective fellowship and industry-sponsored project.",
+            "Built an end-to-end machine learning pipeline using behavioral survey data to model founder traits and support venture investment analysis.",
 
         highlights: [
-            "Selected from 3,000+ applicants for applied AI, machine learning, and data science training.",
-            "Worked with Chambers Capital Ventures on predictive modeling using behavioral survey data related to founder grit.",
-            "Built an end-to-end workflow spanning data cleaning, EDA, feature engineering, model training, and evaluation.",
-            "Reduced 60+ survey features to 15 meaningful predictors through feature analysis and selection.",
-            "Built a Streamlit application and presented model results and feature insights to industry stakeholders.",
+            "Engineered an end-to-end machine learning pipeline on large-scale behavioral survey data to model founder behavioral traits and support data-driven venture investment analysis.",
+            "Performed feature engineering and selection across 60+ behavioral variables, reducing the feature space to 15 high-signal predictors and improving downstream model training and evaluation.",
+            "Developed a stakeholder-facing application to surface model predictions and feature insights, translating ML outputs into actionable findings for investor review.",
         ],
 
         technologies: [

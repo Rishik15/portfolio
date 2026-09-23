@@ -13,19 +13,12 @@ export type ProjectHighlight = {
     value: string;
 };
 
-export type ProjectImage = {
-    src: string;
-    alt: string;
-};
-
 export type Project = {
     id: string;
     name: string;
     category: string;
 
     description: string;
-
-    image: ProjectImage;
 
     status: string;
     year: string;
@@ -42,73 +35,126 @@ export type Project = {
 
 export const PROJECTS: readonly Project[] = [
     {
-        id: "nlp-to-sql",
-        name: "NLP-to-SQL",
-        category: "Agentic AI · Data",
+        id: "wids-wildfire",
+        name: "WiDS Global Datathon 2026",
+        category: "Machine Learning · Survival Modeling",
 
         description:
-            "A read-only natural-language-to-SQL system that converts database questions into validated SQL using an agentic workflow, schema retrieval, semantic caching, deterministic execution, and response synthesis.",
+            "A multi-horizon wildfire risk forecasting pipeline for predicting evacuation-zone threat at 12, 24, 48, and 72 hours, combining 87 engineered spatial, temporal, and fire-dynamics features with gradient-boosting and survival-model ensembles.",
 
-        image: {
-            src: "/projects/nlp-to-sql.webp",
-            alt: "NLP-to-SQL project interface",
-        },
-
-        status: "Active",
+        status: "Completed",
         year: "2026",
-        role: "AI Engineer",
+        role: "Machine Learning Engineer",
 
         technologies: [
             "Python",
-            "Amazon Bedrock",
-            "PostgreSQL",
-            "Strands Agents",
-            "Psycopg2",
-            "SQLGlot",
+            "LightGBM",
+            "XGBoost",
+            "CatBoost",
+            "Scikit-learn",
+            "Pandas",
+            "NumPy",
+            "Survival Modeling",
         ],
 
         repositories: [
             {
-                label: "Frontend",
-                url: "https://github.com/Rishik15",
+                label: "GitHub",
+                url: "https://github.com/Rishik15/WiDs",
             },
             {
-                label: "Backend",
-                url: "https://github.com/Rishik15",
-            },
-            {
-                label: "Database",
-                url: "https://github.com/Rishik15",
+                label: "Kaggle",
+                url: "https://www.kaggle.com/competitions/WiDSWorldWide_GlobalDathon26/writeups/wids-global-datathon-2026-solution-btt-heatwave",
             },
         ],
 
         languages: [
             {
                 name: "Python",
-                percentage: 76,
-            },
-            {
-                name: "TypeScript",
-                percentage: 16,
-            },
-            {
-                name: "SQL",
-                percentage: 8,
+                percentage: 100,
             },
         ],
 
         highlights: [
             {
-                label: "Workflow",
-                value: "7 Agents",
+                label: "Feature Space",
+                value: "87 Engineered",
             },
             {
-                label: "Mode",
-                value: "Read Only",
+                label: "Modeling",
+                value: "GBM + Survival",
             },
             {
-                label: "Cache",
-                value: "Semantic",
+                label: "Forecast Horizons",
+                value: "12–72 Hours",
+            },
+        ],
+    },
+
+    {
+        id: "betafit",
+        name: "BetaFit",
+        category: "Full Stack · Fitness",
+
+        description:
+            "A containerized three-tier fitness platform with a React frontend, Flask/Gunicorn application layer, and MySQL persistence, integrating SQLAlchemy data access, OAuth authentication, Socket.IO real-time communication, media storage, and automated backend testing.",
+
+        status: "Completed",
+        year: "2026",
+        role: "Full-Stack Developer",
+
+        technologies: [
+            "Python",
+            "TypeScript",
+            "React",
+            "Flask",
+            "SQLAlchemy",
+            "MySQL",
+            "Socket.IO",
+            "Docker",
+            "Google OAuth",
+            "Cloudinary",
+            "Pytest",
+        ],
+
+        repositories: [
+            {
+                label: "Frontend",
+                url: "https://github.com/Rishik15/groupProject-frontend",
+            },
+            {
+                label: "Backend",
+                url: "https://github.com/Rishik15/groupProject-backend",
+            },
+        ],
+
+        languages: [
+            {
+                name: "Python",
+                percentage: 50,
+            },
+            {
+                name: "TypeScript",
+                percentage: 46,
+            },
+            {
+                name: "CSS",
+                percentage: 4,
+            },
+        ],
+
+        highlights: [
+            {
+                label: "Deployment",
+                value: "Docker Compose",
+            },
+            {
+                label: "Persistence",
+                value: "MySQL + ORM",
+            },
+            {
+                label: "Realtime Layer",
+                value: "Socket.IO",
             },
         ],
     },
@@ -119,60 +165,110 @@ export const PROJECTS: readonly Project[] = [
         category: "AI · Knowledge Graph",
 
         description:
-            "An AI tutoring system that combines retrieval-augmented generation with entity extraction, relationship modeling, knowledge graphs, graph traversal, and citation grounding to produce explainable responses.",
-
-        image: {
-            src: "/projects/erica.webp",
-            alt: "Erica AI tutor project interface",
-        },
+            "A GraphRAG-based tutoring system that extracts concepts and relationships into Neo4j, traverses the resulting knowledge graph for retrieval, and synthesizes grounded instructional responses through hosted or locally served LLMs in a Dockerized Chainlit application.",
 
         status: "Completed",
         year: "2026",
-        role: "AI Engineer",
+        role: "Lead Developer",
 
         technologies: [
             "Python",
             "LangChain",
             "Neo4j",
+            "GraphRAG",
             "Ollama",
-            "Qwen",
+            "Qwen2.5",
+            "Chainlit",
             "Docker",
         ],
 
         repositories: [
             {
                 label: "GitHub",
-                url: "https://github.com/Rishik15",
+                url: "https://github.com/Rishik15/erica",
             },
         ],
 
         languages: [
             {
                 name: "Python",
-                percentage: 88,
-            },
-            {
-                name: "JavaScript",
-                percentage: 8,
-            },
-            {
-                name: "CSS",
-                percentage: 4,
+                percentage: 100,
             },
         ],
 
         highlights: [
             {
-                label: "Architecture",
-                value: "RAG",
+                label: "Retrieval",
+                value: "GraphRAG",
             },
             {
-                label: "Graph",
+                label: "Knowledge Store",
                 value: "Neo4j",
             },
             {
-                label: "Runtime",
-                value: "Docker",
+                label: "LLM Runtime",
+                value: "API + Ollama",
+            },
+        ],
+    },
+
+    {
+        id: "fork-it",
+        name: "ForkIt",
+        category: "Machine Learning · Recommendation",
+
+        description:
+            "A hybrid group recommendation system that vectorizes free-text preferences with TF-IDF, one-hot encodes categorical attributes, aggregates individual representations through weighted averaging, and ranks restaurant candidates using cosine similarity behind a Flask REST API.",
+
+        status: "Completed",
+        year: "2025",
+        role: "Machine Learning Engineer",
+
+        technologies: [
+            "Python",
+            "Scikit-learn",
+            "Pandas",
+            "NumPy",
+            "Flask",
+            "BeautifulSoup",
+            "TF-IDF",
+            "Cosine Similarity",
+        ],
+
+        repositories: [
+            {
+                label: "GitHub",
+                url: "https://github.com/Rishik15/ForkIt",
+            },
+        ],
+
+        languages: [
+            {
+                name: "Python",
+                percentage: 90,
+            },
+            {
+                name: "JavaScript",
+                percentage: 7,
+            },
+            {
+                name: "CSS",
+                percentage: 3,
+            },
+        ],
+
+        highlights: [
+            {
+                label: "Text Encoding",
+                value: "TF-IDF",
+            },
+            {
+                label: "Group Modeling",
+                value: "Weighted Vectors",
+            },
+            {
+                label: "Ranking",
+                value: "Cosine Similarity",
             },
         ],
     },
@@ -180,19 +276,14 @@ export const PROJECTS: readonly Project[] = [
     {
         id: "quickdraw",
         name: "QuickDraw",
-        category: "Machine Learning · Web",
+        category: "Deep Learning · Full Stack",
 
         description:
-            "A real-time sketch recognition application that serves a TensorFlow model through a Flask REST API and connects it to a React frontend for low-latency drawing classification.",
-
-        image: {
-            src: "/projects/quickdraw.webp",
-            alt: "QuickDraw sketch recognition project interface",
-        },
+            "A full-stack sketch classification system that couples an interactive React drawing client with a Flask inference service, a TensorFlow model-training pipeline, and MongoDB persistence to perform real-time prediction on user-generated drawings.",
 
         status: "Completed",
-        year: "2026",
-        role: "ML Engineer",
+        year: "2025",
+        role: "Full-Stack ML Engineer",
 
         technologies: [
             "Python",
@@ -205,23 +296,19 @@ export const PROJECTS: readonly Project[] = [
 
         repositories: [
             {
-                label: "Frontend",
-                url: "https://github.com/Rishik15",
-            },
-            {
-                label: "Backend",
-                url: "https://github.com/Rishik15",
+                label: "GitHub",
+                url: "https://github.com/Rishik15/quickdraw",
             },
         ],
 
         languages: [
             {
                 name: "Python",
-                percentage: 55,
+                percentage: 58,
             },
             {
                 name: "JavaScript",
-                percentage: 38,
+                percentage: 35,
             },
             {
                 name: "CSS",
@@ -231,16 +318,73 @@ export const PROJECTS: readonly Project[] = [
 
         highlights: [
             {
-                label: "Model",
+                label: "Model Training",
                 value: "TensorFlow",
             },
             {
-                label: "Inference",
-                value: "Real Time",
+                label: "Model Serving",
+                value: "Flask REST",
             },
             {
-                label: "API",
-                value: "REST",
+                label: "Application State",
+                value: "MongoDB",
+            },
+        ],
+    },
+
+    {
+        id: "thread-insight",
+        name: "ThreadInsight",
+        category: "Data Analytics · NLP",
+
+        description:
+            "A Reddit analytics pipeline that ingests subreddit posts and comments through PRAW, transforms activity data with Pandas, computes engagement and contributor metrics, and exposes temporal, distributional, and keyword analyses through an interactive Streamlit dashboard.",
+
+        status: "Completed",
+        year: "2024",
+        role: "Data Application Developer",
+
+        technologies: [
+            "Python",
+            "Streamlit",
+            "PRAW",
+            "Pandas",
+            "Plotly",
+            "Matplotlib",
+            "Scikit-learn",
+            "WordCloud",
+        ],
+
+        repositories: [
+            {
+                label: "GitHub",
+                url: "https://github.com/Rishik15/ThreadInsight",
+            },
+            {
+                label: "Live Demo",
+                url: "https://threadinsight.streamlit.app/",
+            },
+        ],
+
+        languages: [
+            {
+                name: "Python",
+                percentage: 100,
+            },
+        ],
+
+        highlights: [
+            {
+                label: "Data Ingestion",
+                value: "Reddit API",
+            },
+            {
+                label: "Aggregation",
+                value: "Posts + Comments",
+            },
+            {
+                label: "Visualization",
+                value: "Plotly + Streamlit",
             },
         ],
     },

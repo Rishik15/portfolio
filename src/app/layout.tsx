@@ -108,7 +108,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
                 <script
                     type="application/ld+json"
                     dangerouslySetInnerHTML={{
-                       __html: JSON.stringify(profileJsonLd).replace(
+                        __html: JSON.stringify(profileJsonLd).replace(
                             /</g,
                             "\\u003c",
                         ),

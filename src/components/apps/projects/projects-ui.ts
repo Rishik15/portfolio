@@ -141,10 +141,7 @@ export const PROJECTS_UI = {
         `,
 
         sectionMargin: `
-            mt-4
-            @3xl/projects:mt-5
-            @6xl/projects:mt-6
-            @7xl/projects:mt-7
+            mt-0
         `,
 
         sectionGrid: `
