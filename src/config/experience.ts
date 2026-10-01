@@ -28,36 +28,6 @@ export type Experience = {
 
 export const EXPERIENCES: readonly Experience[] = [
     {
-        id: "dimension-consulting-ai-engineering-intern",
-        year: 2026,
-
-        role: "AI Engineering Intern",
-        company: "Dimension Consulting",
-        type: "Internship",
-
-        startDate: "June 2026",
-        endDate: "September 2026",
-        location: "Edison, NJ",
-
-        summary:
-            "Built a client-facing agentic AI platform that transformed complex enterprise analysis into fast, self-service workflows across large databases.",
-
-        highlights: [
-            "Built a client-facing agentic AI platform that transformed multi-person enterprise analysis into sub-2-minute self-service workflows across large enterprise databases using 15+ specialized AI agents.",
-            "Engineered the platform with Amazon Bedrock, Strands Agents, Python, and AWS SDK, converting natural-language requests into coordinated SQL, analytics, math, and sandboxed-code workflows.",
-            "Redesigned the execution architecture with dependency-aware parallelism, cache and schema reuse, and targeted retries, reducing projected execution time by approximately 45% while reducing redundant LLM and database operations.",
-        ],
-
-        technologies: [
-            "Python",
-            "Strands Agents",
-            "Amazon Bedrock",
-            "AWS SDK",
-            "SQL",
-            "Agentic AI",
-        ],
-    },
-    {
         id: "njit-data-science-research-assistant",
         year: 2025,
 
