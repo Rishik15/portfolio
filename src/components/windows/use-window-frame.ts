@@ -42,7 +42,7 @@ export type ResizeDirection =
     | "left"
     | null;
 
-type SnapZone = "top" | "left" | "right" | null;
+type SnapZone = "top" | null;
 
 type SnappedSide = "left" | "right" | null;
 
@@ -113,23 +113,13 @@ function getWorkArea() {
 }
 
 /**
- * Builds the frame a window fills: the whole viewport when maximized (covering the top bar and dock), or half the work area when snapped.
+ * Builds the frame a window fills: the whole viewport when maximized, covering the top bar and dock.
  * Takes the dock kind and returns the matching position and size.
  */
-function getDockedFrame(kind: "full" | "left" | "right"): WindowFrame {
-    const viewport = getViewportBounds();
-    const area =
-        kind === "full"
-            ? { x: 0, y: 0, ...viewport }
-            : getWorkArea();
-    const width = kind === "full" ? area.width : area.width / 2;
-
+function getFullFrame(): WindowFrame {
     return {
-        position: {
-            x: kind === "right" ? area.x + width : area.x,
-            y: area.y,
-        },
-        size: { width, height: area.height },
+        position: { x: 0, y: 0 },
+        size: getViewportBounds(),
     };
 }
 
@@ -359,7 +349,7 @@ export function useWindowFrame({
         }
 
         if (shouldOpenMaximized) {
-            return getDockedFrame("full").position;
+            return getFullFrame().position;
         }
 
         return {
@@ -377,7 +367,7 @@ export function useWindowFrame({
         }
 
         if (shouldOpenMaximized && typeof window !== "undefined") {
-            return getDockedFrame("full").size;
+            return getFullFrame().size;
         }
 
         return defaultFrame.size;
@@ -569,9 +559,9 @@ export function useWindowFrame({
                 height: sizeRef.current.height,
             };
 
-            setFramePosition(getDockedFrame("full").position);
+            setFramePosition(getFullFrame().position);
 
-            setFrameSize(getDockedFrame("full").size);
+            setFrameSize(getFullFrame().size);
 
             setFrameMaximized(true);
             setFrameSnapped(null);
@@ -670,11 +660,7 @@ export function useWindowFrame({
                 let restoredFrame: WindowFrame;
 
                 if (isMaximizedRef.current) {
-                    restoredFrame = getDockedFrame("full");
-                } else if (isSnappedRef.current === "left") {
-                    restoredFrame = getDockedFrame("left");
-                } else if (isSnappedRef.current === "right") {
-                    restoredFrame = getDockedFrame("right");
+                    restoredFrame = getFullFrame();
                 } else {
                     restoredFrame = clampWindowFrame(
                         config,
@@ -830,16 +816,6 @@ export function useWindowFrame({
                 return;
             }
 
-            if (clientX <= SNAP_THRESHOLD) {
-                setFrameSnapZone("left");
-                return;
-            }
-
-            if (clientX >= window.innerWidth - SNAP_THRESHOLD) {
-                setFrameSnapZone("right");
-                return;
-            }
-
             setFrameSnapZone(null);
         };
 
@@ -895,30 +871,12 @@ export function useWindowFrame({
                 }
 
                 if (currentSnapZone === "top") {
-                    setFramePosition(getDockedFrame("full").position);
+                    setFramePosition(getFullFrame().position);
 
-                    setFrameSize(getDockedFrame("full").size);
+                    setFrameSize(getFullFrame().size);
 
                     setFrameMaximized(true);
                     setFrameSnapped(null);
-                }
-
-                if (currentSnapZone === "left") {
-                    setFramePosition(getDockedFrame("left").position);
-
-                    setFrameSize(getDockedFrame("left").size);
-
-                    setFrameSnapped("left");
-                    setFrameMaximized(false);
-                }
-
-                if (currentSnapZone === "right") {
-                    setFramePosition(getDockedFrame("right").position);
-
-                    setFrameSize(getDockedFrame("right").size);
-
-                    setFrameSnapped("right");
-                    setFrameMaximized(false);
                 }
 
                 window.setTimeout(() => {
@@ -1196,25 +1154,9 @@ export function useWindowFrame({
                 savedSize.current = nextRestoredFrame.size;
 
                 if (isMaximized) {
-                    setFramePosition(getDockedFrame("full").position);
+                    setFramePosition(getFullFrame().position);
 
-                    setFrameSize(getDockedFrame("full").size);
-
-                    return;
-                }
-
-                if (isSnapped === "left") {
-                    setFramePosition(getDockedFrame("left").position);
-
-                    setFrameSize(getDockedFrame("left").size);
-
-                    return;
-                }
-
-                if (isSnapped === "right") {
-                    setFramePosition(getDockedFrame("right").position);
-
-                    setFrameSize(getDockedFrame("right").size);
+                    setFrameSize(getFullFrame().size);
 
                     return;
                 }
@@ -1250,7 +1192,7 @@ export function useWindowFrame({
 
     const snapPreviewFrame =
         snapZone && typeof window !== "undefined"
-            ? getDockedFrame(snapZone === "top" ? "full" : snapZone)
+            ? getFullFrame()
             : null;
 
     const snapPreviewStyle = snapPreviewFrame

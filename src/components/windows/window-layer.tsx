@@ -7,6 +7,7 @@ import { Experience } from "@/components/apps/experience/experience";
 import { Notes } from "@/components/apps/notes/notes";
 import { Projects } from "@/components/apps/projects/projects";
 import { Resume } from "@/components/apps/resume/resume";
+import { Welcome } from "@/components/apps/welcome/welcome";
 import { Terminal } from "@/components/apps/terminal/terminal";
 import { AppWindow } from "@/components/windows/app-window";
 import { useWindowManager } from "@/components/windows/window-manager";
@@ -14,6 +15,9 @@ import { WINDOW_CONFIGS, WINDOW_IDS } from "@/config/windows";
 
 function getWindowContent(windowId: string) {
     switch (windowId) {
+        case "welcome":
+            return <Welcome />;
+
         case "terminal":
             return <Terminal />;
 
@@ -41,7 +45,7 @@ export function WindowLayer() {
     const { windows, openWindow, getLauncherPosition } = useWindowManager();
 
     useEffect(() => {
-        openWindow(WINDOW_IDS.terminal);
+        openWindow(WINDOW_IDS.welcome);
     }, [openWindow]);
 
     return (

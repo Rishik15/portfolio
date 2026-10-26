@@ -32,7 +32,7 @@ const desktopApps = [
         iconHeight: 64,
 
         position: {
-            top: "2%",
+            top: "calc(50% - 205px)",
             left: "1%",
         },
     },
@@ -45,7 +45,7 @@ const desktopApps = [
         iconHeight: 64,
 
         position: {
-            top: "24%",
+            top: "calc(50% - 97px)",
             left: "1%",
         },
     },
@@ -58,7 +58,7 @@ const desktopApps = [
         iconHeight: 64,
 
         position: {
-            top: "46%",
+            top: "calc(50% + 11px)",
             left: "1%",
         },
     },
@@ -71,7 +71,7 @@ const desktopApps = [
         iconHeight: 64,
 
         position: {
-            top: "68%",
+            top: "calc(50% + 119px)",
             left: "1%",
         },
     },
