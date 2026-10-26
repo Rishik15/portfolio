@@ -1,86 +1,32 @@
 "use client";
 
-import { motion, useReducedMotion, type MotionProps } from "motion/react";
-import { useEffect, type ReactNode } from "react";
+import type { ReactNode } from "react";
 
-import {
-    TERMINAL_MOTION,
-    TERMINAL_UI,
-} from "@/components/apps/terminal/terminal-ui";
+import { usePrintUnit } from "@/components/apps/terminal/terminal-print";
+import { TERMINAL_UI } from "@/components/apps/terminal/terminal-ui";
 import { CERTIFICATES } from "@/config/certificates";
 
 type PrintedLineProps = {
     children: ReactNode;
     index: number;
     className?: string;
-    reduceMotion: boolean | null;
-    onComplete?: () => void;
 };
 
-function PrintedLine({
-    children,
-    index,
-    className,
-    reduceMotion,
-    onComplete,
-}: PrintedLineProps) {
-    const animation: MotionProps = reduceMotion
-        ? {
-              initial: false,
-          }
-        : {
-              initial: {
-                  opacity: 0,
-              },
-
-              animate: {
-                  opacity: 1,
-              },
-
-              transition: {
-                  duration: TERMINAL_MOTION.certificateLineDurationSeconds,
-
-                  delay: index * TERMINAL_MOTION.certificateLineDelaySeconds,
-              },
-
-              onAnimationComplete: onComplete,
-          };
-
+function PrintedLine({ children, index, className }: PrintedLineProps) {
     return (
-        <motion.div {...animation} className={className}>
+        <div {...usePrintUnit(index)} className={className}>
             {children}
-        </motion.div>
+        </div>
     );
 }
 
-type TerminalCertificatesProps = {
-    onComplete?: () => void;
-};
-
-export function TerminalCertificates({
-    onComplete,
-}: TerminalCertificatesProps) {
-    const reduceMotion = useReducedMotion();
-
-    const lastLineIndex = CERTIFICATES.reduce(
-        (count, certificate) => count + 2 + (certificate.credentialUrl ? 1 : 0),
-        0,
-    );
-
-    useEffect(() => {
-        if (reduceMotion) {
-            onComplete?.();
-        }
-    }, [reduceMotion]);
-
+export function TerminalCertificates() {
     let lineIndex = 1;
 
     return (
         <div className={TERMINAL_UI.certificates.root}>
             <PrintedLine
                 index={0}
-                reduceMotion={reduceMotion}
-                onComplete={lastLineIndex === 0 ? onComplete : undefined}
                 className={TERMINAL_UI.certificates.heading}
             >
                 certificates/
@@ -109,12 +55,6 @@ export function TerminalCertificates({
                     <div key={certificate.name}>
                         <PrintedLine
                             index={certificateLineIndex}
-                            reduceMotion={reduceMotion}
-                            onComplete={
-                                certificateLineIndex === lastLineIndex
-                                    ? onComplete
-                                    : undefined
-                            }
                             className={TERMINAL_UI.certificates.certificateLine}
                         >
                             <span
@@ -135,12 +75,6 @@ export function TerminalCertificates({
 
                         <PrintedLine
                             index={issuerLineIndex}
-                            reduceMotion={reduceMotion}
-                            onComplete={
-                                issuerLineIndex === lastLineIndex
-                                    ? onComplete
-                                    : undefined
-                            }
                             className={TERMINAL_UI.certificates.detailLine}
                         >
                             <span
@@ -167,12 +101,6 @@ export function TerminalCertificates({
                             credentialLineIndex !== undefined && (
                                 <PrintedLine
                                     index={credentialLineIndex}
-                                    reduceMotion={reduceMotion}
-                                    onComplete={
-                                        credentialLineIndex === lastLineIndex
-                                            ? onComplete
-                                            : undefined
-                                    }
                                     className={
                                         TERMINAL_UI.certificates.detailLine
                                     }

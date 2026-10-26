@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 
 import { useMusic } from "@/components/providers/music-provider";
 import { useWindowManager } from "@/components/windows/window-manager";
@@ -8,7 +8,7 @@ import {
     normalizeTerminalCommand,
     resolveTerminalCommand,
 } from "./terminal-command";
-import type { TerminalEntry } from "./terminal-types";
+import type { TerminalDraft, TerminalEntry } from "./terminal-types";
 
 const TERMINAL_WINDOW_COMMANDS: Readonly<Record<string, WindowId>> = {
     "/about": WINDOW_IDS.about,
@@ -21,6 +21,8 @@ export function useTerminal() {
     const { activateWindow } = useWindowManager();
 
     const { isMusicVisible, toggleMusic, musicError } = useMusic();
+
+    const nextEntryId = useRef(0);
 
     const [entries, setEntries] = useState<TerminalEntry[]>([]);
 
@@ -66,6 +68,12 @@ export function useTerminal() {
         });
     }, [entries, musicError]);
 
+    function addEntry(draft: TerminalDraft) {
+        const entry = { ...draft, id: nextEntryId.current++ };
+
+        setEntries((current) => [...current, entry]);
+    }
+
     function submitCommand(command: string) {
         const normalizedCommand = normalizeTerminalCommand(command);
 
@@ -89,25 +97,20 @@ export function useTerminal() {
 
             toggleMusic();
 
-            setEntries((current) => [
-                ...current,
-                {
-                    command,
-                    result: {
-                        type: "text",
-                        lines: [
-                            wasMusicVisible
-                                ? "Music paused."
-                                : "Starting music...",
-                        ],
-                    },
+            addEntry({
+                command,
+                result: {
+                    type: "text",
+                    lines: [
+                        wasMusicVisible ? "Music paused." : "Starting music...",
+                    ],
                 },
-            ]);
+            });
 
             return;
         }
 
-        setEntries((current) => [...current, resolveTerminalCommand(command)]);
+        addEntry(resolveTerminalCommand(command));
     }
 
     return {

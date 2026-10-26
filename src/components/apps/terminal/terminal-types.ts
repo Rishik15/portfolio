@@ -13,7 +13,11 @@ export type TerminalResult =
           lines: readonly string[];
       };
 
-export type TerminalEntry = {
+export type TerminalDraft = {
     command: string;
     result: TerminalResult;
+};
+
+export type TerminalEntry = TerminalDraft & {
+    id: number;
 };

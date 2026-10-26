@@ -2,12 +2,18 @@ export const TERMINAL_UI = {
     root: `
         @container/terminal
 
+        relative
+        h-full
+        w-full
+    `,
+
+    viewport: `
         h-full
         w-full
 
         cursor-text
 
-        overflow-x-hidden
+        overflow-x-auto
         overflow-y-auto
 
         p-3
@@ -30,6 +36,24 @@ export const TERMINAL_UI = {
         @min-[1440px]/terminal:leading-6
 
         @min-[1680px]/terminal:text-[16px]
+    `,
+
+    jumpToLatest: `
+        absolute
+        right-4
+        bottom-4
+
+        border
+        border-foreground/25
+
+        bg-background/90
+        px-2
+        py-1
+
+        text-[11px]
+        text-foreground/80
+
+        hover:bg-foreground/10
     `,
 
     output: {
@@ -470,138 +494,93 @@ export const TERMINAL_UI = {
     skills: {
         root: `
             w-full
+            overflow-x-auto
 
             border
             border-foreground/25
 
             bg-background/20
+            p-1.5
+
+            @min-[760px]/terminal:p-2
+
+            @min-[1200px]/terminal:p-2.5
+
+            @min-[1440px]/terminal:p-3
         `,
 
-        body: `
-            px-1.5
-            py-1.5
-
-            @min-[760px]/terminal:px-2
-            @min-[760px]/terminal:py-2
-
-            @min-[1200px]/terminal:px-2.5
-            @min-[1200px]/terminal:py-2.5
-
-            @min-[1440px]/terminal:px-3
-            @min-[1440px]/terminal:py-3
+        table: `
+            w-full
+            border-collapse
         `,
 
         row: `
-            grid
+            border-t
+            border-foreground/10
 
-            grid-cols-[8rem_minmax(0,1fr)]
-
-            items-start
-            gap-3
-
-            px-2
-            py-1.5
-
-            transition-colors
-            duration-100
+            first:border-t-0
 
             hover:bg-foreground/[0.035]
-
-            @min-[760px]/terminal:grid-cols-[10.5rem_minmax(0,1fr)]
-            @min-[760px]/terminal:gap-4
-            @min-[760px]/terminal:py-2
-
-            @min-[1200px]/terminal:grid-cols-[11.5rem_minmax(0,1fr)]
-            @min-[1200px]/terminal:px-2.5
-
-            @min-[1440px]/terminal:grid-cols-[12.5rem_minmax(0,1fr)]
-            @min-[1440px]/terminal:px-3
-            @min-[1440px]/terminal:py-2.5
-
-            @min-[1680px]/terminal:grid-cols-[13.5rem_minmax(0,1fr)]
         `,
 
-        categoryWrapper: `
-            flex
-            min-w-0
-            items-center
+        category: `
+            py-1.5
+            pr-4
+            pl-2
 
+            text-left
+            align-top
+            font-medium
+            whitespace-nowrap
+            text-blue-600/85
+
+            dark:text-blue-400/85
+
+            @min-[760px]/terminal:py-2
+
+            @min-[1200px]/terminal:pr-6
+        `,
+
+        categoryLabel: `
+            flex
+            items-start
             gap-1.5
 
             @min-[760px]/terminal:gap-2
-
-            @min-[1440px]/terminal:gap-2.5
         `,
 
         dot: `
+            mt-[0.6em]
             size-1.5
             shrink-0
 
             bg-blue-500/75
 
             dark:bg-blue-400/75
-
-            @min-[1440px]/terminal:size-[7px]
-
-            @min-[1680px]/terminal:size-2
         `,
 
-        category: `
-            min-w-0
+        cell: `
+            w-full
+            py-1.5
+            pr-2
 
-            text-[10px]
-            font-medium
-            text-blue-600/85
+            align-top
 
-            dark:text-blue-400/85
-
-            @min-[760px]/terminal:text-[11px]
-
-            @min-[1200px]/terminal:text-[12px]
-
-            @min-[1440px]/terminal:text-[13px]
-
-            @min-[1680px]/terminal:text-[14px]
+            @min-[760px]/terminal:py-2
         `,
 
         skillList: `
             flex
-            min-w-0
             flex-wrap
-            items-center
 
-            gap-x-1.5
+            gap-x-3
             gap-y-1
 
-            @min-[760px]/terminal:gap-x-2
-
-            @min-[1200px]/terminal:gap-x-2.5
-
-            @min-[1440px]/terminal:gap-x-3
-            @min-[1440px]/terminal:gap-y-1.5
-        `,
-
-        skillWrapper: `
-            flex
-            items-center
-
-            gap-1.5
-
-            @min-[760px]/terminal:gap-2
-        `,
-
-        separator: `
-            text-[9px]
-            text-foreground/25
-
-            @min-[1200px]/terminal:text-[10px]
-
-            @min-[1440px]/terminal:text-[11px]
-
-            @min-[1680px]/terminal:text-[12px]
+            @min-[1440px]/terminal:gap-x-4
         `,
 
         skill: `
+            whitespace-nowrap
             text-foreground/80
         `,
     },
@@ -685,6 +664,7 @@ export const TERMINAL_UI = {
 } as const;
 
 export const TERMINAL_MOTION = {
-    certificateLineDelaySeconds: 0.04,
-    certificateLineDurationSeconds: 0.01,
+    revealStepMs: 40,
+    revealMaxTotalMs: 1200,
+    followThresholdPx: 24,
 } as const;

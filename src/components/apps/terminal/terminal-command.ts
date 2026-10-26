@@ -1,6 +1,6 @@
 import { TERMINAL_COMMANDS } from "@/config/terminal";
 
-import type { TerminalEntry } from "./terminal-types";
+import type { TerminalDraft } from "./terminal-types";
 
 export function normalizeTerminalCommand(command: string) {
     const normalized = command.trim().toLowerCase();
@@ -22,7 +22,7 @@ export function getTerminalSuggestions(value: string) {
     );
 }
 
-export function resolveTerminalCommand(command: string): TerminalEntry {
+export function resolveTerminalCommand(command: string): TerminalDraft {
     const normalized = normalizeTerminalCommand(command);
 
     if (normalized === "/help") {
