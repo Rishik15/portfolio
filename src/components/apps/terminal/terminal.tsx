@@ -1,5 +1,6 @@
 "use client";
 
+import { ArrowDown } from "lucide-react";
 import {
     useCallback,
     useEffect,
@@ -159,10 +160,11 @@ export function Terminal() {
             {!isFollowing && (
                 <button
                     type="button"
+                    aria-label="Jump to latest"
                     onClick={handleJumpToLatest}
                     className={TERMINAL_UI.jumpToLatest}
                 >
-                    Jump to latest ↓
+                    <ArrowDown aria-hidden="true" className="size-4" />
                 </button>
             )}
         </div>

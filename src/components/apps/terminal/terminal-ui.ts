@@ -43,15 +43,20 @@ export const TERMINAL_UI = {
         right-4
         bottom-4
 
+        flex
+        size-8
+        items-center
+        justify-center
+
+        rounded-full
         border
         border-foreground/25
 
         bg-background/90
-        px-2
-        py-1
-
-        text-[11px]
         text-foreground/80
+
+        transition-colors
+        duration-100
 
         hover:bg-foreground/10
     `,

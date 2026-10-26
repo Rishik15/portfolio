@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { useMusic } from "@/components/providers/music-provider";
 import { useWindowManager } from "@/components/windows/window-manager";
@@ -30,48 +30,31 @@ export function useTerminal() {
 
     const [showWelcome, setShowWelcome] = useState(true);
 
-    const displayedEntries = useMemo(() => {
-        if (!musicError) {
-            return entries;
-        }
+    const pendingMusicEntryId = useRef<number | null>(null);
 
-        let hasUpdatedMusicEntry = false;
+    useEffect(() => {
+        const pendingId = pendingMusicEntryId.current;
 
-        return entries.map((entry, index) => {
-            if (hasUpdatedMusicEntry) {
-                return entry;
-            }
+        if (!musicError || pendingId === null) return;
 
-            const remainingEntries = entries.slice(index + 1);
+        pendingMusicEntryId.current = null;
 
-            const hasLaterMusicEntry = remainingEntries.some(
-                (nextEntry) =>
-                    normalizeTerminalCommand(nextEntry.command) === "/music",
-            );
-
-            if (
-                normalizeTerminalCommand(entry.command) !== "/music" ||
-                hasLaterMusicEntry
-            ) {
-                return entry;
-            }
-
-            hasUpdatedMusicEntry = true;
-
-            return {
-                ...entry,
-                result: {
-                    type: "text" as const,
-                    lines: [musicError],
-                },
-            };
-        });
-    }, [entries, musicError]);
+        setEntries((current) => [
+            ...current.filter((entry) => entry.id !== pendingId),
+            {
+                id: nextEntryId.current++,
+                command: "/music",
+                result: { type: "text", lines: [musicError] },
+            },
+        ]);
+    }, [musicError]);
 
     function addEntry(draft: TerminalDraft) {
         const entry = { ...draft, id: nextEntryId.current++ };
 
         setEntries((current) => [...current, entry]);
+
+        return entry.id;
     }
 
     function submitCommand(command: string) {
@@ -81,6 +64,7 @@ export function useTerminal() {
 
         if (normalizedCommand === "/clear") {
             setEntries([]);
+            pendingMusicEntryId.current = null;
             setShowWelcome(false);
 
             return;
@@ -97,7 +81,7 @@ export function useTerminal() {
 
             toggleMusic();
 
-            addEntry({
+            const entryId = addEntry({
                 command,
                 result: {
                     type: "text",
@@ -107,6 +91,8 @@ export function useTerminal() {
                 },
             });
 
+            pendingMusicEntryId.current = wasMusicVisible ? null : entryId;
+
             return;
         }
 
@@ -114,7 +100,7 @@ export function useTerminal() {
     }
 
     return {
-        entries: displayedEntries,
+        entries,
         history,
         showWelcome,
         submitCommand,
