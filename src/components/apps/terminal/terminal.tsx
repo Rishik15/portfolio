@@ -57,7 +57,8 @@ export function Terminal() {
 
             frame = requestAnimationFrame(() => {
                 frame = 0;
-                scrollToLatest();
+
+                if (isFollowingRef.current) scrollToLatest();
             });
         });
 
