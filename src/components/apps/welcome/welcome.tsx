@@ -4,6 +4,7 @@
 
 import { WELCOME_UI } from "@/components/apps/welcome/welcome-ui";
 import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { useWindowManager } from "@/components/windows/window-manager";
 import { WELCOME, type WelcomeAction } from "@/config/welcome";
 
@@ -19,10 +20,13 @@ export function Welcome() {
      * Takes the action and whether it is the primary one; returns the element.
      */
     function renderAction(action: WelcomeAction, primary: boolean) {
-        const className = buttonVariants({
+        const className = cn(buttonVariants({
             variant: primary ? "default" : "outline",
             size: "lg",
-        });
+            className: primary
+                ? undefined
+                : "border-foreground/15 bg-foreground/5 hover:bg-foreground/10 dark:border-foreground/10 dark:bg-foreground/5 dark:hover:bg-foreground/10",
+        }));
 
         if ("windowId" in action) {
             return (
