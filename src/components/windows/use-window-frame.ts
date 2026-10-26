@@ -113,11 +113,15 @@ function getWorkArea() {
 }
 
 /**
- * Builds the frame a window fills when maximized or snapped to a half of the work area.
+ * Builds the frame a window fills: the whole viewport when maximized (covering the top bar and dock), or half the work area when snapped.
  * Takes the dock kind and returns the matching position and size.
  */
 function getDockedFrame(kind: "full" | "left" | "right"): WindowFrame {
-    const area = getWorkArea();
+    const viewport = getViewportBounds();
+    const area =
+        kind === "full"
+            ? { x: 0, y: 0, ...viewport }
+            : getWorkArea();
     const width = kind === "full" ? area.width : area.width / 2;
 
     return {
