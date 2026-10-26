@@ -1,5 +1,7 @@
 "use client";
 
+// desktop-icons.tsx: desktop icon launchers for Projects, Experience, Resume and Terminal.
+
 import { useCallback, useRef, type RefObject } from "react";
 
 import { DesktopIcon } from "@/components/desktop/desktop-icon";
@@ -22,6 +24,45 @@ type DesktopApp = {
 
 const desktopApps = [
     {
+        id: "projects",
+        windowId: WINDOW_IDS.projects,
+        label: "Projects",
+        icon: "/icons/projects.svg",
+        iconWidth: 64,
+        iconHeight: 64,
+
+        position: {
+            top: "2%",
+            left: "1%",
+        },
+    },
+    {
+        id: "experience",
+        windowId: WINDOW_IDS.experience,
+        label: "Experience",
+        icon: "/icons/experience.svg",
+        iconWidth: 64,
+        iconHeight: 64,
+
+        position: {
+            top: "24%",
+            left: "1%",
+        },
+    },
+    {
+        id: "resume",
+        windowId: WINDOW_IDS.resume,
+        label: "Resume",
+        icon: "/icons/resume.svg",
+        iconWidth: 64,
+        iconHeight: 64,
+
+        position: {
+            top: "46%",
+            left: "1%",
+        },
+    },
+    {
         id: "terminal",
         windowId: WINDOW_IDS.terminal,
         label: "Terminal",
@@ -30,7 +71,7 @@ const desktopApps = [
         iconHeight: 64,
 
         position: {
-            top: "43%",
+            top: "68%",
             left: "1%",
         },
     },
@@ -41,6 +82,10 @@ type DesktopAppIconProps = {
     dragBoundsRef: RefObject<HTMLDivElement | null>;
 };
 
+/**
+ * Renders one draggable desktop icon that opens its app window.
+ * Takes the app definition and the drag bounds ref; returns the icon element.
+ */
 function DesktopAppIcon({ app, dragBoundsRef }: DesktopAppIconProps) {
     const { activateWindow, registerLauncher } = useWindowManager();
 
@@ -70,6 +115,10 @@ function DesktopAppIcon({ app, dragBoundsRef }: DesktopAppIconProps) {
     );
 }
 
+/**
+ * Renders the column of desktop icons inside their shared drag area.
+ * Takes no props; returns the icon layer element.
+ */
 export function DesktopIcons() {
     const dragBoundsRef = useRef<HTMLDivElement>(null);
 

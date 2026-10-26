@@ -70,6 +70,9 @@ const FALLBACK_OPEN_SCALE = 0.985;
 
 const MINIMIZE_ANIMATION_MS = 450;
 
+const WORK_AREA_INSET_TOP = 72;
+const WORK_AREA_INSET_BOTTOM = 128;
+
 const DEFAULT_VIEWPORT_WIDTH = 1440;
 const DEFAULT_VIEWPORT_HEIGHT = 900;
 
@@ -88,6 +91,41 @@ function getViewportBounds(): WindowBounds {
     return {
         width: window.innerWidth,
         height: window.innerHeight,
+    };
+}
+
+/**
+ * Returns the desktop area between the top bar and the dock, used to size,
+ * place, maximize and snap windows. Dragging is not restricted to it.
+ */
+function getWorkArea() {
+    const viewport = getViewportBounds();
+    const steps = viewport.width >= 2400 ? 2 : viewport.width >= 1800 ? 1 : 0;
+    const top = WORK_AREA_INSET_TOP + steps * 8;
+    const bottom = WORK_AREA_INSET_BOTTOM + steps * 8;
+
+    return {
+        x: 0,
+        y: top,
+        width: viewport.width,
+        height: Math.max(0, viewport.height - top - bottom),
+    };
+}
+
+/**
+ * Builds the frame a window fills when maximized or snapped to a half of the work area.
+ * Takes the dock kind and returns the matching position and size.
+ */
+function getDockedFrame(kind: "full" | "left" | "right"): WindowFrame {
+    const area = getWorkArea();
+    const width = kind === "full" ? area.width : area.width / 2;
+
+    return {
+        position: {
+            x: kind === "right" ? area.x + width : area.x,
+            y: area.y,
+        },
+        size: { width, height: area.height },
     };
 }
 
@@ -196,10 +234,11 @@ function getDefaultWindowFrame(
     cascadeIndex: number,
 ): WindowFrame {
     const bounds = getViewportBounds();
-    const size = getResponsiveWindowSize(config, bounds);
+    const area = getWorkArea();
+    const size = getResponsiveWindowSize(config, area);
 
-    const freeX = Math.max(0, bounds.width - size.width);
-    const freeY = Math.max(0, bounds.height - size.height);
+    const freeX = Math.max(0, area.width - size.width);
+    const freeY = Math.max(0, area.height - size.height);
 
     const placementX = clamp(config.initialPlacement?.x ?? 0.5, 0, 1);
     const placementY = clamp(config.initialPlacement?.y ?? 0.5, 0, 1);
@@ -213,8 +252,8 @@ function getDefaultWindowFrame(
         config,
         {
             position: {
-                x: freeX * placementX + cascadeOffset,
-                y: freeY * placementY + cascadeOffset,
+                x: area.x + freeX * placementX + cascadeOffset,
+                y: area.y + freeY * placementY + cascadeOffset,
             },
             size,
         },
@@ -316,10 +355,7 @@ export function useWindowFrame({
         }
 
         if (shouldOpenMaximized) {
-            return {
-                x: 0,
-                y: 0,
-            };
+            return getDockedFrame("full").position;
         }
 
         return {
@@ -337,10 +373,7 @@ export function useWindowFrame({
         }
 
         if (shouldOpenMaximized && typeof window !== "undefined") {
-            return {
-                width: window.innerWidth,
-                height: window.innerHeight,
-            };
+            return getDockedFrame("full").size;
         }
 
         return defaultFrame.size;
@@ -532,15 +565,9 @@ export function useWindowFrame({
                 height: sizeRef.current.height,
             };
 
-            setFramePosition({
-                x: 0,
-                y: 0,
-            });
+            setFramePosition(getDockedFrame("full").position);
 
-            setFrameSize({
-                width: window.innerWidth,
-                height: window.innerHeight,
-            });
+            setFrameSize(getDockedFrame("full").size);
 
             setFrameMaximized(true);
             setFrameSnapped(null);
@@ -639,38 +666,11 @@ export function useWindowFrame({
                 let restoredFrame: WindowFrame;
 
                 if (isMaximizedRef.current) {
-                    restoredFrame = {
-                        position: {
-                            x: 0,
-                            y: 0,
-                        },
-                        size: {
-                            width: bounds.width,
-                            height: bounds.height,
-                        },
-                    };
+                    restoredFrame = getDockedFrame("full");
                 } else if (isSnappedRef.current === "left") {
-                    restoredFrame = {
-                        position: {
-                            x: 0,
-                            y: 0,
-                        },
-                        size: {
-                            width: bounds.width / 2,
-                            height: bounds.height,
-                        },
-                    };
+                    restoredFrame = getDockedFrame("left");
                 } else if (isSnappedRef.current === "right") {
-                    restoredFrame = {
-                        position: {
-                            x: bounds.width / 2,
-                            y: 0,
-                        },
-                        size: {
-                            width: bounds.width / 2,
-                            height: bounds.height,
-                        },
-                    };
+                    restoredFrame = getDockedFrame("right");
                 } else {
                     restoredFrame = clampWindowFrame(
                         config,
@@ -891,45 +891,27 @@ export function useWindowFrame({
                 }
 
                 if (currentSnapZone === "top") {
-                    setFramePosition({
-                        x: 0,
-                        y: 0,
-                    });
+                    setFramePosition(getDockedFrame("full").position);
 
-                    setFrameSize({
-                        width: window.innerWidth,
-                        height: window.innerHeight,
-                    });
+                    setFrameSize(getDockedFrame("full").size);
 
                     setFrameMaximized(true);
                     setFrameSnapped(null);
                 }
 
                 if (currentSnapZone === "left") {
-                    setFramePosition({
-                        x: 0,
-                        y: 0,
-                    });
+                    setFramePosition(getDockedFrame("left").position);
 
-                    setFrameSize({
-                        width: window.innerWidth / 2,
-                        height: window.innerHeight,
-                    });
+                    setFrameSize(getDockedFrame("left").size);
 
                     setFrameSnapped("left");
                     setFrameMaximized(false);
                 }
 
                 if (currentSnapZone === "right") {
-                    setFramePosition({
-                        x: window.innerWidth / 2,
-                        y: 0,
-                    });
+                    setFramePosition(getDockedFrame("right").position);
 
-                    setFrameSize({
-                        width: window.innerWidth / 2,
-                        height: window.innerHeight,
-                    });
+                    setFrameSize(getDockedFrame("right").size);
 
                     setFrameSnapped("right");
                     setFrameMaximized(false);
@@ -1210,43 +1192,25 @@ export function useWindowFrame({
                 savedSize.current = nextRestoredFrame.size;
 
                 if (isMaximized) {
-                    setFramePosition({
-                        x: 0,
-                        y: 0,
-                    });
+                    setFramePosition(getDockedFrame("full").position);
 
-                    setFrameSize({
-                        width: nextBounds.width,
-                        height: nextBounds.height,
-                    });
+                    setFrameSize(getDockedFrame("full").size);
 
                     return;
                 }
 
                 if (isSnapped === "left") {
-                    setFramePosition({
-                        x: 0,
-                        y: 0,
-                    });
+                    setFramePosition(getDockedFrame("left").position);
 
-                    setFrameSize({
-                        width: nextBounds.width / 2,
-                        height: nextBounds.height,
-                    });
+                    setFrameSize(getDockedFrame("left").size);
 
                     return;
                 }
 
                 if (isSnapped === "right") {
-                    setFramePosition({
-                        x: nextBounds.width / 2,
-                        y: 0,
-                    });
+                    setFramePosition(getDockedFrame("right").position);
 
-                    setFrameSize({
-                        width: nextBounds.width / 2,
-                        height: nextBounds.height,
-                    });
+                    setFrameSize(getDockedFrame("right").size);
 
                     return;
                 }
@@ -1280,21 +1244,19 @@ export function useWindowFrame({
         }
     }, [actions, isActive]);
 
-    const snapPreviewStyle =
+    const snapPreviewFrame =
         snapZone && typeof window !== "undefined"
-            ? {
-                  top: 8,
-
-                  left: snapZone === "right" ? window.innerWidth / 2 + 4 : 8,
-
-                  width:
-                      snapZone === "top"
-                          ? window.innerWidth - 16
-                          : window.innerWidth / 2 - 12,
-
-                  height: window.innerHeight - 16,
-              }
+            ? getDockedFrame(snapZone === "top" ? "full" : snapZone)
             : null;
+
+    const snapPreviewStyle = snapPreviewFrame
+        ? {
+              top: snapPreviewFrame.position.y + 8,
+              left: snapPreviewFrame.position.x + 8,
+              width: snapPreviewFrame.size.width - 16,
+              height: snapPreviewFrame.size.height - 16,
+          }
+        : null;
 
     const shouldRender = isOpen || (isMinimized && isClosing);
 
