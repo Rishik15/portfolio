@@ -27,7 +27,7 @@ const desktopApps = [
         id: "projects",
         windowId: WINDOW_IDS.projects,
         label: "Projects",
-        icon: "/icons/projects.svg",
+        icon: "/icons/projects.webp",
         iconWidth: 64,
         iconHeight: 64,
 
@@ -40,7 +40,7 @@ const desktopApps = [
         id: "experience",
         windowId: WINDOW_IDS.experience,
         label: "Experience",
-        icon: "/icons/experience.svg",
+        icon: "/icons/experience.webp",
         iconWidth: 64,
         iconHeight: 64,
 
@@ -53,7 +53,7 @@ const desktopApps = [
         id: "resume",
         windowId: WINDOW_IDS.resume,
         label: "Resume",
-        icon: "/icons/resume.svg",
+        icon: "/icons/resume.webp",
         iconWidth: 64,
         iconHeight: 64,
 
