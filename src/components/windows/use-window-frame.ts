@@ -1,3 +1,4 @@
+/** use-window-frame.ts manages window geometry, gestures and frame transitions. */
 import {
     useCallback,
     useEffect,
@@ -44,8 +45,6 @@ export type ResizeDirection =
 
 type SnapZone = "top" | null;
 
-type SnappedSide = "left" | "right" | null;
-
 type UseWindowFrameOptions = {
     config: AppWindowConfig;
     state: WindowState;
@@ -76,10 +75,12 @@ const WORK_AREA_INSET_BOTTOM = 128;
 const DEFAULT_VIEWPORT_WIDTH = 1440;
 const DEFAULT_VIEWPORT_HEIGHT = 900;
 
+/** Returns the input value constrained to the supplied minimum and maximum. */
 function clamp(value: number, minimum: number, maximum: number) {
     return Math.min(Math.max(value, minimum), maximum);
 }
 
+/** Returns browser viewport dimensions, or fallback dimensions during server rendering. */
 function getViewportBounds(): WindowBounds {
     if (typeof window === "undefined") {
         return {
@@ -95,8 +96,8 @@ function getViewportBounds(): WindowBounds {
 }
 
 /**
- * Returns the desktop area between the top bar and the dock, used to size,
- * place, maximize and snap windows. Dragging is not restricted to it.
+ * Returns the desktop area between the top bar and the dock, used to size
+ * and place windows. Takes no inputs; dragging is not restricted to this area.
  */
 function getWorkArea() {
     const viewport = getViewportBounds();
@@ -113,8 +114,7 @@ function getWorkArea() {
 }
 
 /**
- * Builds the frame a window fills: the whole viewport when maximized, covering the top bar and dock.
- * Takes the dock kind and returns the matching position and size.
+ * Returns the full viewport frame for maximize, with no inputs.
  */
 function getFullFrame(): WindowFrame {
     return {
@@ -123,6 +123,7 @@ function getFullFrame(): WindowFrame {
     };
 }
 
+/** Returns pixels parsed from a CSS size string and the supplied viewport dimensions. */
 function parseSize(
     value: string,
     viewportWidth: number,
@@ -145,6 +146,7 @@ function parseSize(
     return parsed;
 }
 
+/** Returns effective minimum and maximum dimensions for the app config and bounds. */
 function getSizeLimits(config: AppWindowConfig, bounds: WindowBounds) {
     const minWidth = Math.min(
         config.minWidth ?? DEFAULT_MIN_WIDTH,
@@ -174,6 +176,7 @@ function getSizeLimits(config: AppWindowConfig, bounds: WindowBounds) {
     };
 }
 
+/** Returns the preferred app size constrained to the supplied bounds and config. */
 function getResponsiveWindowSize(
     config: AppWindowConfig,
     bounds: WindowBounds,
@@ -198,6 +201,7 @@ function getResponsiveWindowSize(
     };
 }
 
+/** Returns the input frame fitted to the supplied viewport and app size limits. */
 function clampWindowFrame(
     config: AppWindowConfig,
     frame: WindowFrame,
@@ -223,6 +227,68 @@ function clampWindowFrame(
     };
 }
 
+/** Returns a viewport-contained position for the candidate position and frame size. */
+function clampWindowPosition(
+    position: WindowPosition,
+    size: WindowSize,
+    bounds: WindowBounds,
+): WindowPosition {
+    return {
+        x: clamp(position.x, 0, Math.max(0, bounds.width - size.width)),
+        y: clamp(position.y, 0, Math.max(0, bounds.height - size.height)),
+    };
+}
+
+/** Returns a resized frame from a fitted start frame, direction, delta, config and viewport. */
+function resizeWindowFrame(
+    frame: WindowFrame,
+    direction: Exclude<ResizeDirection, null>,
+    delta: WindowPosition,
+    config: AppWindowConfig,
+    bounds: WindowBounds,
+): WindowFrame {
+    const limits = getSizeLimits(config, bounds);
+    const { x, y } = frame.position;
+    const right = x + frame.size.width;
+    const bottom = y + frame.size.height;
+    const position = { ...frame.position };
+    const size = { ...frame.size };
+
+    if (direction.includes("right")) {
+        size.width = clamp(
+            frame.size.width + delta.x,
+            limits.minWidth,
+            Math.min(limits.maxWidth, bounds.width - x),
+        );
+    }
+    if (direction.includes("left")) {
+        size.width = clamp(
+            frame.size.width - delta.x,
+            limits.minWidth,
+            Math.min(limits.maxWidth, right),
+        );
+        position.x = right - size.width;
+    }
+    if (direction.includes("bottom")) {
+        size.height = clamp(
+            frame.size.height + delta.y,
+            limits.minHeight,
+            Math.min(limits.maxHeight, bounds.height - y),
+        );
+    }
+    if (direction.includes("top")) {
+        size.height = clamp(
+            frame.size.height - delta.y,
+            limits.minHeight,
+            Math.min(limits.maxHeight, bottom),
+        );
+        position.y = bottom - size.height;
+    }
+
+    return { position, size };
+}
+
+/** Returns the initial app frame for the supplied config and cascade index. */
 function getDefaultWindowFrame(
     config: AppWindowConfig,
     cascadeIndex: number,
@@ -255,6 +321,7 @@ function getDefaultWindowFrame(
     );
 }
 
+/** Returns a fitted frame scaled from the previous viewport to the next using app limits. */
 function scaleFrameBetweenViewports(
     config: AppWindowConfig,
     frame: WindowFrame,
@@ -315,6 +382,7 @@ function scaleFrameBetweenViewports(
     );
 }
 
+/** Returns window frame state and interaction handlers for the supplied app, actions and placement options. */
 export function useWindowFrame({
     config,
     state,
@@ -380,7 +448,6 @@ export function useWindowFrame({
     const [isDragging, setIsDragging] = useState(false);
     const [isResizing, setIsResizing] = useState<ResizeDirection>(null);
     const [isMaximized, setIsMaximized] = useState(shouldOpenMaximized);
-    const [isSnapped, setIsSnapped] = useState<SnappedSide>(null);
     const [snapZone, setSnapZone] = useState<SnapZone>(null);
     const [isTransitioning, setIsTransitioning] = useState(false);
     const [isOpening, setIsOpening] = useState(shouldAnimateOpen);
@@ -391,12 +458,13 @@ export function useWindowFrame({
     const sizeRef = useRef(size);
 
     const isMaximizedRef = useRef(isMaximized);
-    const isSnappedRef = useRef<SnappedSide>(isSnapped);
     const snapZoneRef = useRef<SnapZone>(snapZone);
 
     const isAnimating = useRef(false);
     const hasUserAdjustedFrame = useRef(false);
     const viewportBoundsRef = useRef(getViewportBounds());
+    const gestureVersion = useRef(0);
+    const hasActiveGesture = useRef(false);
 
     const savedPosition = useRef<WindowPosition>({
         ...defaultFrame.position,
@@ -430,26 +498,25 @@ export function useWindowFrame({
         startPosY: 0,
     });
 
+    /** Stores the supplied position in state and its synchronous ref; returns nothing. */
     const setFramePosition = useCallback((nextPosition: WindowPosition) => {
         positionRef.current = nextPosition;
         setPosition(nextPosition);
     }, []);
 
+    /** Stores the supplied size in state and its synchronous ref; returns nothing. */
     const setFrameSize = useCallback((nextSize: WindowSize) => {
         sizeRef.current = nextSize;
         setSize(nextSize);
     }, []);
 
+    /** Stores the supplied maximize flag in state and its ref; returns nothing. */
     const setFrameMaximized = useCallback((nextValue: boolean) => {
         isMaximizedRef.current = nextValue;
         setIsMaximized(nextValue);
     }, []);
 
-    const setFrameSnapped = useCallback((nextValue: SnappedSide) => {
-        isSnappedRef.current = nextValue;
-        setIsSnapped(nextValue);
-    }, []);
-
+    /** Stores the supplied preview zone when changed; returns nothing. */
     const setFrameSnapZone = useCallback((nextValue: SnapZone) => {
         if (snapZoneRef.current === nextValue) {
             return;
@@ -465,10 +532,12 @@ export function useWindowFrame({
 
     const zIndex = isOpen ? state.zIndex : isMinimized ? state.zIndex : 0;
 
+    /** Closes the current app with no inputs or return value. */
     const handleClose = useCallback(() => {
         actions.close();
     }, [actions]);
 
+    /** Minimizes the current app toward its icon with no inputs or return value. */
     const handleMinimize = useCallback(() => {
         if (isAnimating.current || !canMinimize) {
             return;
@@ -483,7 +552,7 @@ export function useWindowFrame({
 
         isAnimating.current = true;
 
-        if (!isMaximizedRef.current && isSnappedRef.current === null) {
+        if (!isMaximizedRef.current) {
             savedPosition.current = {
                 x: positionRef.current.x,
                 y: positionRef.current.y,
@@ -520,6 +589,7 @@ export function useWindowFrame({
         setFrameSize,
     ]);
 
+    /** Toggles the current app between restored and full viewport frames; returns nothing. */
     const handleMaximize = useCallback(() => {
         if (!canMaximize || typeof window === "undefined") {
             return;
@@ -527,7 +597,7 @@ export function useWindowFrame({
 
         setIsTransitioning(true);
 
-        if (isMaximizedRef.current || isSnappedRef.current) {
+        if (isMaximizedRef.current) {
             const restoredFrame = clampWindowFrame(
                 config,
                 {
@@ -550,7 +620,6 @@ export function useWindowFrame({
             savedSize.current = restoredFrame.size;
 
             setFrameMaximized(false);
-            setFrameSnapped(null);
         } else {
             previousState.current = {
                 x: positionRef.current.x,
@@ -564,7 +633,6 @@ export function useWindowFrame({
             setFrameSize(getFullFrame().size);
 
             setFrameMaximized(true);
-            setFrameSnapped(null);
         }
 
         window.setTimeout(() => {
@@ -579,7 +647,6 @@ export function useWindowFrame({
         setFrameMaximized,
         setFramePosition,
         setFrameSize,
-        setFrameSnapped,
     ]);
 
     useEffect(() => {
@@ -702,6 +769,7 @@ export function useWindowFrame({
         };
     }, [config, isClosing, isMinimized, setFramePosition, setFrameSize]);
 
+    /** Starts a title-bar drag from the supplied mouse event; returns nothing. */
     const handleDragMouseDown = useCallback(
         (event: ReactMouseEvent<HTMLDivElement>) => {
             if (!isActive) {
@@ -714,18 +782,19 @@ export function useWindowFrame({
                 startX: event.clientX - positionRef.current.x,
                 startY: event.clientY - positionRef.current.y,
 
-                needsRestore:
-                    isMaximizedRef.current || isSnappedRef.current !== null,
+                needsRestore: isMaximizedRef.current,
 
                 initialClientX: event.clientX,
                 initialClientY: event.clientY,
             };
 
+            hasActiveGesture.current = true;
             setIsDragging(true);
         },
         [actions, isActive],
     );
 
+    /** Toggles maximize when allowed, with no inputs or return value. */
     const handleTitleBarDoubleClick = useCallback(() => {
         if (canMaximize) {
             handleMaximize();
@@ -737,6 +806,8 @@ export function useWindowFrame({
             return;
         }
 
+        const version = gestureVersion.current;
+        let hasMoved = false;
         let animationFrame = 0;
 
         let pendingPointer: {
@@ -744,7 +815,11 @@ export function useWindowFrame({
             y: number;
         } | null = null;
 
+        /** Applies the supplied pointer coordinates to the active drag; returns nothing. */
         const applyDragPosition = (clientX: number, clientY: number) => {
+            if (version !== gestureVersion.current) {
+                return;
+            }
             if (dragRef.current.needsRestore) {
                 const deltaX = Math.abs(
                     clientX - dragRef.current.initialClientX,
@@ -758,39 +833,35 @@ export function useWindowFrame({
                     return;
                 }
 
-                const previousWidth = previousState.current.width;
-                const previousHeight = previousState.current.height;
-
-                const cursorRatioX = clientX / window.innerWidth;
-
-                const newX = clientX - previousWidth * cursorRatioX;
-                const newY = clientY - 24;
-
-                const restoredX = Math.max(0, newX);
-                const restoredY = Math.max(0, newY);
+                const bounds = getViewportBounds();
+                const restoredFrame = clampWindowFrame(
+                    config,
+                    {
+                        position: { x: previousState.current.x, y: previousState.current.y },
+                        size: { width: previousState.current.width, height: previousState.current.height },
+                    },
+                    bounds,
+                );
+                const cursorRatioX = clamp(clientX / bounds.width, 0, 1);
+                const restoredPosition = clampWindowPosition(
+                    { x: clientX - restoredFrame.size.width * cursorRatioX, y: clientY - 24 },
+                    restoredFrame.size,
+                    bounds,
+                );
 
                 setIsTransitioning(true);
-
-                setFramePosition({
-                    x: restoredX,
-                    y: restoredY,
-                });
-
-                setFrameSize({
-                    width: previousWidth,
-                    height: previousHeight,
-                });
+                setFramePosition(restoredPosition);
+                setFrameSize(restoredFrame.size);
 
                 setFrameMaximized(false);
-                setFrameSnapped(null);
 
                 window.setTimeout(() => {
                     setIsTransitioning(false);
                 }, 150);
 
                 dragRef.current = {
-                    startX: clientX - restoredX,
-                    startY: clientY - restoredY,
+                    startX: clientX - restoredPosition.x,
+                    startY: clientY - restoredPosition.y,
                     needsRestore: false,
                     initialClientX: clientX,
                     initialClientY: clientY,
@@ -801,13 +872,14 @@ export function useWindowFrame({
                 return;
             }
 
-            const newX = clientX - dragRef.current.startX;
-            const newY = Math.max(0, clientY - dragRef.current.startY);
-
-            setFramePosition({
-                x: newX,
-                y: newY,
-            });
+            setFramePosition(clampWindowPosition(
+                {
+                    x: clientX - dragRef.current.startX,
+                    y: clientY - dragRef.current.startY,
+                },
+                sizeRef.current,
+                getViewportBounds(),
+            ));
 
             hasUserAdjustedFrame.current = true;
 
@@ -819,6 +891,7 @@ export function useWindowFrame({
             setFrameSnapZone(null);
         };
 
+        /** Applies the latest queued gesture coordinates with no inputs or return value. */
         const flushPendingPointer = () => {
             if (!pendingPointer) {
                 return;
@@ -830,7 +903,9 @@ export function useWindowFrame({
             applyDragPosition(pointer.x, pointer.y);
         };
 
+        /** Queues the supplied mouse event for the next animation frame; returns nothing. */
         const handleMouseMove = (event: MouseEvent) => {
+            hasMoved = true;
             pendingPointer = {
                 x: event.clientX,
                 y: event.clientY,
@@ -846,7 +921,18 @@ export function useWindowFrame({
             });
         };
 
-        const handleMouseUp = () => {
+        /** Flushes the supplied release coordinates and saves the completed gesture; returns nothing. */
+        const handleMouseUp = (event: MouseEvent) => {
+            if (version !== gestureVersion.current) {
+                return;
+            }
+            if (
+                hasMoved || event.clientX !== dragRef.current.initialClientX ||
+                event.clientY !== dragRef.current.initialClientY
+            ) {
+                pendingPointer = { x: event.clientX, y: event.clientY };
+            }
+            hasActiveGesture.current = false;
             if (animationFrame) {
                 window.cancelAnimationFrame(animationFrame);
                 animationFrame = 0;
@@ -861,7 +947,7 @@ export function useWindowFrame({
             if (currentSnapZone) {
                 setIsTransitioning(true);
 
-                if (!isMaximizedRef.current && isSnappedRef.current === null) {
+                if (!isMaximizedRef.current) {
                     previousState.current = {
                         x: savedPosition.current.x,
                         y: savedPosition.current.y,
@@ -876,7 +962,6 @@ export function useWindowFrame({
                     setFrameSize(getFullFrame().size);
 
                     setFrameMaximized(true);
-                    setFrameSnapped(null);
                 }
 
                 window.setTimeout(() => {
@@ -884,10 +969,7 @@ export function useWindowFrame({
                 }, 200);
 
                 setFrameSnapZone(null);
-            } else if (
-                !isMaximizedRef.current &&
-                isSnappedRef.current === null
-            ) {
+            } else if (!isMaximizedRef.current) {
                 savedPosition.current = {
                     x: positionRef.current.x,
                     y: positionRef.current.y,
@@ -921,14 +1003,15 @@ export function useWindowFrame({
             document.removeEventListener("mouseup", handleMouseUp);
         };
     }, [
+        config,
         isDragging,
         setFrameMaximized,
         setFramePosition,
         setFrameSize,
-        setFrameSnapped,
         setFrameSnapZone,
     ]);
 
+    /** Fits the frame and starts resizing from the supplied event and direction; returns nothing. */
     const handleResizeMouseDown = useCallback(
         (
             event: ReactMouseEvent<HTMLDivElement>,
@@ -945,18 +1028,26 @@ export function useWindowFrame({
             event.preventDefault();
             event.stopPropagation();
 
+            const frame = clampWindowFrame(
+                config,
+                { position: positionRef.current, size: sizeRef.current },
+                getViewportBounds(),
+            );
+            setFramePosition(frame.position);
+            setFrameSize(frame.size);
+            hasActiveGesture.current = true;
             setIsResizing(direction);
 
             resizeRef.current = {
                 startX: event.clientX,
                 startY: event.clientY,
-                startWidth: sizeRef.current.width,
-                startHeight: sizeRef.current.height,
-                startPosX: positionRef.current.x,
-                startPosY: positionRef.current.y,
+                startWidth: frame.size.width,
+                startHeight: frame.size.height,
+                startPosX: frame.position.x,
+                startPosY: frame.position.y,
             };
         },
-        [actions, canResize, isActive],
+        [actions, canResize, config, isActive, setFramePosition, setFrameSize],
     );
 
     useEffect(() => {
@@ -964,6 +1055,7 @@ export function useWindowFrame({
             return;
         }
 
+        const version = gestureVersion.current;
         let animationFrame = 0;
 
         let pendingPointer: {
@@ -971,76 +1063,26 @@ export function useWindowFrame({
             y: number;
         } | null = null;
 
+        /** Applies the supplied pointer coordinates to the anchored resize frame; returns nothing. */
         const applyResize = (clientX: number, clientY: number) => {
-            const bounds = getViewportBounds();
-            const limits = getSizeLimits(config, bounds);
-
-            const deltaX = clientX - resizeRef.current.startX;
-            const deltaY = clientY - resizeRef.current.startY;
-
-            let newWidth = resizeRef.current.startWidth;
-            let newHeight = resizeRef.current.startHeight;
-
-            let newX = resizeRef.current.startPosX;
-            let newY = resizeRef.current.startPosY;
-
-            if (isResizing.includes("right")) {
-                newWidth = Math.max(
-                    limits.minWidth,
-                    resizeRef.current.startWidth + deltaX,
-                );
-
-                newWidth = Math.min(newWidth, limits.maxWidth);
+            if (version !== gestureVersion.current) {
+                return;
             }
-
-            if (isResizing.includes("left")) {
-                const potentialWidth = resizeRef.current.startWidth - deltaX;
-
-                if (potentialWidth >= limits.minWidth) {
-                    newWidth = Math.min(potentialWidth, limits.maxWidth);
-
-                    newX =
-                        resizeRef.current.startPosX +
-                        (resizeRef.current.startWidth - newWidth);
-                }
-            }
-
-            if (isResizing.includes("bottom")) {
-                newHeight = Math.max(
-                    limits.minHeight,
-                    resizeRef.current.startHeight + deltaY,
-                );
-
-                newHeight = Math.min(newHeight, limits.maxHeight);
-            }
-
-            if (isResizing.includes("top")) {
-                const potentialHeight = resizeRef.current.startHeight - deltaY;
-
-                const potentialY = resizeRef.current.startPosY + deltaY;
-
-                if (potentialHeight >= limits.minHeight && potentialY >= 0) {
-                    newHeight = Math.min(potentialHeight, limits.maxHeight);
-
-                    newY =
-                        resizeRef.current.startPosY +
-                        (resizeRef.current.startHeight - newHeight);
-                }
-            }
-
-            setFrameSize({
-                width: newWidth,
-                height: newHeight,
-            });
-
-            setFramePosition({
-                x: newX,
-                y: newY,
-            });
+            const start = resizeRef.current;
+            const frame = resizeWindowFrame({
+                position: { x: start.startPosX, y: start.startPosY },
+                size: { width: start.startWidth, height: start.startHeight },
+            }, isResizing, {
+                x: clientX - start.startX,
+                y: clientY - start.startY,
+            }, config, getViewportBounds());
+            setFrameSize(frame.size);
+            setFramePosition(frame.position);
 
             hasUserAdjustedFrame.current = true;
         };
 
+        /** Applies the latest queued gesture coordinates with no inputs or return value. */
         const flushPendingPointer = () => {
             if (!pendingPointer) {
                 return;
@@ -1052,6 +1094,7 @@ export function useWindowFrame({
             applyResize(pointer.x, pointer.y);
         };
 
+        /** Queues the supplied mouse event for the next animation frame; returns nothing. */
         const handleMouseMove = (event: MouseEvent) => {
             pendingPointer = {
                 x: event.clientX,
@@ -1068,7 +1111,13 @@ export function useWindowFrame({
             });
         };
 
-        const handleMouseUp = () => {
+        /** Flushes the supplied release coordinates and saves the completed gesture; returns nothing. */
+        const handleMouseUp = (event: MouseEvent) => {
+            if (version !== gestureVersion.current) {
+                return;
+            }
+            pendingPointer = { x: event.clientX, y: event.clientY };
+            hasActiveGesture.current = false;
             if (animationFrame) {
                 window.cancelAnimationFrame(animationFrame);
                 animationFrame = 0;
@@ -1112,7 +1161,21 @@ export function useWindowFrame({
     useEffect(() => {
         let animationFrame = 0;
 
+        /** Cancels active gestures and refits saved frames to the viewport; has no inputs or return value. */
         const handleBrowserResize = () => {
+            if (hasActiveGesture.current && !isMaximizedRef.current) {
+                previousState.current = {
+                    ...positionRef.current,
+                    ...sizeRef.current,
+                };
+            }
+            gestureVersion.current += 1;
+            hasActiveGesture.current = false;
+            dragRef.current.needsRestore = false;
+            setIsDragging(false);
+            setIsResizing(null);
+            setFrameSnapZone(null);
+
             if (animationFrame) {
                 cancelAnimationFrame(animationFrame);
             }
@@ -1179,11 +1242,12 @@ export function useWindowFrame({
         cascadeIndex,
         config,
         isMaximized,
-        isSnapped,
         setFramePosition,
         setFrameSize,
+        setFrameSnapZone,
     ]);
 
+    /** Focuses the current window if inactive, with no inputs or return value. */
     const handleWindowMouseDown = useCallback(() => {
         if (!isActive) {
             actions.focus();
