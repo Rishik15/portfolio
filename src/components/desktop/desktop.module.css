@@ -1,3 +1,5 @@
+/* desktop.module.css: Position desktop content over its active-theme wallpaper. */
+
 .desktop {
     position: relative;
     isolation: isolate;
@@ -13,22 +15,6 @@
     object-position: center 70%;
     pointer-events: none;
     user-select: none;
-}
-
-.lightWallpaper {
-    visibility: visible;
-}
-
-.darkWallpaper {
-    visibility: hidden;
-}
-
-:global(.dark) .lightWallpaper {
-    visibility: hidden;
-}
-
-:global(.dark) .darkWallpaper {
-    visibility: visible;
 }
 
 .content {

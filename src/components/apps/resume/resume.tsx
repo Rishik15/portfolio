@@ -1,3 +1,4 @@
+// resume.tsx: Display a lazily loaded resume preview with zoom and PDF download controls.
 /* eslint-disable @next/next/no-img-element */
 
 "use client";
@@ -10,23 +11,27 @@ import {
     RESUME_ZOOM,
 } from "@/components/apps/resume/resume-ui";
 
+/** Takes no props and returns the resume preview, zoom controls and download link. */
 export function Resume() {
     const [zoom, setZoom] = useState<number>(RESUME_ZOOM.default);
     const [isLoaded, setIsLoaded] = useState(false);
     const [hasFailed, setHasFailed] = useState(false);
 
+    /** Takes no arguments and increases zoom within its bounds; returns nothing. */
     function zoomIn() {
         setZoom((current) =>
             Math.min(current + RESUME_ZOOM.step, RESUME_ZOOM.max),
         );
     }
 
+    /** Takes no arguments and decreases zoom within its bounds; returns nothing. */
     function zoomOut() {
         setZoom((current) =>
             Math.max(current - RESUME_ZOOM.step, RESUME_ZOOM.min),
         );
     }
 
+    /** Takes no arguments and restores default zoom; returns nothing. */
     function resetZoom() {
         setZoom(RESUME_ZOOM.default);
     }
@@ -76,8 +81,7 @@ export function Resume() {
                         alt={RESUME_ASSET.alt}
                         width={RESUME_ASSET.width}
                         height={RESUME_ASSET.height}
-                        loading="eager"
-                        fetchPriority="high"
+                        loading="lazy"
                         decoding="async"
                         draggable={false}
                         onLoad={() => {
