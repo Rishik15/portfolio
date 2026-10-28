@@ -17,6 +17,7 @@ import {
     type WindowState,
 } from "@/components/windows/window-manager";
 import { resolveWindowSizing } from "@/components/windows/window-sizing";
+import { useReducedMotion } from "@/lib/use-reduced-motion";
 
 type WorkArea = WindowBounds & WindowPosition;
 
@@ -303,6 +304,7 @@ export function useWindowFrame({
     iconPosition,
     getIconPosition,
 }: UseWindowFrameOptions) {
+    const reducedMotion = useReducedMotion();
     const defaultFrame = useMemo(
         () => getDefaultWindowFrame(config, cascadeIndex),
         [cascadeIndex, config],
@@ -319,8 +321,9 @@ export function useWindowFrame({
         [cascadeIndex, config],
     );
 
-    const hasIconAnimation = iconPosition !== undefined;
-    const hasFallbackOpenAnimation = !hasIconAnimation && !shouldOpenMaximized;
+    const hasIconAnimation = !reducedMotion && iconPosition !== undefined;
+    const hasFallbackOpenAnimation =
+        !reducedMotion && !hasIconAnimation && !shouldOpenMaximized;
     const shouldAnimateOpen = hasIconAnimation || hasFallbackOpenAnimation;
 
     const [position, setPosition] = useState<WindowPosition>(() => {
@@ -334,7 +337,7 @@ export function useWindowFrame({
 
         return {
             x: defaultFrame.position.x,
-            y: defaultFrame.position.y + FALLBACK_OPEN_OFFSET_Y,
+            y: defaultFrame.position.y + (reducedMotion ? 0 : FALLBACK_OPEN_OFFSET_Y),
         };
     });
 
@@ -373,6 +376,29 @@ export function useWindowFrame({
     const snapZoneRef = useRef<SnapZone>(snapZone);
 
     const isAnimating = useRef(false);
+    const animationTimers = useRef(new Set<number>());
+    const pendingMinimize = useRef(false);
+
+    /** Cancels tracked transition timers, with no inputs or return value. */
+    const clearAnimationTimers = useCallback(() => {
+        animationTimers.current.forEach((timer) => window.clearTimeout(timer));
+        animationTimers.current.clear();
+    }, []);
+
+    /** Schedules the supplied completion after a motion delay; returns nothing. */
+    const finishTransition = useCallback((complete: () => void, delay: number) => {
+        if (reducedMotion) {
+            complete();
+            return;
+        }
+        const timer = window.setTimeout(() => {
+            animationTimers.current.delete(timer);
+            complete();
+        }, delay);
+        animationTimers.current.add(timer);
+    }, [reducedMotion]);
+
+    useEffect(() => clearAnimationTimers, [clearAnimationTimers]);
     const hasUserAdjustedFrame = useRef(false);
     const workAreaRef = useRef(getWorkArea());
     const gestureVersion = useRef(0);
@@ -455,6 +481,11 @@ export function useWindowFrame({
             return;
         }
 
+        if (reducedMotion) {
+            actions.minimize();
+            return;
+        }
+
         const currentIconPosition = getIconPosition?.() ?? iconPosition;
 
         if (!currentIconPosition) {
@@ -463,6 +494,7 @@ export function useWindowFrame({
         }
 
         isAnimating.current = true;
+        pendingMinimize.current = true;
 
         if (!isMaximizedRef.current) {
             savedPosition.current = {
@@ -477,7 +509,7 @@ export function useWindowFrame({
         }
 
         setIsClosing(true);
-        setIsTransitioning(true);
+        setIsTransitioning(!reducedMotion);
 
         setFramePosition(currentIconPosition);
 
@@ -488,13 +520,16 @@ export function useWindowFrame({
 
         setOpacity(0);
 
-        window.setTimeout(() => {
+        finishTransition(() => {
+            pendingMinimize.current = false;
             isAnimating.current = false;
             actions.minimize();
         }, MINIMIZE_ANIMATION_MS);
     }, [
         actions,
         canMinimize,
+        reducedMotion,
+        finishTransition,
         getIconPosition,
         iconPosition,
         setFramePosition,
@@ -507,7 +542,7 @@ export function useWindowFrame({
             return;
         }
 
-        setIsTransitioning(true);
+        setIsTransitioning(!reducedMotion);
 
         if (isMaximizedRef.current) {
             const restoredFrame = clampWindowFrame(
@@ -547,7 +582,7 @@ export function useWindowFrame({
             setFrameMaximized(true);
         }
 
-        window.setTimeout(() => {
+        finishTransition(() => {
             setIsTransitioning(false);
         }, 200);
 
@@ -555,6 +590,8 @@ export function useWindowFrame({
     }, [
         actions,
         canMaximize,
+        reducedMotion,
+        finishTransition,
         config,
         setFrameMaximized,
         setFramePosition,
@@ -562,7 +599,7 @@ export function useWindowFrame({
     ]);
 
     useEffect(() => {
-        if (!isOpening) {
+        if (!isOpening || reducedMotion) {
             return;
         }
 
@@ -570,7 +607,7 @@ export function useWindowFrame({
         let transitionTimeout = 0;
 
         const firstFrame = requestAnimationFrame(() => {
-            setIsTransitioning(true);
+            setIsTransitioning(!reducedMotion);
 
             secondFrame = requestAnimationFrame(() => {
                 const nextFrame = getDefaultFrame();
@@ -613,13 +650,14 @@ export function useWindowFrame({
     }, [
         getDefaultFrame,
         hasIconAnimation,
+        reducedMotion,
         isOpening,
         setFramePosition,
         setFrameSize,
     ]);
 
     useEffect(() => {
-        if (isMinimized || !isClosing || isAnimating.current) {
+        if (reducedMotion || isMinimized || !isClosing || isAnimating.current) {
             return;
         }
 
@@ -629,7 +667,7 @@ export function useWindowFrame({
         let transitionTimeout = 0;
 
         const firstFrame = requestAnimationFrame(() => {
-            setIsTransitioning(true);
+            setIsTransitioning(!reducedMotion);
 
             secondFrame = requestAnimationFrame(() => {
                 const bounds = getViewportBounds();
@@ -676,8 +714,50 @@ export function useWindowFrame({
             if (transitionTimeout) {
                 window.clearTimeout(transitionTimeout);
             }
+            isAnimating.current = false;
         };
-    }, [config, isClosing, isMinimized, setFramePosition, setFrameSize]);
+    }, [config, isClosing, isMinimized, reducedMotion, setFramePosition, setFrameSize]);
+
+    useEffect(() => {
+        if (!reducedMotion) {
+            return;
+        }
+        clearAnimationTimers();
+        if (pendingMinimize.current) {
+            pendingMinimize.current = false;
+            actions.minimize();
+        }
+        if (isOpening || isClosing) {
+            const frame = isMaximizedRef.current
+                ? getFullFrame()
+                : isOpening
+                  ? getDefaultFrame()
+                  : clampWindowFrame(config, {
+                        position: savedPosition.current,
+                        size: savedSize.current,
+                    }, getViewportBounds());
+            setFramePosition(frame.position);
+            setFrameSize(frame.size);
+            savedPosition.current = frame.position;
+            savedSize.current = frame.size;
+        }
+        setScale(1);
+        setOpacity(1);
+        setIsOpening(false);
+        setIsClosing(false);
+        setIsTransitioning(false);
+        isAnimating.current = false;
+    }, [
+        actions,
+        clearAnimationTimers,
+        config,
+        getDefaultFrame,
+        isClosing,
+        isOpening,
+        reducedMotion,
+        setFramePosition,
+        setFrameSize,
+    ]);
 
     /** Starts a title-bar drag from the supplied mouse event; returns nothing. */
     const handleDragMouseDown = useCallback(
@@ -759,13 +839,13 @@ export function useWindowFrame({
                     bounds,
                 );
 
-                setIsTransitioning(true);
+                setIsTransitioning(!reducedMotion);
                 setFramePosition(restoredPosition);
                 setFrameSize(restoredFrame.size);
 
                 setFrameMaximized(false);
 
-                window.setTimeout(() => {
+                finishTransition(() => {
                     setIsTransitioning(false);
                 }, 150);
 
@@ -855,7 +935,7 @@ export function useWindowFrame({
             const currentSnapZone = snapZoneRef.current;
 
             if (currentSnapZone) {
-                setIsTransitioning(true);
+                setIsTransitioning(!reducedMotion);
 
                 if (!isMaximizedRef.current) {
                     previousState.current = {
@@ -874,7 +954,7 @@ export function useWindowFrame({
                     setFrameMaximized(true);
                 }
 
-                window.setTimeout(() => {
+                finishTransition(() => {
                     setIsTransitioning(false);
                 }, 200);
 
@@ -915,6 +995,8 @@ export function useWindowFrame({
     }, [
         config,
         isDragging,
+        reducedMotion,
+        finishTransition,
         setFrameMaximized,
         setFramePosition,
         setFrameSize,
@@ -1181,6 +1263,7 @@ export function useWindowFrame({
     const shouldRender = isOpen || (isMinimized && isClosing);
 
     return {
+        reducedMotion,
         position,
         size,
         scale,

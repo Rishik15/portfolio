@@ -1,3 +1,4 @@
+/** app-window.tsx renders window chrome, content and frame controls. */
 import type { ReactNode } from "react";
 
 import {
@@ -60,6 +61,7 @@ const RESIZE_HANDLES: {
     },
 ];
 
+/** Returns window chrome and content for the supplied configuration, state and actions. */
 export function AppWindow({
     config,
     state,
@@ -96,6 +98,7 @@ export function AppWindow({
                         bg-white/35
                         dark:border-white/20
                         dark:bg-black/35
+                        motion-reduce:transition-none
                         transition-all
                         duration-150
                     "
@@ -108,8 +111,9 @@ export function AppWindow({
                 onMouseDown={frame.handleWindowMouseDown}
                 className={`
                     absolute
+                    motion-reduce:transition-none
                     ${
-                        frame.isTransitioning
+                        frame.isTransitioning && !frame.reducedMotion
                             ? frame.isClosing
                                 ? "transition-[transform,width,height,opacity] duration-[450ms] ease-[cubic-bezier(0.4,0,0.2,1)]"
                                 : frame.isOpening
@@ -196,6 +200,7 @@ export function AppWindow({
                                         size-3
                                         rounded-full
                                         transition-colors
+                                        motion-reduce:transition-none
                                         ${
                                             frame.isActive
                                                 ? "bg-[#ff5f57] hover:bg-[#ff4b42]"
@@ -217,6 +222,7 @@ export function AppWindow({
                                         size-3
                                         rounded-full
                                         transition-colors
+                                        motion-reduce:transition-none
                                         ${
                                             !frame.canMinimize
                                                 ? "cursor-not-allowed bg-zinc-400 dark:bg-zinc-600"
@@ -240,6 +246,7 @@ export function AppWindow({
                                         size-3
                                         rounded-full
                                         transition-colors
+                                        motion-reduce:transition-none
                                         ${
                                             !frame.canMaximize
                                                 ? "cursor-not-allowed bg-zinc-400 dark:bg-zinc-600"

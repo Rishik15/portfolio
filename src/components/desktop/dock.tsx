@@ -1,3 +1,4 @@
+/** dock.tsx renders app and contact launchers with optional magnification. */
 "use client";
 
 import { DockItem } from "@/components/desktop/dock-item";
@@ -5,11 +6,15 @@ import { DOCK_CONFIG, DOCK_UI } from "@/components/desktop/dock-ui";
 import { Dock as MagicDock, DockIcon } from "@/components/ui/dock";
 import { Separator } from "@/components/ui/separator";
 import { APP_DOCK_ITEMS, CONTACT_DOCK_ITEMS } from "@/config/dock";
+import { useReducedMotion } from "@/lib/use-reduced-motion";
 
+/** Takes no props and returns the desktop dock honoring the live motion preference. */
 export function Dock() {
+    const reducedMotion = useReducedMotion();
     return (
         <div className={DOCK_UI.position}>
             <MagicDock
+                disableMagnification={reducedMotion}
                 iconSize={DOCK_CONFIG.iconSize}
                 iconMagnification={DOCK_CONFIG.iconMagnification}
                 iconDistance={DOCK_CONFIG.iconDistance}

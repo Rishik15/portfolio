@@ -1,3 +1,4 @@
+/** dock-ui.ts defines desktop dock dimensions and presentation classes. */
 export const DOCK_CONFIG = {
     iconSize: 54,
     iconMagnification: 72,
@@ -49,6 +50,7 @@ export const DOCK_UI = {
         shadow-lg!
         shadow-black/10!
 
+        motion-reduce:transition-none
         transition-transform
         duration-150
         ease-out
