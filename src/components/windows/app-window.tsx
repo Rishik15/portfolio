@@ -138,6 +138,11 @@ export function AppWindow({
                         : 40 + frame.zIndex,
 
                     pointerEvents: frame.isMinimized ? "none" : "auto",
+
+                    visibility:
+                        frame.isMinimized && frame.reducedMotion
+                            ? "hidden"
+                            : undefined,
                 }}
             >
                 <div

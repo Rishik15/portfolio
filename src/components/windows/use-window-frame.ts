@@ -1260,7 +1260,7 @@ export function useWindowFrame({
           }
         : null;
 
-    const shouldRender = isOpen || (isMinimized && isClosing);
+    const shouldRender = isOpen || (isMinimized && (isClosing || reducedMotion));
 
     return {
         reducedMotion,
