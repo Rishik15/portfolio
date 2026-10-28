@@ -1,7 +1,6 @@
-// desktop.tsx: Compose the themed desktop, launchers and managed app windows.
+import Image from "next/image";
 
 import { DesktopIcons } from "@/components/desktop/desktop-icons";
-import { DesktopWallpaper } from "@/components/desktop/desktop-wallpaper";
 import { Dock } from "@/components/desktop/dock";
 import { TopBar } from "@/components/desktop/top-bar";
 import { MusicProvider } from "@/components/providers/music-provider";
@@ -12,11 +11,28 @@ import { WINDOW_CONFIGS } from "@/config/windows";
 
 import styles from "./desktop.module.css";
 
-/** Takes no props and returns the desktop with shared window and music providers. */
 export function Desktop() {
     return (
         <main className={styles.desktop}>
-            <DesktopWallpaper />
+            <Image
+                src="/backgrounds/tree-light.webp"
+                alt=""
+                fill
+                sizes="100vw"
+                loading="eager"
+                draggable={false}
+                className={`${styles.wallpaper} ${styles.lightWallpaper}`}
+            />
+
+            <Image
+                src="/backgrounds/tree-dark.webp"
+                alt=""
+                fill
+                sizes="100vw"
+                loading="eager"
+                draggable={false}
+                className={`${styles.wallpaper} ${styles.darkWallpaper}`}
+            />
 
             <WindowManagerProvider configs={WINDOW_CONFIGS}>
                 <MusicProvider>
