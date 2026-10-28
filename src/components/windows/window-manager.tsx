@@ -1,3 +1,4 @@
+/** window-manager.tsx owns app registration, window state and activation actions. */
 "use client";
 
 import {
@@ -9,6 +10,8 @@ import {
     useState,
     type ReactNode,
 } from "react";
+
+import type { WindowSizingPolicy } from "@/components/windows/window-sizing";
 
 export type WindowPosition = {
     x: number;
@@ -25,14 +28,7 @@ export type AppWindowConfig = {
     title: string;
     icon?: ReactNode;
 
-    width?: string;
-    height?: string;
-
-    minWidth?: number;
-    minHeight?: number;
-
-    maxWidth?: number;
-    maxHeight?: number;
+    sizing?: WindowSizingPolicy;
 
     initialPlacement?: WindowPlacement;
 

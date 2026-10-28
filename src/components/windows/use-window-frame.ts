@@ -16,6 +16,9 @@ import {
     type WindowPosition,
     type WindowState,
 } from "@/components/windows/window-manager";
+import { resolveWindowSizing } from "@/components/windows/window-sizing";
+
+type WorkArea = WindowBounds & WindowPosition;
 
 type WindowSize = {
     width: number;
@@ -54,12 +57,6 @@ type UseWindowFrameOptions = {
     getIconPosition?: () => WindowPosition | undefined;
 };
 
-const DEFAULT_WIDTH = "650px";
-const DEFAULT_HEIGHT = "500px";
-
-const DEFAULT_MIN_WIDTH = 400;
-const DEFAULT_MIN_HEIGHT = 300;
-
 const CASCADE_OFFSET = 30;
 const SNAP_THRESHOLD = 10;
 const DRAG_THRESHOLD = 1;
@@ -97,10 +94,9 @@ function getViewportBounds(): WindowBounds {
 
 /**
  * Returns the desktop area between the top bar and the dock, used to size
- * and place windows. Takes no inputs; dragging is not restricted to this area.
+ * and place windows, for supplied viewport dimensions or the current browser.
  */
-function getWorkArea() {
-    const viewport = getViewportBounds();
+function getWorkArea(viewport = getViewportBounds()): WorkArea {
     const steps = viewport.width >= 2400 ? 2 : viewport.width >= 1800 ? 1 : 0;
     const top = WORK_AREA_INSET_TOP + steps * 8;
     const bottom = WORK_AREA_INSET_BOTTOM + steps * 8;
@@ -123,91 +119,13 @@ function getFullFrame(): WindowFrame {
     };
 }
 
-/** Returns pixels parsed from a CSS size string and the supplied viewport dimensions. */
-function parseSize(
-    value: string,
-    viewportWidth: number,
-    viewportHeight: number,
-): number {
-    const parsed = Number.parseFloat(value);
-
-    if (!Number.isFinite(parsed)) {
-        return 0;
-    }
-
-    if (value.endsWith("vw")) {
-        return (parsed / 100) * viewportWidth;
-    }
-
-    if (value.endsWith("vh")) {
-        return (parsed / 100) * viewportHeight;
-    }
-
-    return parsed;
-}
-
-/** Returns effective minimum and maximum dimensions for the app config and bounds. */
-function getSizeLimits(config: AppWindowConfig, bounds: WindowBounds) {
-    const minWidth = Math.min(
-        config.minWidth ?? DEFAULT_MIN_WIDTH,
-        bounds.width,
-    );
-
-    const minHeight = Math.min(
-        config.minHeight ?? DEFAULT_MIN_HEIGHT,
-        bounds.height,
-    );
-
-    const maxWidth = Math.max(
-        minWidth,
-        Math.min(config.maxWidth ?? bounds.width, bounds.width),
-    );
-
-    const maxHeight = Math.max(
-        minHeight,
-        Math.min(config.maxHeight ?? bounds.height, bounds.height),
-    );
-
-    return {
-        minWidth,
-        minHeight,
-        maxWidth,
-        maxHeight,
-    };
-}
-
-/** Returns the preferred app size constrained to the supplied bounds and config. */
-function getResponsiveWindowSize(
-    config: AppWindowConfig,
-    bounds: WindowBounds,
-): WindowSize {
-    const limits = getSizeLimits(config, bounds);
-
-    const preferredWidth = parseSize(
-        config.width ?? DEFAULT_WIDTH,
-        bounds.width,
-        bounds.height,
-    );
-
-    const preferredHeight = parseSize(
-        config.height ?? DEFAULT_HEIGHT,
-        bounds.width,
-        bounds.height,
-    );
-
-    return {
-        width: clamp(preferredWidth, limits.minWidth, limits.maxWidth),
-        height: clamp(preferredHeight, limits.minHeight, limits.maxHeight),
-    };
-}
-
 /** Returns the input frame fitted to the supplied viewport and app size limits. */
 function clampWindowFrame(
     config: AppWindowConfig,
     frame: WindowFrame,
     bounds: WindowBounds,
 ): WindowFrame {
-    const limits = getSizeLimits(config, bounds);
+    const limits = resolveWindowSizing(config.sizing, getWorkArea(bounds));
 
     const width = clamp(frame.size.width, limits.minWidth, limits.maxWidth);
     const height = clamp(frame.size.height, limits.minHeight, limits.maxHeight);
@@ -247,7 +165,7 @@ function resizeWindowFrame(
     config: AppWindowConfig,
     bounds: WindowBounds,
 ): WindowFrame {
-    const limits = getSizeLimits(config, bounds);
+    const limits = resolveWindowSizing(config.sizing, getWorkArea(bounds));
     const { x, y } = frame.position;
     const right = x + frame.size.width;
     const bottom = y + frame.size.height;
@@ -295,7 +213,8 @@ function getDefaultWindowFrame(
 ): WindowFrame {
     const bounds = getViewportBounds();
     const area = getWorkArea();
-    const size = getResponsiveWindowSize(config, area);
+    const { width, height } = resolveWindowSizing(config.sizing, area);
+    const size = { width, height };
 
     const freeX = Math.max(0, area.width - size.width);
     const freeY = Math.max(0, area.height - size.height);
@@ -321,12 +240,12 @@ function getDefaultWindowFrame(
     );
 }
 
-/** Returns a fitted frame scaled from the previous viewport to the next using app limits. */
-function scaleFrameBetweenViewports(
+/** Returns a fitted frame scaled between supplied work areas using app limits and relative placement. */
+function scaleFrameBetweenWorkAreas(
     config: AppWindowConfig,
     frame: WindowFrame,
-    previousBounds: WindowBounds,
-    nextBounds: WindowBounds,
+    previousBounds: WorkArea,
+    nextBounds: WorkArea,
 ): WindowFrame {
     const widthScale =
         previousBounds.width > 0 ? nextBounds.width / previousBounds.width : 1;
@@ -344,12 +263,12 @@ function scaleFrameBetweenViewports(
     );
 
     const horizontalProgress =
-        previousFreeX > 0 ? clamp(frame.position.x / previousFreeX, 0, 1) : 0.5;
+        previousFreeX > 0 ? clamp((frame.position.x - previousBounds.x) / previousFreeX, 0, 1) : 0.5;
 
     const verticalProgress =
-        previousFreeY > 0 ? clamp(frame.position.y / previousFreeY, 0, 1) : 0.5;
+        previousFreeY > 0 ? clamp((frame.position.y - previousBounds.y) / previousFreeY, 0, 1) : 0.5;
 
-    const limits = getSizeLimits(config, nextBounds);
+    const limits = resolveWindowSizing(config.sizing, nextBounds);
 
     const nextWidth = clamp(
         frame.size.width * widthScale,
@@ -366,20 +285,13 @@ function scaleFrameBetweenViewports(
     const nextFreeX = Math.max(0, nextBounds.width - nextWidth);
     const nextFreeY = Math.max(0, nextBounds.height - nextHeight);
 
-    return clampWindowFrame(
-        config,
-        {
-            position: {
-                x: nextFreeX * horizontalProgress,
-                y: nextFreeY * verticalProgress,
-            },
-            size: {
-                width: nextWidth,
-                height: nextHeight,
-            },
+    return {
+        position: {
+            x: nextBounds.x + nextFreeX * horizontalProgress,
+            y: nextBounds.y + nextFreeY * verticalProgress,
         },
-        nextBounds,
-    );
+        size: { width: nextWidth, height: nextHeight },
+    };
 }
 
 /** Returns window frame state and interaction handlers for the supplied app, actions and placement options. */
@@ -462,7 +374,7 @@ export function useWindowFrame({
 
     const isAnimating = useRef(false);
     const hasUserAdjustedFrame = useRef(false);
-    const viewportBoundsRef = useRef(getViewportBounds());
+    const workAreaRef = useRef(getWorkArea());
     const gestureVersion = useRef(0);
     const hasActiveGesture = useRef(false);
 
@@ -665,9 +577,7 @@ export function useWindowFrame({
 
                 setFramePosition(nextFrame.position);
 
-                if (hasIconAnimation) {
-                    setFrameSize(nextFrame.size);
-                }
+                setFrameSize(nextFrame.size);
 
                 setScale(1);
                 setOpacity(1);
@@ -1181,10 +1091,10 @@ export function useWindowFrame({
             }
 
             animationFrame = requestAnimationFrame(() => {
-                const previousBounds = viewportBoundsRef.current;
-                const nextBounds = getViewportBounds();
+                const previousBounds = workAreaRef.current;
+                const nextBounds = getWorkArea();
 
-                viewportBoundsRef.current = nextBounds;
+                workAreaRef.current = nextBounds;
 
                 const previousRestoredFrame: WindowFrame = {
                     position: {
@@ -1198,7 +1108,7 @@ export function useWindowFrame({
                 };
 
                 const nextRestoredFrame = hasUserAdjustedFrame.current
-                    ? scaleFrameBetweenViewports(
+                    ? scaleFrameBetweenWorkAreas(
                           config,
                           previousRestoredFrame,
                           previousBounds,
