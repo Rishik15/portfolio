@@ -1,24 +1,24 @@
 import {
-    PROJECTS_LIMITS,
-    PROJECTS_UI,
+  PROJECTS_LIMITS,
+  PROJECTS_UI,
 } from "@/components/apps/projects/projects-ui";
 import type { Project } from "@/config/projects";
 
 type ProjectOverviewProps = {
-    project: Project;
+  project: Project;
 };
 
 export function ProjectOverview({ project }: ProjectOverviewProps) {
-    return (
-        <section
-            className={`
+  return (
+    <section
+      className={`
                 min-w-0
                 ${PROJECTS_UI.section.paddingY}
                 ${PROJECTS_UI.section.overviewRightPadding}
             `}
-        >
-            <div
-                className={`
+    >
+      <div
+        className={`
                     font-semibold
                     uppercase
                     tracking-[0.12em]
@@ -27,36 +27,36 @@ export function ProjectOverview({ project }: ProjectOverviewProps) {
                     ${PROJECTS_UI.section.titleMargin}
                     ${PROJECTS_UI.section.titleText}
                 `}
-            >
-                Overview
-            </div>
+      >
+        Overview
+      </div>
 
-            <p
-                className={`
+      <p
+        className={`
                     max-w-4xl
                     text-foreground/65
                     ${PROJECTS_UI.section.bodyText}
                 `}
-            >
-                {project.description}
-            </p>
+      >
+        {project.description}
+      </p>
 
-            {project.highlights.length > 0 && (
-                <div
-                    className={`
+      {project.highlights.length > 0 && (
+        <div
+          className={`
                         grid
 
                         ${PROJECTS_UI.highlights.marginTop}
                         ${PROJECTS_UI.highlights.grid}
                         ${PROJECTS_UI.highlights.gap}
                     `}
-                >
-                    {project.highlights
-                        .slice(0, PROJECTS_LIMITS.highlights)
-                        .map((highlight) => (
-                            <div
-                                key={`${highlight.label}-${highlight.value}`}
-                                className={`
+        >
+          {project.highlights
+            .slice(0, PROJECTS_LIMITS.highlights)
+            .map((highlight) => (
+              <div
+                key={`${highlight.label}-${highlight.value}`}
+                className={`
                                     flex
                                     flex-col
                                     justify-center
@@ -67,20 +67,20 @@ export function ProjectOverview({ project }: ProjectOverviewProps) {
 
                                     ${PROJECTS_UI.highlights.card}
                                 `}
-                            >
-                                <div
-                                    className={`
+              >
+                <div
+                  className={`
                                         font-semibold
                                         tracking-tight
                                         text-foreground/90
                                         ${PROJECTS_UI.highlights.valueText}
                                     `}
-                                >
-                                    {highlight.value}
-                                </div>
+                >
+                  {highlight.value}
+                </div>
 
-                                <div
-                                    className={`
+                <div
+                  className={`
                                         mt-1
                                         font-medium
                                         uppercase
@@ -88,13 +88,13 @@ export function ProjectOverview({ project }: ProjectOverviewProps) {
                                         text-foreground/35
                                         ${PROJECTS_UI.highlights.labelText}
                                     `}
-                                >
-                                    {highlight.label}
-                                </div>
-                            </div>
-                        ))}
+                >
+                  {highlight.label}
                 </div>
-            )}
-        </section>
-    );
+              </div>
+            ))}
+        </div>
+      )}
+    </section>
+  );
 }

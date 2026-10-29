@@ -1,5 +1,5 @@
 export const UNSUPPORTED_SCREEN_UI = {
-    root: `
+  root: `
         relative
         h-dvh
         w-full
@@ -9,8 +9,8 @@ export const UNSUPPORTED_SCREEN_UI = {
         text-foreground
     `,
 
-    theme: {
-        position: `
+  theme: {
+    position: `
             absolute
             right-5
             top-5
@@ -23,7 +23,7 @@ export const UNSUPPORTED_SCREEN_UI = {
             [@media(max-height:560px)]:top-4
         `,
 
-        wrapper: `
+    wrapper: `
             pointer-events-auto
 
             flex
@@ -45,7 +45,7 @@ export const UNSUPPORTED_SCREEN_UI = {
             [@media(max-height:560px)]:size-7
         `,
 
-        button: `
+    button: `
             flex
             size-8
             cursor-pointer
@@ -77,9 +77,9 @@ export const UNSUPPORTED_SCREEN_UI = {
             [@media(max-height:560px)]:size-7
             [@media(max-height:560px)]:[&_svg]:size-[13px]
         `,
-    },
+  },
 
-    layout: `
+  layout: `
         mx-auto
 
         flex
@@ -104,7 +104,7 @@ export const UNSUPPORTED_SCREEN_UI = {
         [@media(max-height:560px)]:py-3
     `,
 
-    content: `
+  content: `
         flex
         max-h-full
         w-full
@@ -114,8 +114,8 @@ export const UNSUPPORTED_SCREEN_UI = {
         text-center
     `,
 
-    hero: {
-        iconWrapper: `
+  hero: {
+    iconWrapper: `
             flex
             size-12
             shrink-0
@@ -138,7 +138,7 @@ export const UNSUPPORTED_SCREEN_UI = {
             [@media(max-height:560px)]:rounded-lg
         `,
 
-        icon: `
+    icon: `
             size-6
             text-foreground/75
 
@@ -149,7 +149,7 @@ export const UNSUPPORTED_SCREEN_UI = {
             [@media(max-height:560px)]:size-5
         `,
 
-        heading: `
+    heading: `
             mt-4
 
             max-w-md
@@ -168,7 +168,7 @@ export const UNSUPPORTED_SCREEN_UI = {
             [@media(max-height:560px)]:text-[20px]
         `,
 
-        description: `
+    description: `
             mt-2.5
 
             max-w-[500px]
@@ -187,10 +187,10 @@ export const UNSUPPORTED_SCREEN_UI = {
             [@media(max-height:560px)]:text-[12px]
             [@media(max-height:560px)]:leading-4
         `,
-    },
+  },
 
-    profile: {
-        root: `
+  profile: {
+    root: `
             mt-3
             mb-3
             text-center
@@ -202,7 +202,7 @@ export const UNSUPPORTED_SCREEN_UI = {
             [@media(max-height:560px)]:mb-2
         `,
 
-        name: `
+    name: `
             text-[14px]
             font-semibold
             text-foreground
@@ -212,7 +212,7 @@ export const UNSUPPORTED_SCREEN_UI = {
             [@media(max-height:560px)]:text-[13px]
         `,
 
-        role: `
+    role: `
             mt-0.5
             text-[11px]
             text-foreground/60
@@ -221,10 +221,10 @@ export const UNSUPPORTED_SCREEN_UI = {
 
             [@media(max-height:560px)]:text-[10px]
         `,
-    },
+  },
 
-    links: {
-        nav: `
+  links: {
+    nav: `
             mt-4
 
             flex
@@ -237,7 +237,7 @@ export const UNSUPPORTED_SCREEN_UI = {
             [@media(max-height:560px)]:mt-2.5
         `,
 
-        link: `
+    link: `
             inline-flex
             items-center
 
@@ -263,10 +263,10 @@ export const UNSUPPORTED_SCREEN_UI = {
             [@media(max-height:560px)]:py-1.5
             [@media(max-height:560px)]:text-[11px]
         `,
-    },
+  },
 
-    support: {
-        section: `
+  support: {
+    section: `
             mt-6
             w-full
 
@@ -277,7 +277,7 @@ export const UNSUPPORTED_SCREEN_UI = {
             [@media(max-height:560px)]:mt-3
         `,
 
-        label: `
+    label: `
             text-[10px]
             font-semibold
             uppercase
@@ -289,7 +289,7 @@ export const UNSUPPORTED_SCREEN_UI = {
             [@media(max-height:560px)]:text-[9px]
         `,
 
-        grid: `
+    grid: `
             mt-3
 
             grid
@@ -308,7 +308,7 @@ export const UNSUPPORTED_SCREEN_UI = {
             [@media(max-height:560px)]:gap-1.5
         `,
 
-        card: `
+    card: `
             flex
             min-w-0
             items-center
@@ -346,7 +346,7 @@ export const UNSUPPORTED_SCREEN_UI = {
             min-[560px]:[@media(max-height:560px)]:py-2
         `,
 
-        iconWrapper: `
+    iconWrapper: `
             flex
             size-8
             shrink-0
@@ -364,7 +364,7 @@ export const UNSUPPORTED_SCREEN_UI = {
             [@media(max-height:560px)]:size-7
         `,
 
-        icon: `
+    icon: `
             size-4
             text-foreground/65
 
@@ -375,11 +375,11 @@ export const UNSUPPORTED_SCREEN_UI = {
             [@media(max-height:560px)]:size-3.5
         `,
 
-        info: `
+    info: `
             min-w-0
         `,
 
-        device: `
+    device: `
             text-[12px]
             font-semibold
             text-foreground/85
@@ -391,7 +391,7 @@ export const UNSUPPORTED_SCREEN_UI = {
             [@media(max-height:560px)]:text-[11px]
         `,
 
-        size: `
+    size: `
             mt-0.5
 
             text-[10px]
@@ -405,7 +405,7 @@ export const UNSUPPORTED_SCREEN_UI = {
             [@media(max-height:560px)]:text-[9px]
         `,
 
-        description: `
+    description: `
             mt-0.5
 
             text-[10px]
@@ -417,10 +417,10 @@ export const UNSUPPORTED_SCREEN_UI = {
 
             [@media(max-height:620px)]:hidden
         `,
-    },
+  },
 
-    footer: {
-        root: `
+  footer: {
+    root: `
             mt-4
 
             flex
@@ -445,11 +445,11 @@ export const UNSUPPORTED_SCREEN_UI = {
             [@media(max-height:620px)]:[&>span:last-child]:hidden
         `,
 
-        minimum: `
+    minimum: `
             font-medium
             text-foreground/45
 
             [@media(max-height:560px)]:text-[9px]
         `,
-    },
+  },
 } as const;

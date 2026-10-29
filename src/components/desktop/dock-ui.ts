@@ -1,12 +1,12 @@
 /** dock-ui.ts defines desktop dock dimensions and presentation classes. */
 export const DOCK_CONFIG = {
-    iconSize: 54,
-    iconMagnification: 72,
-    iconDistance: 130,
+  iconSize: 54,
+  iconMagnification: 72,
+  iconDistance: 130,
 } as const;
 
 export const DOCK_UI = {
-    position: `
+  position: `
         pointer-events-none
 
         fixed
@@ -24,7 +24,7 @@ export const DOCK_UI = {
         min-[2400px]:bottom-16
     `,
 
-    dock: `
+  dock: `
         pointer-events-auto
 
         h-19
@@ -60,11 +60,11 @@ export const DOCK_UI = {
         min-[2400px]:scale-[1.15]
     `,
 
-    icon: `
+  icon: `
         rounded-[15px]
     `,
 
-    separator: `
+  separator: `
         mx-0.75
 
         h-11

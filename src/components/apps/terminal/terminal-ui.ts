@@ -1,5 +1,5 @@
 export const TERMINAL_UI = {
-    root: `
+  root: `
         @container/terminal
 
         relative
@@ -7,7 +7,7 @@ export const TERMINAL_UI = {
         w-full
     `,
 
-    viewport: `
+  viewport: `
         h-full
         w-full
 
@@ -38,7 +38,7 @@ export const TERMINAL_UI = {
         @min-[1680px]/terminal:text-[16px]
     `,
 
-    jumpToLatest: `
+  jumpToLatest: `
         absolute
         right-4
         bottom-4
@@ -61,20 +61,20 @@ export const TERMINAL_UI = {
         hover:bg-foreground/10
     `,
 
-    output: {
-        root: `
+  output: {
+    root: `
             w-full
         `,
 
-        textResult: `
+    textResult: `
             text-foreground/55
         `,
 
-        entry: `
+    entry: `
             w-full
         `,
 
-        commandRow: `
+    commandRow: `
             flex
             min-w-0
             items-center
@@ -86,14 +86,14 @@ export const TERMINAL_UI = {
             @min-[1440px]/terminal:gap-2.5
         `,
 
-        result: `
+    result: `
             mt-2
             w-full
 
             @min-[1440px]/terminal:mt-2.5
         `,
 
-        entriesWithWelcome: `
+    entriesWithWelcome: `
             mt-2
             space-y-2
 
@@ -101,51 +101,51 @@ export const TERMINAL_UI = {
             @min-[1440px]/terminal:space-y-3
         `,
 
-        entries: `
+    entries: `
             space-y-2
 
             @min-[1440px]/terminal:space-y-3
         `,
 
-        inputWithContent: `
+    inputWithContent: `
             mt-2
             w-full
 
             @min-[1440px]/terminal:mt-3
         `,
 
-        input: `
+    input: `
             w-full
         `,
-    },
+  },
 
-    prompt: {
-        root: `
+  prompt: {
+    root: `
             flex
             shrink-0
             items-center
             whitespace-nowrap
         `,
 
-        user: `
+    user: `
             font-medium
             text-red-400
 
             dark:text-red-400
         `,
 
-        symbol: `
+    symbol: `
             ml-1
             text-foreground/90
         `,
-    },
+  },
 
-    input: {
-        root: `
+  input: {
+    root: `
             w-full
         `,
 
-        form: `
+    form: `
             flex
             w-full
             min-w-0
@@ -158,13 +158,13 @@ export const TERMINAL_UI = {
             @min-[1440px]/terminal:gap-2.5
         `,
 
-        fieldWrapper: `
+    fieldWrapper: `
             relative
             min-w-0
             flex-1
         `,
 
-        field: `
+    field: `
             w-full
             min-w-0
 
@@ -180,7 +180,7 @@ export const TERMINAL_UI = {
             outline-none
         `,
 
-        caret: `
+    caret: `
             pointer-events-none
 
             absolute
@@ -196,10 +196,10 @@ export const TERMINAL_UI = {
 
             leading-[1.25em]
         `,
-    },
+  },
 
-    suggestions: {
-        root: `
+  suggestions: {
+    root: `
             mt-2
             w-full
 
@@ -212,7 +212,7 @@ export const TERMINAL_UI = {
             @min-[1440px]/terminal:py-1.5
         `,
 
-        row: `
+    row: `
             grid
             w-full
             min-w-0
@@ -242,28 +242,28 @@ export const TERMINAL_UI = {
             @min-[1680px]/terminal:grid-cols-[14rem_minmax(0,1fr)]
         `,
 
-        command: `
+    command: `
             min-w-0
             font-medium
         `,
 
-        description: `
+    description: `
             min-w-0
             text-foreground/55
         `,
 
-        active: `
+    active: `
             bg-foreground/8
             text-foreground
         `,
 
-        inactive: `
+    inactive: `
             text-foreground/55
 
             hover:bg-foreground/4
         `,
 
-        hint: `
+    hint: `
             border-t
             border-foreground/10
 
@@ -284,17 +284,17 @@ export const TERMINAL_UI = {
 
             @min-[1680px]/terminal:text-[14px]
         `,
-    },
+  },
 
-    welcome: {
-        root: `
+  welcome: {
+    root: `
             w-full
 
             border
             border-foreground/25
         `,
 
-        body: `
+    body: `
             px-3
             py-2.5
 
@@ -308,7 +308,7 @@ export const TERMINAL_UI = {
             @min-[1440px]/terminal:py-4
         `,
 
-        title: `
+    title: `
             text-[13px]
             font-medium
             text-foreground/90
@@ -322,7 +322,7 @@ export const TERMINAL_UI = {
             @min-[1680px]/terminal:text-[17px]
         `,
 
-        helpRow: `
+    helpRow: `
             border-t
             border-foreground/10
 
@@ -337,21 +337,21 @@ export const TERMINAL_UI = {
             @min-[1440px]/terminal:py-2.5
         `,
 
-        muted: `
+    muted: `
             text-foreground/65
         `,
 
-        command: `
+    command: `
             mx-1.5
             font-semibold
             text-foreground/90
 
             @min-[1440px]/terminal:mx-2
         `,
-    },
+  },
 
-    help: {
-        root: `
+  help: {
+    root: `
             w-full
 
             border
@@ -360,7 +360,7 @@ export const TERMINAL_UI = {
             bg-background/20
         `,
 
-        header: `
+    header: `
             grid
 
             grid-cols-[7.5rem_minmax(0,1fr)]
@@ -397,7 +397,7 @@ export const TERMINAL_UI = {
             @min-[1680px]/terminal:text-[12px]
         `,
 
-        body: `
+    body: `
             mt-1
 
             px-1.5
@@ -413,7 +413,7 @@ export const TERMINAL_UI = {
             @min-[1440px]/terminal:px-3
         `,
 
-        row: `
+    row: `
             grid
 
             grid-cols-[7.5rem_minmax(0,1fr)]
@@ -437,18 +437,18 @@ export const TERMINAL_UI = {
             @min-[1680px]/terminal:grid-cols-[15rem_minmax(0,1fr)]
         `,
 
-        command: `
+    command: `
             min-w-0
             font-medium
             text-foreground/90
         `,
 
-        description: `
+    description: `
             min-w-0
             text-foreground/50
         `,
 
-        footer: `
+    footer: `
             grid
             grid-cols-1
 
@@ -482,7 +482,7 @@ export const TERMINAL_UI = {
             @min-[1680px]/terminal:text-[13px]
         `,
 
-        footerItem: `
+    footerItem: `
             flex
             min-w-0
             items-center
@@ -490,14 +490,14 @@ export const TERMINAL_UI = {
             gap-2
         `,
 
-        footerKey: `
+    footerKey: `
             shrink-0
             text-foreground/60
         `,
-    },
+  },
 
-    skills: {
-        root: `
+  skills: {
+    root: `
             w-full
             overflow-x-auto
 
@@ -514,12 +514,12 @@ export const TERMINAL_UI = {
             @min-[1440px]/terminal:p-3
         `,
 
-        table: `
+    table: `
             w-full
             border-collapse
         `,
 
-        row: `
+    row: `
             border-t
             border-foreground/10
 
@@ -528,7 +528,7 @@ export const TERMINAL_UI = {
             hover:bg-foreground/[0.035]
         `,
 
-        category: `
+    category: `
             py-1.5
             pr-4
             pl-2
@@ -546,7 +546,7 @@ export const TERMINAL_UI = {
             @min-[1200px]/terminal:pr-6
         `,
 
-        categoryLabel: `
+    categoryLabel: `
             flex
             items-start
             gap-1.5
@@ -554,7 +554,7 @@ export const TERMINAL_UI = {
             @min-[760px]/terminal:gap-2
         `,
 
-        dot: `
+    dot: `
             mt-[0.6em]
             size-1.5
             shrink-0
@@ -564,7 +564,7 @@ export const TERMINAL_UI = {
             dark:bg-blue-400/75
         `,
 
-        cell: `
+    cell: `
             w-full
             py-1.5
             pr-2
@@ -574,7 +574,7 @@ export const TERMINAL_UI = {
             @min-[760px]/terminal:py-2
         `,
 
-        skillList: `
+    skillList: `
             flex
             flex-wrap
 
@@ -584,14 +584,14 @@ export const TERMINAL_UI = {
             @min-[1440px]/terminal:gap-x-4
         `,
 
-        skill: `
+    skill: `
             whitespace-nowrap
             text-foreground/80
         `,
-    },
+  },
 
-    certificates: {
-        root: `
+  certificates: {
+    root: `
             w-full
             py-1
 
@@ -603,18 +603,18 @@ export const TERMINAL_UI = {
             @min-[1680px]/terminal:leading-7
         `,
 
-        heading: `
+    heading: `
             text-blue-500/80
 
             dark:text-blue-400/80
         `,
 
-        certificateLine: `
+    certificateLine: `
             grid
             grid-cols-[4ch_minmax(0,1fr)]
         `,
 
-        detailLine: `
+    detailLine: `
             grid
 
             grid-cols-[7ch_5.75rem_minmax(0,1fr)]
@@ -626,33 +626,33 @@ export const TERMINAL_UI = {
             @min-[1440px]/terminal:grid-cols-[7ch_9rem_minmax(0,1fr)]
         `,
 
-        branch: `
+    branch: `
             select-none
             whitespace-pre
             text-foreground/25
         `,
 
-        certificateName: `
+    certificateName: `
             min-w-0
             text-foreground/95
         `,
 
-        detailLabel: `
+    detailLabel: `
             select-none
             text-foreground/55
         `,
 
-        credentialLabel: `
+    credentialLabel: `
             select-none
             text-foreground/35
         `,
 
-        detailValue: `
+    detailValue: `
             min-w-0
             text-foreground/75
         `,
 
-        credentialLink: `
+    credentialLink: `
             w-fit
 
             text-blue-500/80
@@ -665,11 +665,11 @@ export const TERMINAL_UI = {
             dark:text-blue-400/80
             dark:hover:text-blue-400
         `,
-    },
+  },
 } as const;
 
 export const TERMINAL_MOTION = {
-    revealStepMs: 40,
-    revealMaxTotalMs: 1200,
-    followThresholdPx: 24,
+  revealStepMs: 40,
+  revealMaxTotalMs: 1200,
+  followThresholdPx: 24,
 } as const;

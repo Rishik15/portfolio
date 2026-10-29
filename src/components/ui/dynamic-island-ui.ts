@@ -1,5 +1,5 @@
 export const DYNAMIC_ISLAND_UI = {
-    position: `
+  position: `
         pointer-events-auto
         fixed
         left-1/2
@@ -12,7 +12,7 @@ export const DYNAMIC_ISLAND_UI = {
         min-[2400px]:top-6
     `,
 
-    island: `
+  island: `
         mx-auto
         w-fit
         min-w-18
@@ -28,8 +28,8 @@ export const DYNAMIC_ISLAND_UI = {
         min-[2400px]:min-w-[96px]
     `,
 
-    bars: {
-        root: `
+  bars: {
+    root: `
             flex
             items-center
             justify-center
@@ -46,7 +46,7 @@ export const DYNAMIC_ISLAND_UI = {
             min-[2400px]:py-3
         `,
 
-        bar: `
+    bar: `
             h-2.5
             w-[3px]
             origin-center
@@ -59,10 +59,10 @@ export const DYNAMIC_ISLAND_UI = {
             min-[2400px]:h-3.5
             min-[2400px]:w-[3.5px]
         `,
-    },
+  },
 
-    player: {
-        root: `
+  player: {
+    root: `
             flex
             w-72
             items-center
@@ -86,7 +86,7 @@ export const DYNAMIC_ISLAND_UI = {
             min-[2400px]:py-3
         `,
 
-        musicIcon: `
+    musicIcon: `
             size-5
             shrink-0
             text-pink-500
@@ -96,12 +96,12 @@ export const DYNAMIC_ISLAND_UI = {
             min-[2400px]:size-[22px]
         `,
 
-        trackInfo: `
+    trackInfo: `
             min-w-0
             flex-1
         `,
 
-        title: `
+    title: `
             pointer-events-none
             truncate
 
@@ -116,7 +116,7 @@ export const DYNAMIC_ISLAND_UI = {
             min-[2400px]:text-base
         `,
 
-        artist: `
+    artist: `
             pointer-events-none
             truncate
 
@@ -130,7 +130,7 @@ export const DYNAMIC_ISLAND_UI = {
             min-[2400px]:text-sm
         `,
 
-        controlButton: `
+    controlButton: `
             flex
             shrink-0
             items-center
@@ -155,30 +155,30 @@ export const DYNAMIC_ISLAND_UI = {
             min-[1800px]:p-1.5
         `,
 
-        controlIcon: `
+    controlIcon: `
             size-4
 
             min-[1800px]:size-[17px]
 
             min-[2400px]:size-[18px]
         `,
-    },
+  },
 } as const;
 
 export const DYNAMIC_ISLAND_MOTION = {
-    bounce: {
-        compactToMusic: 0.42,
-        musicToCompact: 0.34,
-        fallback: 0.4,
-    },
+  bounce: {
+    compactToMusic: 0.42,
+    musicToCompact: 0.34,
+    fallback: 0.4,
+  },
 
-    musicBarDelays: [0, 0.1, 0.2, 0.3] as const,
+  musicBarDelays: [0, 0.1, 0.2, 0.3] as const,
 
-    autoCollapseDelayMs: 1000,
+  autoCollapseDelayMs: 1000,
 
-    islandMorphDurationSeconds: 0.25,
-    contentMorphDurationSeconds: 0.23,
+  islandMorphDurationSeconds: 0.25,
+  contentMorphDurationSeconds: 0.23,
 
-    exitToPillDelayMs: 130,
-    exitShrinkDurationMs: 120,
+  exitToPillDelayMs: 130,
+  exitShrinkDurationMs: 120,
 } as const;

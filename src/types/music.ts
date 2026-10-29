@@ -1,10 +1,10 @@
 export type MusicTrack = {
-    id: string;
-    title: string;
-    artist: string;
+  id: string;
+  title: string;
+  artist: string;
 };
 
 export type MusicPlaylist = {
-    name: string;
-    tracks: readonly MusicTrack[];
+  name: string;
+  tracks: readonly MusicTrack[];
 };

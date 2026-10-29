@@ -4,7 +4,7 @@ export const runtime = "nodejs";
 export const dynamic = "force-static";
 
 export async function GET() {
-    const library = await getNotesLibrary();
+  const library = await getNotesLibrary();
 
-    return Response.json(library);
+  return Response.json(library);
 }

@@ -10,37 +10,37 @@ import { AnimatedThemeToggler } from "@/components/ui/animated-theme-toggler";
 const emptySubscribe = () => () => {};
 
 export function TopBar() {
-    const mounted = useSyncExternalStore(
-        emptySubscribe,
-        () => true,
-        () => false,
-    );
+  const mounted = useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false,
+  );
 
-    const { resolvedTheme, setTheme } = useTheme();
+  const { resolvedTheme, setTheme } = useTheme();
 
-    return (
-        <header className={TOP_BAR_UI.root}>
-            <div>
-                <h1 className={TOP_BAR_UI.identity.name}>Rishik</h1>
+  return (
+    <header className={TOP_BAR_UI.root}>
+      <div>
+        <h1 className={TOP_BAR_UI.identity.name}>Rishik</h1>
 
-                <p className={TOP_BAR_UI.identity.role}>Software Engineer</p>
-            </div>
+        <p className={TOP_BAR_UI.identity.role}>Software Engineer</p>
+      </div>
 
-            <div className={TOP_BAR_UI.right.root}>
-                <LiveClock />
+      <div className={TOP_BAR_UI.right.root}>
+        <LiveClock />
 
-                <div className={TOP_BAR_UI.right.themeWrapper}>
-                    {mounted && (
-                        <AnimatedThemeToggler
-                            theme={resolvedTheme === "dark" ? "dark" : "light"}
-                            onThemeChange={setTheme}
-                            duration={600}
-                            aria-label="Toggle theme"
-                            className={TOP_BAR_UI.right.themeButton}
-                        />
-                    )}
-                </div>
-            </div>
-        </header>
-    );
+        <div className={TOP_BAR_UI.right.themeWrapper}>
+          {mounted && (
+            <AnimatedThemeToggler
+              theme={resolvedTheme === "dark" ? "dark" : "light"}
+              onThemeChange={setTheme}
+              duration={600}
+              aria-label="Toggle theme"
+              className={TOP_BAR_UI.right.themeButton}
+            />
+          )}
+        </div>
+      </div>
+    </header>
+  );
 }

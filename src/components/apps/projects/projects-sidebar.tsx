@@ -2,57 +2,57 @@ import { PROJECTS_UI } from "@/components/apps/projects/projects-ui";
 import type { Project } from "@/config/projects";
 
 type ProjectsSidebarProps = {
-    projects: readonly Project[];
-    selectedProjectId: string | null;
-    onSelectProject: (projectId: string) => void;
+  projects: readonly Project[];
+  selectedProjectId: string | null;
+  onSelectProject: (projectId: string) => void;
 };
 
 function EmptySidebarItems() {
-    return (
-        <div className={PROJECTS_UI.sidebar.listGap}>
-            <div
-                className={`
+  return (
+    <div className={PROJECTS_UI.sidebar.listGap}>
+      <div
+        className={`
                     rounded-md
                     bg-foreground/[0.07]
                     ${PROJECTS_UI.sidebar.emptyItemHeight}
                 `}
-            />
+      />
 
-            <div
-                className={`
+      <div
+        className={`
                     rounded-md
                     bg-foreground/[0.025]
                     ${PROJECTS_UI.sidebar.emptyItemHeight}
                 `}
-            />
+      />
 
-            <div
-                className={`
+      <div
+        className={`
                     rounded-md
                     bg-foreground/[0.025]
                     ${PROJECTS_UI.sidebar.emptyItemHeight}
                 `}
-            />
+      />
 
-            <div
-                className={`
+      <div
+        className={`
                     rounded-md
                     bg-foreground/[0.025]
                     ${PROJECTS_UI.sidebar.emptyItemHeight}
                 `}
-            />
-        </div>
-    );
+      />
+    </div>
+  );
 }
 
 export function ProjectsSidebar({
-    projects,
-    selectedProjectId,
-    onSelectProject,
+  projects,
+  selectedProjectId,
+  onSelectProject,
 }: ProjectsSidebarProps) {
-    return (
-        <aside
-            className={`
+  return (
+    <aside
+      className={`
                 flex
                 shrink-0
                 flex-col
@@ -61,9 +61,9 @@ export function ProjectsSidebar({
                 bg-foreground/[0.025]
                 ${PROJECTS_UI.sidebar.width}
             `}
-        >
-            <div
-                className={`
+    >
+      <div
+        className={`
                     flex
                     shrink-0
                     items-center
@@ -72,39 +72,39 @@ export function ProjectsSidebar({
                     ${PROJECTS_UI.chrome.headerHeight}
                     ${PROJECTS_UI.sidebar.headerPadding}
                 `}
-            >
-                <span
-                    className={`
+      >
+        <span
+          className={`
                         font-semibold
                         tracking-tight
                         ${PROJECTS_UI.sidebar.headerText}
                     `}
-                >
-                    Index
-                </span>
-            </div>
+        >
+          Index
+        </span>
+      </div>
 
-            <div
-                className={`
+      <div
+        className={`
                     min-h-0
                     flex-1
                     overflow-auto
                     ${PROJECTS_UI.sidebar.bodyPadding}
                 `}
-            >
-                {projects.length === 0 ? (
-                    <EmptySidebarItems />
-                ) : (
-                    <div className={PROJECTS_UI.sidebar.listGap}>
-                        {projects.map((project) => {
-                            const selected = project.id === selectedProjectId;
+      >
+        {projects.length === 0 ? (
+          <EmptySidebarItems />
+        ) : (
+          <div className={PROJECTS_UI.sidebar.listGap}>
+            {projects.map((project) => {
+              const selected = project.id === selectedProjectId;
 
-                            return (
-                                <button
-                                    key={project.id}
-                                    type="button"
-                                    onClick={() => onSelectProject(project.id)}
-                                    className={`
+              return (
+                <button
+                  key={project.id}
+                  type="button"
+                  onClick={() => onSelectProject(project.id)}
+                  className={`
                                         w-full
                                         rounded-md
                                         text-left
@@ -114,42 +114,42 @@ export function ProjectsSidebar({
                                         ${PROJECTS_UI.sidebar.itemPadding}
 
                                         ${
-                                            selected
-                                                ? "bg-foreground/[0.08]"
-                                                : "hover:bg-foreground/[0.045]"
+                                          selected
+                                            ? "bg-foreground/[0.08]"
+                                            : "hover:bg-foreground/[0.045]"
                                         }
                                     `}
-                                >
-                                    <div
-                                        className={`
+                >
+                  <div
+                    className={`
                                             truncate
                                             font-medium
                                             text-foreground/85
                                             ${PROJECTS_UI.sidebar.itemNameText}
                                         `}
-                                    >
-                                        {project.name}
-                                    </div>
+                  >
+                    {project.name}
+                  </div>
 
-                                    <div
-                                        className={`
+                  <div
+                    className={`
                                             mt-0.5
                                             truncate
                                             text-foreground/40
                                             ${PROJECTS_UI.sidebar.itemCategoryText}
                                         `}
-                                    >
-                                        {project.category}
-                                    </div>
-                                </button>
-                            );
-                        })}
-                    </div>
-                )}
-            </div>
+                  >
+                    {project.category}
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        )}
+      </div>
 
-            <div
-                className={`
+      <div
+        className={`
                     flex
                     shrink-0
                     items-center
@@ -161,16 +161,15 @@ export function ProjectsSidebar({
                     ${PROJECTS_UI.sidebar.footerPadding}
                     ${PROJECTS_UI.sidebar.footerText}
                 `}
-            >
-                {projects.length === 0 ? (
-                    <div className="h-2 w-20 rounded-full bg-foreground/10" />
-                ) : (
-                    <>
-                        {projects.length}{" "}
-                        {projects.length === 1 ? "project" : "projects"}
-                    </>
-                )}
-            </div>
-        </aside>
-    );
+      >
+        {projects.length === 0 ? (
+          <div className="h-2 w-20 rounded-full bg-foreground/10" />
+        ) : (
+          <>
+            {projects.length} {projects.length === 1 ? "project" : "projects"}
+          </>
+        )}
+      </div>
+    </aside>
+  );
 }

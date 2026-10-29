@@ -9,77 +9,77 @@ import { useWindowManager } from "@/components/windows/window-manager";
 import { WINDOW_IDS, type WindowId } from "@/config/windows";
 
 type DesktopApp = {
-    readonly id: string;
-    readonly windowId: WindowId;
-    readonly label: string;
-    readonly icon: string;
-    readonly iconWidth: number;
-    readonly iconHeight: number;
+  readonly id: string;
+  readonly windowId: WindowId;
+  readonly label: string;
+  readonly icon: string;
+  readonly iconWidth: number;
+  readonly iconHeight: number;
 
-    readonly position: {
-        readonly top: string;
-        readonly left: string;
-    };
+  readonly position: {
+    readonly top: string;
+    readonly left: string;
+  };
 };
 
 const desktopApps = [
-    {
-        id: "projects",
-        windowId: WINDOW_IDS.projects,
-        label: "Projects",
-        icon: "/icons/projects.webp",
-        iconWidth: 64,
-        iconHeight: 64,
+  {
+    id: "projects",
+    windowId: WINDOW_IDS.projects,
+    label: "Projects",
+    icon: "/icons/projects.webp",
+    iconWidth: 64,
+    iconHeight: 64,
 
-        position: {
-            top: "calc(50% - 205px)",
-            left: "1%",
-        },
+    position: {
+      top: "calc(50% - 205px)",
+      left: "1%",
     },
-    {
-        id: "experience",
-        windowId: WINDOW_IDS.experience,
-        label: "Experience",
-        icon: "/icons/experience.webp",
-        iconWidth: 64,
-        iconHeight: 64,
+  },
+  {
+    id: "experience",
+    windowId: WINDOW_IDS.experience,
+    label: "Experience",
+    icon: "/icons/experience.webp",
+    iconWidth: 64,
+    iconHeight: 64,
 
-        position: {
-            top: "calc(50% - 97px)",
-            left: "1%",
-        },
+    position: {
+      top: "calc(50% - 97px)",
+      left: "1%",
     },
-    {
-        id: "resume",
-        windowId: WINDOW_IDS.resume,
-        label: "Resume",
-        icon: "/icons/resume.webp",
-        iconWidth: 64,
-        iconHeight: 64,
+  },
+  {
+    id: "resume",
+    windowId: WINDOW_IDS.resume,
+    label: "Resume",
+    icon: "/icons/resume.webp",
+    iconWidth: 64,
+    iconHeight: 64,
 
-        position: {
-            top: "calc(50% + 11px)",
-            left: "1%",
-        },
+    position: {
+      top: "calc(50% + 11px)",
+      left: "1%",
     },
-    {
-        id: "terminal",
-        windowId: WINDOW_IDS.terminal,
-        label: "Terminal",
-        icon: "/icons/terminal.webp",
-        iconWidth: 64,
-        iconHeight: 64,
+  },
+  {
+    id: "terminal",
+    windowId: WINDOW_IDS.terminal,
+    label: "Terminal",
+    icon: "/icons/terminal.webp",
+    iconWidth: 64,
+    iconHeight: 64,
 
-        position: {
-            top: "calc(50% + 119px)",
-            left: "1%",
-        },
+    position: {
+      top: "calc(50% + 119px)",
+      left: "1%",
     },
+  },
 ] as const satisfies readonly DesktopApp[];
 
 type DesktopAppIconProps = {
-    app: DesktopApp;
-    dragBoundsRef: RefObject<HTMLDivElement | null>;
+  app: DesktopApp;
+  dragBoundsRef: RefObject<HTMLDivElement | null>;
 };
 
 /**
@@ -87,32 +87,32 @@ type DesktopAppIconProps = {
  * Takes the app definition and the drag bounds ref; returns the icon element.
  */
 function DesktopAppIcon({ app, dragBoundsRef }: DesktopAppIconProps) {
-    const { activateWindow, registerLauncher } = useWindowManager();
+  const { activateWindow, registerLauncher } = useWindowManager();
 
-    const setLauncherRef = useCallback(
-        (element: HTMLDivElement | null) => {
-            registerLauncher(app.windowId, element);
-        },
-        [app.windowId, registerLauncher],
-    );
+  const setLauncherRef = useCallback(
+    (element: HTMLDivElement | null) => {
+      registerLauncher(app.windowId, element);
+    },
+    [app.windowId, registerLauncher],
+  );
 
-    const handleOpen = useCallback(() => {
-        activateWindow(app.windowId);
-    }, [activateWindow, app.windowId]);
+  const handleOpen = useCallback(() => {
+    activateWindow(app.windowId);
+  }, [activateWindow, app.windowId]);
 
-    return (
-        <DesktopIcon
-            label={app.label}
-            icon={app.icon}
-            iconWidth={app.iconWidth}
-            iconHeight={app.iconHeight}
-            position={app.position}
-            dragConstraints={dragBoundsRef}
-            launcherRef={setLauncherRef}
-            onOpen={handleOpen}
-            className="pointer-events-auto"
-        />
-    );
+  return (
+    <DesktopIcon
+      label={app.label}
+      icon={app.icon}
+      iconWidth={app.iconWidth}
+      iconHeight={app.iconHeight}
+      position={app.position}
+      dragConstraints={dragBoundsRef}
+      launcherRef={setLauncherRef}
+      onOpen={handleOpen}
+      className="pointer-events-auto"
+    />
+  );
 }
 
 /**
@@ -120,20 +120,16 @@ function DesktopAppIcon({ app, dragBoundsRef }: DesktopAppIconProps) {
  * Takes no props; returns the icon layer element.
  */
 export function DesktopIcons() {
-    const dragBoundsRef = useRef<HTMLDivElement>(null);
+  const dragBoundsRef = useRef<HTMLDivElement>(null);
 
-    return (
-        <div
-            ref={dragBoundsRef}
-            className="pointer-events-none absolute inset-x-0 bottom-28 top-20 z-10 overflow-hidden"
-        >
-            {desktopApps.map((app) => (
-                <DesktopAppIcon
-                    key={app.id}
-                    app={app}
-                    dragBoundsRef={dragBoundsRef}
-                />
-            ))}
-        </div>
-    );
+  return (
+    <div
+      ref={dragBoundsRef}
+      className="pointer-events-none absolute inset-x-0 bottom-28 top-20 z-10 overflow-hidden"
+    >
+      {desktopApps.map((app) => (
+        <DesktopAppIcon key={app.id} app={app} dragBoundsRef={dragBoundsRef} />
+      ))}
+    </div>
+  );
 }

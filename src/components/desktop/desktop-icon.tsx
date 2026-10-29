@@ -8,122 +8,122 @@ import { DESKTOP_ICON_UI } from "@/components/desktop/desktop-icon-ui";
 import { cn } from "@/lib/utils";
 
 type DesktopIconProps = {
-    label: string;
-    icon: string;
+  label: string;
+  icon: string;
 
-    position: {
-        top: string;
-        left: string;
-    };
+  position: {
+    top: string;
+    left: string;
+  };
 
-    dragConstraints: RefObject<HTMLDivElement | null>;
+  dragConstraints: RefObject<HTMLDivElement | null>;
 
-    className?: string;
+  className?: string;
 
-    iconWidth?: number;
-    iconHeight?: number;
+  iconWidth?: number;
+  iconHeight?: number;
 
-    launcherRef?: Ref<HTMLDivElement>;
-    onOpen?: () => void;
+  launcherRef?: Ref<HTMLDivElement>;
+  onOpen?: () => void;
 };
 
 const DRAG_TAP_BLOCK_MS = 100;
 
 export function DesktopIcon({
-    label,
-    icon,
-    position,
-    dragConstraints,
-    className,
-    iconWidth = 64,
-    iconHeight = 64,
-    launcherRef,
-    onOpen,
+  label,
+  icon,
+  position,
+  dragConstraints,
+  className,
+  iconWidth = 64,
+  iconHeight = 64,
+  launcherRef,
+  onOpen,
 }: DesktopIconProps) {
-    const isDraggingRef = useRef(false);
-    const lastDragEndRef = useRef(0);
+  const isDraggingRef = useRef(false);
+  const lastDragEndRef = useRef(0);
 
-    const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-        if (!onOpen) {
-            return;
-        }
+  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (!onOpen) {
+      return;
+    }
 
-        if (event.key === "Enter" || event.key === " ") {
-            event.preventDefault();
-            onOpen();
-        }
-    };
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      onOpen();
+    }
+  };
 
-    const handleDragStart = () => {
-        isDraggingRef.current = true;
-    };
+  const handleDragStart = () => {
+    isDraggingRef.current = true;
+  };
 
-    const handleDragEnd = () => {
-        isDraggingRef.current = false;
-        lastDragEndRef.current = performance.now();
-    };
+  const handleDragEnd = () => {
+    isDraggingRef.current = false;
+    lastDragEndRef.current = performance.now();
+  };
 
-    const handleTap = () => {
-        if (!onOpen || isDraggingRef.current) {
-            return;
-        }
+  const handleTap = () => {
+    if (!onOpen || isDraggingRef.current) {
+      return;
+    }
 
-        const timeSinceDragEnd = performance.now() - lastDragEndRef.current;
+    const timeSinceDragEnd = performance.now() - lastDragEndRef.current;
 
-        if (timeSinceDragEnd < DRAG_TAP_BLOCK_MS) {
-            return;
-        }
+    if (timeSinceDragEnd < DRAG_TAP_BLOCK_MS) {
+      return;
+    }
 
-        onOpen();
-    };
+    onOpen();
+  };
 
-    return (
-        <motion.div
-            ref={launcherRef}
-            drag
-            dragConstraints={dragConstraints}
-            dragElastic={0}
-            dragMomentum={false}
-            onDragStart={handleDragStart}
-            onDragEnd={handleDragEnd}
-            onTap={handleTap}
-            onKeyDown={handleKeyDown}
-            role={onOpen ? "button" : undefined}
-            tabIndex={onOpen ? 0 : undefined}
-            aria-label={onOpen ? `Open ${label}` : undefined}
+  return (
+    <motion.div
+      ref={launcherRef}
+      drag
+      dragConstraints={dragConstraints}
+      dragElastic={0}
+      dragMomentum={false}
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
+      onTap={handleTap}
+      onKeyDown={handleKeyDown}
+      role={onOpen ? "button" : undefined}
+      tabIndex={onOpen ? 0 : undefined}
+      aria-label={onOpen ? `Open ${label}` : undefined}
+      style={{
+        top: position.top,
+        left: position.left,
+      }}
+      className={cn(DESKTOP_ICON_UI.root, className)}
+    >
+      <div className={DESKTOP_ICON_UI.responsiveScale}>
+        <div className={DESKTOP_ICON_UI.iconSurface}>
+          <Image
+            src={icon}
+            alt=""
+            width={iconWidth}
+            height={iconHeight}
+            loading="eager"
+            draggable={false}
+            sizes={`${iconWidth}px`}
+            className={DESKTOP_ICON_UI.image}
             style={{
-                top: position.top,
-                left: position.left,
+              width: iconWidth,
+              height: iconHeight,
             }}
-            className={cn(DESKTOP_ICON_UI.root, className)}
-        >
-            <div className={DESKTOP_ICON_UI.responsiveScale}>
-                <div className={DESKTOP_ICON_UI.iconSurface}>
-                    <Image
-                        src={icon}
-                        alt=""
-                        width={iconWidth}
-                        height={iconHeight}
-                        loading="eager"
-                        draggable={false}
-                        sizes={`${iconWidth}px`}
-                        className={DESKTOP_ICON_UI.image}
-                        style={{
-                            width: iconWidth,
-                            height: iconHeight,
-                        }}
-                    />
-                </div>
-            </div>
+          />
+        </div>
+      </div>
 
-            <span
-                style={{
-                    fontFamily: "var(--font-inter)",
-                }}
-                className={DESKTOP_ICON_UI.label}
-            >
-                {label}
-            </span>
-        </motion.div>
-    );
+      <span
+        style={{
+          fontFamily: "var(--font-inter)",
+        }}
+        className={DESKTOP_ICON_UI.label}
+      >
+        {label}
+      </span>
+    </motion.div>
+  );
 }

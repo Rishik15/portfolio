@@ -1,39 +1,39 @@
 .desktop {
-    position: relative;
-    isolation: isolate;
-    width: 100vw;
-    height: 100dvh;
-    overflow: hidden;
-    background: var(--background);
+  position: relative;
+  isolation: isolate;
+  width: 100vw;
+  height: 100dvh;
+  overflow: hidden;
+  background: var(--background);
 }
 
 .wallpaper {
-    z-index: -1;
-    object-fit: cover;
-    object-position: center 70%;
-    pointer-events: none;
-    user-select: none;
+  z-index: -1;
+  object-fit: cover;
+  object-position: center 70%;
+  pointer-events: none;
+  user-select: none;
 }
 
 .lightWallpaper {
-    visibility: visible;
+  visibility: visible;
 }
 
 .darkWallpaper {
-    visibility: hidden;
+  visibility: hidden;
 }
 
 :global(.dark) .lightWallpaper {
-    visibility: hidden;
+  visibility: hidden;
 }
 
 :global(.dark) .darkWallpaper {
-    visibility: visible;
+  visibility: visible;
 }
 
 .content {
-    position: relative;
-    z-index: 1;
-    width: 100%;
-    height: 100%;
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
 }

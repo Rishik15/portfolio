@@ -10,35 +10,35 @@ import { useReducedMotion } from "@/lib/use-reduced-motion";
 
 /** Takes no props and returns the desktop dock honoring the live motion preference. */
 export function Dock() {
-    const reducedMotion = useReducedMotion();
-    return (
-        <div className={DOCK_UI.position}>
-            <MagicDock
-                disableMagnification={reducedMotion}
-                iconSize={DOCK_CONFIG.iconSize}
-                iconMagnification={DOCK_CONFIG.iconMagnification}
-                iconDistance={DOCK_CONFIG.iconDistance}
-                direction="middle"
-                className={DOCK_UI.dock}
-            >
-                {APP_DOCK_ITEMS.map((item) => (
-                    <DockIcon key={item.id} className={DOCK_UI.icon}>
-                        <DockItem item={item} />
-                    </DockIcon>
-                ))}
+  const reducedMotion = useReducedMotion();
+  return (
+    <div className={DOCK_UI.position}>
+      <MagicDock
+        disableMagnification={reducedMotion}
+        iconSize={DOCK_CONFIG.iconSize}
+        iconMagnification={DOCK_CONFIG.iconMagnification}
+        iconDistance={DOCK_CONFIG.iconDistance}
+        direction="middle"
+        className={DOCK_UI.dock}
+      >
+        {APP_DOCK_ITEMS.map((item) => (
+          <DockIcon key={item.id} className={DOCK_UI.icon}>
+            <DockItem item={item} />
+          </DockIcon>
+        ))}
 
-                <Separator
-                    orientation="vertical"
-                    variant="secondary"
-                    className={DOCK_UI.separator}
-                />
+        <Separator
+          orientation="vertical"
+          variant="secondary"
+          className={DOCK_UI.separator}
+        />
 
-                {CONTACT_DOCK_ITEMS.map((item) => (
-                    <DockIcon key={item.id} className={DOCK_UI.icon}>
-                        <DockItem item={item} />
-                    </DockIcon>
-                ))}
-            </MagicDock>
-        </div>
-    );
+        {CONTACT_DOCK_ITEMS.map((item) => (
+          <DockIcon key={item.id} className={DOCK_UI.icon}>
+            <DockItem item={item} />
+          </DockIcon>
+        ))}
+      </MagicDock>
+    </div>
+  );
 }

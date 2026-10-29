@@ -1,11 +1,11 @@
 import {
-    useCallback,
-    useLayoutEffect,
-    useRef,
-    useState,
-    type KeyboardEvent,
-    type RefObject,
-    type SyntheticEvent,
+  useCallback,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type KeyboardEvent,
+  type RefObject,
+  type SyntheticEvent,
 } from "react";
 
 import { TerminalPrompt } from "@/components/apps/terminal/terminal-prompt";
@@ -14,167 +14,167 @@ import { TERMINAL_UI } from "@/components/apps/terminal/terminal-ui";
 import { useTerminalInput } from "@/components/apps/terminal/use-terminal-input";
 
 type TerminalInputProps = {
-    history: readonly string[];
-    inputRef: RefObject<HTMLInputElement | null>;
-    viewportRef: RefObject<HTMLDivElement | null>;
-    onCommand: (command: string) => void;
+  history: readonly string[];
+  inputRef: RefObject<HTMLInputElement | null>;
+  viewportRef: RefObject<HTMLDivElement | null>;
+  onCommand: (command: string) => void;
 };
 
 export function TerminalInput({
-    history,
-    inputRef,
-    viewportRef,
-    onCommand,
+  history,
+  inputRef,
+  viewportRef,
+  onCommand,
 }: TerminalInputProps) {
-    const input = useTerminalInput(history);
-    const containerRef = useRef<HTMLDivElement>(null);
+  const input = useTerminalInput(history);
+  const containerRef = useRef<HTMLDivElement>(null);
 
-    const [isFocused, setIsFocused] = useState(false);
-    const [caretIndex, setCaretIndex] = useState(0);
-    const hasSuggestions = input.suggestions.length > 0;
+  const [isFocused, setIsFocused] = useState(false);
+  const [caretIndex, setCaretIndex] = useState(0);
+  const hasSuggestions = input.suggestions.length > 0;
 
-    const revealSuggestions = useCallback(() => {
-        const viewport = viewportRef.current;
-        const container = containerRef.current;
+  const revealSuggestions = useCallback(() => {
+    const viewport = viewportRef.current;
+    const container = containerRef.current;
 
-        if (!viewport || !container) {
-            return;
-        }
-
-        const bottomPadding = parseFloat(getComputedStyle(viewport).paddingBottom) || 0;
-        const visibleBottom =
-            viewport.getBoundingClientRect().top +
-            viewport.clientHeight -
-            bottomPadding;
-        const hiddenHeight =
-            container.getBoundingClientRect().bottom - visibleBottom;
-
-        if (hiddenHeight > 0) {
-            viewport.scrollTop += Math.ceil(hiddenHeight);
-        }
-    }, [viewportRef]);
-
-    useLayoutEffect(() => {
-        if (hasSuggestions) {
-            revealSuggestions();
-        }
-    }, [input.value, hasSuggestions, revealSuggestions]);
-
-    useLayoutEffect(() => {
-        const viewport = viewportRef.current;
-        const container = containerRef.current;
-
-        if (!viewport || !container || !hasSuggestions) {
-            return;
-        }
-
-        const observer = new ResizeObserver(revealSuggestions);
-        observer.observe(viewport);
-        observer.observe(container);
-
-        return () => observer.disconnect();
-    }, [hasSuggestions, revealSuggestions, viewportRef]);
-
-    function updateCaretPosition() {
-        const element = inputRef.current;
-
-        if (!element) {
-            return;
-        }
-
-        setCaretIndex(element.selectionStart ?? element.value.length);
+    if (!viewport || !container) {
+      return;
     }
 
-    function handleSubmit(event: SyntheticEvent<HTMLFormElement>) {
-        event.preventDefault();
+    const bottomPadding =
+      parseFloat(getComputedStyle(viewport).paddingBottom) || 0;
+    const visibleBottom =
+      viewport.getBoundingClientRect().top +
+      viewport.clientHeight -
+      bottomPadding;
+    const hiddenHeight =
+      container.getBoundingClientRect().bottom - visibleBottom;
 
-        const command = input.value.trim();
+    if (hiddenHeight > 0) {
+      viewport.scrollTop += Math.ceil(hiddenHeight);
+    }
+  }, [viewportRef]);
 
-        if (!command) {
-            return;
-        }
+  useLayoutEffect(() => {
+    if (hasSuggestions) {
+      revealSuggestions();
+    }
+  }, [input.value, hasSuggestions, revealSuggestions]);
 
-        onCommand(command);
-        input.reset();
-        setCaretIndex(0);
+  useLayoutEffect(() => {
+    const viewport = viewportRef.current;
+    const container = containerRef.current;
+
+    if (!viewport || !container || !hasSuggestions) {
+      return;
     }
 
-    function handleKeyDown(event: KeyboardEvent<HTMLInputElement>) {
-        input.handleKeyDown(event);
+    const observer = new ResizeObserver(revealSuggestions);
+    observer.observe(viewport);
+    observer.observe(container);
 
-        window.requestAnimationFrame(updateCaretPosition);
+    return () => observer.disconnect();
+  }, [hasSuggestions, revealSuggestions, viewportRef]);
+
+  function updateCaretPosition() {
+    const element = inputRef.current;
+
+    if (!element) {
+      return;
     }
 
-    function handleSuggestionSelect(command: string) {
-        input.setValue(command);
-        setCaretIndex(command.length);
+    setCaretIndex(element.selectionStart ?? element.value.length);
+  }
 
-        window.requestAnimationFrame(() => {
-            const element = inputRef.current;
+  function handleSubmit(event: SyntheticEvent<HTMLFormElement>) {
+    event.preventDefault();
 
-            if (!element) {
-                return;
-            }
+    const command = input.value.trim();
 
-            element.focus();
-            element.setSelectionRange(command.length, command.length);
-        });
+    if (!command) {
+      return;
     }
 
-    const cursorCharacter = input.value[caretIndex] ?? "\u00A0";
+    onCommand(command);
+    input.reset();
+    setCaretIndex(0);
+  }
 
-    return (
-        <div ref={containerRef} className={TERMINAL_UI.input.root}>
-            <form onSubmit={handleSubmit} className={TERMINAL_UI.input.form}>
-                <TerminalPrompt />
+  function handleKeyDown(event: KeyboardEvent<HTMLInputElement>) {
+    input.handleKeyDown(event);
 
-                <div className={TERMINAL_UI.input.fieldWrapper}>
-                    <input
-                        ref={inputRef}
-                        value={input.value}
-                        onChange={(event) => {
-                            input.setValue(event.target.value);
+    window.requestAnimationFrame(updateCaretPosition);
+  }
 
-                            setCaretIndex(
-                                event.target.selectionStart ??
-                                    event.target.value.length,
-                            );
-                        }}
-                        onKeyDown={handleKeyDown}
-                        onSelect={updateCaretPosition}
-                        onClick={updateCaretPosition}
-                        onFocus={() => {
-                            setIsFocused(true);
+  function handleSuggestionSelect(command: string) {
+    input.setValue(command);
+    setCaretIndex(command.length);
 
-                            window.requestAnimationFrame(updateCaretPosition);
-                        }}
-                        onBlur={() => setIsFocused(false)}
-                        aria-label="Terminal command"
-                        autoComplete="off"
-                        spellCheck={false}
-                        autoFocus
-                        className={TERMINAL_UI.input.field}
-                    />
+    window.requestAnimationFrame(() => {
+      const element = inputRef.current;
 
-                    {isFocused && (
-                        <span
-                            aria-hidden="true"
-                            style={{
-                                left: `${caretIndex}ch`,
-                            }}
-                            className={TERMINAL_UI.input.caret}
-                        >
-                            {cursorCharacter}
-                        </span>
-                    )}
-                </div>
-            </form>
+      if (!element) {
+        return;
+      }
 
-            <TerminalSuggestions
-                suggestions={input.suggestions}
-                activeIndex={input.activeIndex}
-                onSelect={handleSuggestionSelect}
-            />
+      element.focus();
+      element.setSelectionRange(command.length, command.length);
+    });
+  }
+
+  const cursorCharacter = input.value[caretIndex] ?? "\u00A0";
+
+  return (
+    <div ref={containerRef} className={TERMINAL_UI.input.root}>
+      <form onSubmit={handleSubmit} className={TERMINAL_UI.input.form}>
+        <TerminalPrompt />
+
+        <div className={TERMINAL_UI.input.fieldWrapper}>
+          <input
+            ref={inputRef}
+            value={input.value}
+            onChange={(event) => {
+              input.setValue(event.target.value);
+
+              setCaretIndex(
+                event.target.selectionStart ?? event.target.value.length,
+              );
+            }}
+            onKeyDown={handleKeyDown}
+            onSelect={updateCaretPosition}
+            onClick={updateCaretPosition}
+            onFocus={() => {
+              setIsFocused(true);
+
+              window.requestAnimationFrame(updateCaretPosition);
+            }}
+            onBlur={() => setIsFocused(false)}
+            aria-label="Terminal command"
+            autoComplete="off"
+            spellCheck={false}
+            autoFocus
+            className={TERMINAL_UI.input.field}
+          />
+
+          {isFocused && (
+            <span
+              aria-hidden="true"
+              style={{
+                left: `${caretIndex}ch`,
+              }}
+              className={TERMINAL_UI.input.caret}
+            >
+              {cursorCharacter}
+            </span>
+          )}
         </div>
-    );
+      </form>
+
+      <TerminalSuggestions
+        suggestions={input.suggestions}
+        activeIndex={input.activeIndex}
+        onSelect={handleSuggestionSelect}
+      />
+    </div>
+  );
 }

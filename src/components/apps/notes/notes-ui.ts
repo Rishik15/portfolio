@@ -1,161 +1,161 @@
 export type NotesPaneWidths = {
-    sidebar: number;
-    list: number;
+  sidebar: number;
+  list: number;
 };
 
 type NotesPaneRange = {
-    preferred: number;
-    min: number;
-    max: number;
+  preferred: number;
+  min: number;
+  max: number;
 };
 
 export type NotesPaneProfile = {
-    minWindowWidth: number;
-    sidebar: NotesPaneRange;
-    list: NotesPaneRange;
-    viewerMin: number;
+  minWindowWidth: number;
+  sidebar: NotesPaneRange;
+  list: NotesPaneRange;
+  viewerMin: number;
 };
 
 export const NOTES_PANE_PROFILES: readonly NotesPaneProfile[] = [
-    {
-        minWindowWidth: 0,
+  {
+    minWindowWidth: 0,
 
-        sidebar: {
-            preferred: 108,
-            min: 96,
-            max: 132,
-        },
-
-        list: {
-            preferred: 148,
-            min: 138,
-            max: 175,
-        },
-
-        viewerMin: 250,
+    sidebar: {
+      preferred: 108,
+      min: 96,
+      max: 132,
     },
 
-    {
-        minWindowWidth: 620,
-
-        sidebar: {
-            preferred: 125,
-            min: 105,
-            max: 150,
-        },
-
-        list: {
-            preferred: 165,
-            min: 145,
-            max: 205,
-        },
-
-        viewerMin: 280,
+    list: {
+      preferred: 148,
+      min: 138,
+      max: 175,
     },
 
-    {
-        minWindowWidth: 720,
+    viewerMin: 250,
+  },
 
-        sidebar: {
-            preferred: 150,
-            min: 120,
-            max: 190,
-        },
+  {
+    minWindowWidth: 620,
 
-        list: {
-            preferred: 190,
-            min: 170,
-            max: 260,
-        },
-
-        viewerMin: 330,
+    sidebar: {
+      preferred: 125,
+      min: 105,
+      max: 150,
     },
 
-    {
-        minWindowWidth: 960,
-
-        sidebar: {
-            preferred: 165,
-            min: 130,
-            max: 205,
-        },
-
-        list: {
-            preferred: 215,
-            min: 180,
-            max: 290,
-        },
-
-        viewerMin: 400,
+    list: {
+      preferred: 165,
+      min: 145,
+      max: 205,
     },
 
-    {
-        minWindowWidth: 1200,
+    viewerMin: 280,
+  },
 
-        sidebar: {
-            preferred: 180,
-            min: 140,
-            max: 215,
-        },
+  {
+    minWindowWidth: 720,
 
-        list: {
-            preferred: 235,
-            min: 190,
-            max: 310,
-        },
-
-        viewerMin: 500,
+    sidebar: {
+      preferred: 150,
+      min: 120,
+      max: 190,
     },
 
-    {
-        minWindowWidth: 1440,
-
-        sidebar: {
-            preferred: 190,
-            min: 145,
-            max: 225,
-        },
-
-        list: {
-            preferred: 255,
-            min: 200,
-            max: 330,
-        },
-
-        viewerMin: 620,
+    list: {
+      preferred: 190,
+      min: 170,
+      max: 260,
     },
+
+    viewerMin: 330,
+  },
+
+  {
+    minWindowWidth: 960,
+
+    sidebar: {
+      preferred: 165,
+      min: 130,
+      max: 205,
+    },
+
+    list: {
+      preferred: 215,
+      min: 180,
+      max: 290,
+    },
+
+    viewerMin: 400,
+  },
+
+  {
+    minWindowWidth: 1200,
+
+    sidebar: {
+      preferred: 180,
+      min: 140,
+      max: 215,
+    },
+
+    list: {
+      preferred: 235,
+      min: 190,
+      max: 310,
+    },
+
+    viewerMin: 500,
+  },
+
+  {
+    minWindowWidth: 1440,
+
+    sidebar: {
+      preferred: 190,
+      min: 145,
+      max: 225,
+    },
+
+    list: {
+      preferred: 255,
+      min: 200,
+      max: 330,
+    },
+
+    viewerMin: 620,
+  },
 ];
 
 export const NOTES_LAYOUT = {
-    fallbackContainerWidth: 820,
-    resizerWidth: 1,
+  fallbackContainerWidth: 820,
+  resizerWidth: 1,
 } as const;
 
 export function getNotesPaneProfile(containerWidth: number): NotesPaneProfile {
-    for (let index = NOTES_PANE_PROFILES.length - 1; index >= 0; index -= 1) {
-        const profile = NOTES_PANE_PROFILES[index];
+  for (let index = NOTES_PANE_PROFILES.length - 1; index >= 0; index -= 1) {
+    const profile = NOTES_PANE_PROFILES[index];
 
-        if (containerWidth >= profile.minWindowWidth) {
-            return profile;
-        }
+    if (containerWidth >= profile.minWindowWidth) {
+      return profile;
     }
+  }
 
-    return NOTES_PANE_PROFILES[0];
+  return NOTES_PANE_PROFILES[0];
 }
 
 export function getNotesPreferredPaneWidths(
-    containerWidth: number,
+  containerWidth: number,
 ): NotesPaneWidths {
-    const profile = getNotesPaneProfile(containerWidth);
+  const profile = getNotesPaneProfile(containerWidth);
 
-    return {
-        sidebar: profile.sidebar.preferred,
-        list: profile.list.preferred,
-    };
+  return {
+    sidebar: profile.sidebar.preferred,
+    list: profile.list.preferred,
+  };
 }
 
 export const NOTES_UI = {
-    root: `
+  root: `
         @container/notes
         grid
         h-full
@@ -174,8 +174,8 @@ export const NOTES_UI = {
         dark:bg-[#1c1c1c]
     `,
 
-    sidebar: {
-        root: `
+  sidebar: {
+    root: `
             @container/folders
 
             min-h-0
@@ -197,7 +197,7 @@ export const NOTES_UI = {
             dark:bg-[#262626]
         `,
 
-        heading: `
+    heading: `
             mb-2
             px-2
 
@@ -212,13 +212,13 @@ export const NOTES_UI = {
             @min-[180px]/folders:text-[15px]
         `,
 
-        nav: `
+    nav: `
             space-y-0.5
 
             @min-[180px]/folders:space-y-1
         `,
 
-        button: `
+    button: `
             flex
             h-8
             w-full
@@ -244,14 +244,14 @@ export const NOTES_UI = {
             @min-[180px]/folders:text-[14px]
         `,
 
-        label: `
+    label: `
             min-w-0
             flex-1
             truncate
             font-medium
         `,
 
-        count: `
+    count: `
             shrink-0
 
             text-[9px]
@@ -265,7 +265,7 @@ export const NOTES_UI = {
             @min-[180px]/folders:text-[12px]
         `,
 
-        icon: `
+    icon: `
             size-3.5
             shrink-0
 
@@ -277,12 +277,12 @@ export const NOTES_UI = {
             @min-[180px]/folders:size-[18px]
         `,
 
-        indentBase: 10,
-        indentStep: 14,
-    },
+    indentBase: 10,
+    indentStep: 14,
+  },
 
-    list: {
-        root: `
+  list: {
+    root: `
             @container/note-list
 
             flex
@@ -296,7 +296,7 @@ export const NOTES_UI = {
             dark:bg-[#202020]
         `,
 
-        header: `
+    header: `
             shrink-0
 
             border-b
@@ -317,7 +317,7 @@ export const NOTES_UI = {
             dark:border-white/8
         `,
 
-        headerRow: `
+    headerRow: `
             flex
             min-w-0
             items-start
@@ -325,13 +325,13 @@ export const NOTES_UI = {
             gap-2
         `,
 
-        titleWrapper: `
+    titleWrapper: `
             min-w-0
             flex-1
             text-right
         `,
 
-        title: `
+    title: `
             truncate
 
             text-[14px]
@@ -347,7 +347,7 @@ export const NOTES_UI = {
             @min-[250px]/note-list:text-[19px]
         `,
 
-        count: `
+    count: `
             mt-0.5
 
             text-[9px]
@@ -360,7 +360,7 @@ export const NOTES_UI = {
             @min-[215px]/note-list:text-[12px]
         `,
 
-        body: `
+    body: `
             min-h-0
             flex-1
             overflow-y-auto
@@ -372,7 +372,7 @@ export const NOTES_UI = {
             @min-[250px]/note-list:p-2.5
         `,
 
-        message: `
+    message: `
             px-3
             py-4
 
@@ -386,7 +386,7 @@ export const NOTES_UI = {
             @min-[250px]/note-list:text-[15px]
         `,
 
-        item: `
+    item: `
             mb-1
             w-full
 
@@ -408,7 +408,7 @@ export const NOTES_UI = {
             @min-[250px]/note-list:py-3
         `,
 
-        itemTitle: `
+    itemTitle: `
             truncate
 
             text-[12px]
@@ -422,10 +422,10 @@ export const NOTES_UI = {
 
             @min-[250px]/note-list:text-[16px]
         `,
-    },
+  },
 
-    viewer: {
-        root: `
+  viewer: {
+    root: `
             @container/viewer
 
             flex
@@ -439,7 +439,7 @@ export const NOTES_UI = {
             dark:bg-[#1c1c1c]
         `,
 
-        toolbar: `
+    toolbar: `
             flex
             h-11
             shrink-0
@@ -460,7 +460,7 @@ export const NOTES_UI = {
             @min-[900px]/viewer:px-7
         `,
 
-        date: `
+    date: `
             text-right
 
             text-[10px]
@@ -477,13 +477,13 @@ export const NOTES_UI = {
             @min-[900px]/viewer:text-[14px]
         `,
 
-        scroller: `
+    scroller: `
             min-h-0
             flex-1
             overflow-y-auto
         `,
 
-        article: `
+    article: `
             mx-auto
             w-full
             max-w-[780px]
@@ -508,7 +508,7 @@ export const NOTES_UI = {
             @min-[900px]/viewer:pt-4
         `,
 
-        title: `
+    title: `
             text-[24px]
             font-semibold
             leading-tight
@@ -524,7 +524,7 @@ export const NOTES_UI = {
             @min-[900px]/viewer:text-[34px]
         `,
 
-        message: `
+    message: `
             flex
             h-full
             items-center
@@ -542,9 +542,9 @@ export const NOTES_UI = {
 
             @min-[700px]/viewer:text-[15px]
         `,
-    },
+  },
 
-    markdown: `
+  markdown: `
         mt-4
 
         text-[13px]
@@ -752,8 +752,8 @@ export const NOTES_UI = {
         dark:[&_td]:border-white/10
     `,
 
-    toggle: {
-        button: `
+  toggle: {
+    button: `
             flex
             size-7
             shrink-0
@@ -773,13 +773,13 @@ export const NOTES_UI = {
             dark:hover:bg-white/[0.06]
         `,
 
-        icon: `
+    icon: `
             size-[17px]
         `,
-    },
+  },
 
-    resizer: {
-        root: `
+  resizer: {
+    root: `
             group
             relative
             z-20
@@ -797,7 +797,7 @@ export const NOTES_UI = {
             dark:bg-white/10
         `,
 
-        hitArea: `
+    hitArea: `
             absolute
             inset-y-0
             left-1/2
@@ -813,5 +813,5 @@ export const NOTES_UI = {
             dark:group-hover:bg-white/[0.025]
             dark:group-active:bg-white/[0.04]
         `,
-    },
+  },
 } as const;

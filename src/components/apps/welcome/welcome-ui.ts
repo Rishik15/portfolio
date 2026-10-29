@@ -1,7 +1,7 @@
 // welcome-ui.ts: class names for the Welcome window, sized by its own container width.
 
 export const WELCOME_UI = {
-    root: `
+  root: `
         @container/welcome
         flex
         h-full
@@ -18,7 +18,7 @@ export const WELCOME_UI = {
         @min-[640px]/welcome:py-8
     `,
 
-    content: `
+  content: `
         mx-auto
         w-full
         max-w-xl
@@ -27,7 +27,7 @@ export const WELCOME_UI = {
         @min-[640px]/welcome:space-y-6
     `,
 
-    eyebrow: `
+  eyebrow: `
         text-[12px]
         font-medium
         uppercase
@@ -35,7 +35,7 @@ export const WELCOME_UI = {
         text-foreground/55
     `,
 
-    name: `
+  name: `
         mt-2
         text-[28px]
         font-semibold
@@ -46,7 +46,7 @@ export const WELCOME_UI = {
         @min-[640px]/welcome:text-[38px]
     `,
 
-    role: `
+  role: `
         mt-1
         text-[14px]
         text-foreground/75
@@ -54,7 +54,7 @@ export const WELCOME_UI = {
         @min-[640px]/welcome:text-[17px]
     `,
 
-    intro: `
+  intro: `
         mt-2
         max-w-md
         text-[14px]
@@ -65,13 +65,13 @@ export const WELCOME_UI = {
         @min-[640px]/welcome:text-[15px]
     `,
 
-    cards: `
+  cards: `
         flex
         flex-wrap
         gap-2
     `,
 
-    card: `
+  card: `
         rounded-full
         border
         border-foreground/10
@@ -80,7 +80,7 @@ export const WELCOME_UI = {
         py-1.5
     `,
 
-    cardTitle: `
+  cardTitle: `
         text-[14px]
         font-semibold
         text-foreground
@@ -88,7 +88,7 @@ export const WELCOME_UI = {
         @min-[640px]/welcome:text-[15px]
     `,
 
-    actions: `
+  actions: `
         flex
         flex-wrap
         items-center

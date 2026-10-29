@@ -14,65 +14,65 @@ import { useWindowManager } from "@/components/windows/window-manager";
 import { WINDOW_CONFIGS, WINDOW_IDS } from "@/config/windows";
 
 function getWindowContent(windowId: string) {
-    switch (windowId) {
-        case "welcome":
-            return <Welcome />;
+  switch (windowId) {
+    case "welcome":
+      return <Welcome />;
 
-        case "terminal":
-            return <Terminal />;
+    case "terminal":
+      return <Terminal />;
 
-        case "about":
-            return <About />;
+    case "about":
+      return <About />;
 
-        case "notes":
-            return <Notes />;
+    case "notes":
+      return <Notes />;
 
-        case "resume":
-            return <Resume />;
+    case "resume":
+      return <Resume />;
 
-        case "projects":
-            return <Projects />;
+    case "projects":
+      return <Projects />;
 
-        case "experience":
-            return <Experience />;
+    case "experience":
+      return <Experience />;
 
-        default:
-            return null;
-    }
+    default:
+      return null;
+  }
 }
 
 export function WindowLayer() {
-    const { windows, openWindow, getLauncherPosition } = useWindowManager();
+  const { windows, openWindow, getLauncherPosition } = useWindowManager();
 
-    useEffect(() => {
-        openWindow(WINDOW_IDS.welcome);
-    }, [openWindow]);
+  useEffect(() => {
+    openWindow(WINDOW_IDS.welcome);
+  }, [openWindow]);
 
-    return (
-        <div className="pointer-events-none fixed inset-0 z-60 overflow-hidden">
-            {WINDOW_CONFIGS.map((config, cascadeIndex) => {
-                const instance = windows.get(config.id);
+  return (
+    <div className="pointer-events-none fixed inset-0 z-60 overflow-hidden">
+      {WINDOW_CONFIGS.map((config, cascadeIndex) => {
+        const instance = windows.get(config.id);
 
-                if (!instance || instance.state.status === "closed") {
-                    return null;
-                }
+        if (!instance || instance.state.status === "closed") {
+          return null;
+        }
 
-                const getIconPosition = () => getLauncherPosition(config.id);
+        const getIconPosition = () => getLauncherPosition(config.id);
 
-                return (
-                    <AppWindow
-                        key={config.id}
-                        config={instance.config}
-                        state={instance.state}
-                        actions={instance.actions}
-                        cascadeIndex={cascadeIndex}
-                        iconPosition={getIconPosition()}
-                        getIconPosition={getIconPosition}
-                    >
-                        {getWindowContent(config.id)}
-                    </AppWindow>
-                );
-            })}
-        </div>
-    );
+        return (
+          <AppWindow
+            key={config.id}
+            config={instance.config}
+            state={instance.state}
+            actions={instance.actions}
+            cascadeIndex={cascadeIndex}
+            iconPosition={getIconPosition()}
+            getIconPosition={getIconPosition}
+          >
+            {getWindowContent(config.id)}
+          </AppWindow>
+        );
+      })}
+    </div>
+  );
 }

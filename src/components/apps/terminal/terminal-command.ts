@@ -3,107 +3,107 @@ import { TERMINAL_COMMANDS } from "@/config/terminal";
 import type { TerminalDraft } from "./terminal-types";
 
 export function normalizeTerminalCommand(command: string) {
-    const normalized = command.trim().toLowerCase();
+  const normalized = command.trim().toLowerCase();
 
-    return normalized.startsWith("/") ? normalized : `/${normalized}`;
+  return normalized.startsWith("/") ? normalized : `/${normalized}`;
 }
 
 export function getTerminalSuggestions(value: string) {
-    const trimmedValue = value.trim();
+  const trimmedValue = value.trim();
 
-    if (!trimmedValue) {
-        return [];
-    }
+  if (!trimmedValue) {
+    return [];
+  }
 
-    const normalized = normalizeTerminalCommand(trimmedValue);
+  const normalized = normalizeTerminalCommand(trimmedValue);
 
-    return TERMINAL_COMMANDS.filter(
-        ({ name }) => name.startsWith(normalized) && name !== normalized,
-    );
+  return TERMINAL_COMMANDS.filter(
+    ({ name }) => name.startsWith(normalized) && name !== normalized,
+  );
 }
 
 export function resolveTerminalCommand(command: string): TerminalDraft {
-    const normalized = normalizeTerminalCommand(command);
+  const normalized = normalizeTerminalCommand(command);
 
-    if (normalized === "/help") {
-        return {
-            command,
-            result: { type: "help" },
-        };
-    }
-
-    if (normalized === "/about") {
-        return {
-            command,
-            result: {
-                type: "text",
-                lines: ["Opening about..."],
-            },
-        };
-    }
-
-    if (normalized === "/resume") {
-        return {
-            command,
-            result: {
-                type: "text",
-                lines: ["Opening resume..."],
-            },
-        };
-    }
-
-    if (normalized === "/projects") {
-        return {
-            command,
-            result: {
-                type: "text",
-                lines: ["Opening projects..."],
-            },
-        };
-    }
-
-    if (normalized === "/experience") {
-        return {
-            command,
-            result: {
-                type: "text",
-                lines: ["Opening experience..."],
-            },
-        };
-    }
-
-    if (normalized === "/skills") {
-        return {
-            command,
-            result: { type: "skills" },
-        };
-    }
-
-    if (normalized === "/certificates") {
-        return {
-            command,
-            result: { type: "certificates" },
-        };
-    }
-
-    if (normalized === "/music") {
-        return {
-            command,
-            result: {
-                type: "text",
-                lines: ["Toggling music..."],
-            },
-        };
-    }
-
+  if (normalized === "/help") {
     return {
-        command,
-        result: {
-            type: "text",
-            lines: [
-                `command not found: ${command}`,
-                "Type /help to see available commands.",
-            ],
-        },
+      command,
+      result: { type: "help" },
     };
+  }
+
+  if (normalized === "/about") {
+    return {
+      command,
+      result: {
+        type: "text",
+        lines: ["Opening about..."],
+      },
+    };
+  }
+
+  if (normalized === "/resume") {
+    return {
+      command,
+      result: {
+        type: "text",
+        lines: ["Opening resume..."],
+      },
+    };
+  }
+
+  if (normalized === "/projects") {
+    return {
+      command,
+      result: {
+        type: "text",
+        lines: ["Opening projects..."],
+      },
+    };
+  }
+
+  if (normalized === "/experience") {
+    return {
+      command,
+      result: {
+        type: "text",
+        lines: ["Opening experience..."],
+      },
+    };
+  }
+
+  if (normalized === "/skills") {
+    return {
+      command,
+      result: { type: "skills" },
+    };
+  }
+
+  if (normalized === "/certificates") {
+    return {
+      command,
+      result: { type: "certificates" },
+    };
+  }
+
+  if (normalized === "/music") {
+    return {
+      command,
+      result: {
+        type: "text",
+        lines: ["Toggling music..."],
+      },
+    };
+  }
+
+  return {
+    command,
+    result: {
+      type: "text",
+      lines: [
+        `command not found: ${command}`,
+        "Type /help to see available commands.",
+      ],
+    },
+  };
 }
