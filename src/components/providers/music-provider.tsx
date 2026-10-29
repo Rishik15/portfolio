@@ -1,565 +1,572 @@
 "use client";
 
 import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  type ReactNode,
+    createContext,
+    useCallback,
+    useContext,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+    type ReactNode,
 } from "react";
 
 import {
-  consumeTrackStart,
-  getStoredPlaybackState,
-  storePlaybackState,
+    consumeTrackStart,
+    getStoredPlaybackState,
+    storePlaybackState,
 } from "@/components/providers/music-storage";
 import type { MusicPlaylist, MusicTrack } from "@/types/music";
 
 const MUSIC_LIMIT_MESSAGE =
-  "Music limit reached for this browser. Please try again later.";
+    "Music limit reached for this browser. Please try again later.";
 
 const MUSIC_UNAVAILABLE_MESSAGE =
-  "Music is temporarily unavailable. Please try again later.";
+    "Music is temporarily unavailable. Please try again later.";
 
 type PendingSeek = {
-  trackId: string;
-  position: number;
+    trackId: string;
+    position: number;
 };
 
 type MusicContextValue = {
-  isMusicVisible: boolean;
-  isMusicPlaying: boolean;
-  isMusicClosing: boolean;
-  isMusicLoading: boolean;
+    isMusicVisible: boolean;
+    isMusicPlaying: boolean;
+    isMusicClosing: boolean;
+    isMusicLoading: boolean;
 
-  playlistName: string | null;
-  currentTrack: MusicTrack | null;
-  musicError: string | null;
+    playlistName: string | null;
+    currentTrack: MusicTrack | null;
+    musicError: string | null;
 
-  toggleMusic: () => void;
-  playMusic: () => void;
-  pauseMusic: () => void;
-  previousTrack: () => void;
-  nextTrack: () => void;
+    toggleMusic: () => void;
+    playMusic: () => void;
+    pauseMusic: () => void;
+    previousTrack: () => void;
+    nextTrack: () => void;
 
-  requestCloseMusic: () => void;
-  finishHideMusic: () => void;
-  clearMusicError: () => void;
+    requestCloseMusic: () => void;
+    finishHideMusic: () => void;
+    clearMusicError: () => void;
 };
 
 type MusicProviderProps = {
-  children: ReactNode;
+    children: ReactNode;
 };
 
 const MusicContext = createContext<MusicContextValue | null>(null);
 
 export function MusicProvider({ children }: MusicProviderProps) {
-  const [playlist, setPlaylist] = useState<MusicPlaylist | null>(null);
+    const [playlist, setPlaylist] = useState<MusicPlaylist | null>(null);
 
-  const [currentIndex, setCurrentIndex] = useState(0);
+    const [currentIndex, setCurrentIndex] = useState(0);
 
-  const [isMusicVisible, setIsMusicVisible] = useState(false);
+    const [isMusicVisible, setIsMusicVisible] = useState(false);
 
-  const [isMusicPlaying, setIsMusicPlaying] = useState(false);
+    const [isMusicPlaying, setIsMusicPlaying] = useState(false);
 
-  const [isMusicClosing, setIsMusicClosing] = useState(false);
+    const [isMusicClosing, setIsMusicClosing] = useState(false);
 
-  const [isPlaylistLoading, setIsPlaylistLoading] = useState(false);
+    const [isPlaylistLoading, setIsPlaylistLoading] = useState(false);
 
-  const [isTrackLoading, setIsTrackLoading] = useState(false);
+    const [isTrackLoading, setIsTrackLoading] = useState(false);
 
-  const [musicError, setMusicError] = useState<string | null>(null);
+    const [musicError, setMusicError] = useState<string | null>(null);
 
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+    const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  const playlistRef = useRef<MusicPlaylist | null>(null);
+    const playlistRef = useRef<MusicPlaylist | null>(null);
 
-  const playlistPromiseRef = useRef<Promise<MusicPlaylist> | null>(null);
+    const playlistPromiseRef = useRef<Promise<MusicPlaylist> | null>(null);
 
-  const pendingSeekRef = useRef<PendingSeek | null>(null);
+    const pendingSeekRef = useRef<PendingSeek | null>(null);
 
-  const currentIndexRef = useRef(0);
+    const currentIndexRef = useRef(0);
 
-  const isMusicVisibleRef = useRef(false);
+    const isMusicVisibleRef = useRef(false);
 
-  const isMusicPlayingRef = useRef(false);
+    const isMusicPlayingRef = useRef(false);
 
-  const clearMusicError = useCallback(() => {
-    setMusicError(null);
-  }, []);
+    const clearMusicError = useCallback(() => {
+        setMusicError(null);
+    }, []);
 
-  const saveCurrentPlayback = useCallback(() => {
-    const audio = audioRef.current;
+    const saveCurrentPlayback = useCallback(() => {
+        const audio = audioRef.current;
 
-    const trackId = audio?.dataset.trackId;
+        const trackId = audio?.dataset.trackId;
 
-    if (!audio || !trackId) {
-      return;
-    }
-
-    storePlaybackState(trackId, audio.currentTime);
-  }, []);
-
-  const failMusic = useCallback((message: string) => {
-    const audio = audioRef.current;
-
-    audio?.pause();
-
-    isMusicPlayingRef.current = false;
-
-    setIsMusicPlaying(false);
-    setIsTrackLoading(false);
-    setMusicError(message);
-
-    if (isMusicVisibleRef.current) {
-      setIsMusicClosing(true);
-    }
-  }, []);
-
-  const playTrackAtIndex = useCallback(
-    async (index: number, shouldPlay: boolean) => {
-      const audio = audioRef.current;
-
-      const currentPlaylist = playlistRef.current;
-
-      if (!audio || !currentPlaylist || currentPlaylist.tracks.length === 0) {
-        return;
-      }
-
-      const trackCount = currentPlaylist.tracks.length;
-
-      const normalizedIndex = ((index % trackCount) + trackCount) % trackCount;
-
-      const track = currentPlaylist.tracks[normalizedIndex];
-
-      const isNewTrack = audio.dataset.trackId !== track.id;
-
-      if (isNewTrack && !consumeTrackStart()) {
-        failMusic(MUSIC_LIMIT_MESSAGE);
-
-        return;
-      }
-
-      currentIndexRef.current = normalizedIndex;
-
-      setCurrentIndex(normalizedIndex);
-
-      if (isNewTrack) {
-        const previousTrackId = audio.dataset.trackId;
-
-        if (previousTrackId) {
-          storePlaybackState(previousTrackId, audio.currentTime);
+        if (!audio || !trackId) {
+            return;
         }
 
-        setIsTrackLoading(true);
+        storePlaybackState(trackId, audio.currentTime);
+    }, []);
 
-        audio.pause();
+    const failMusic = useCallback((message: string) => {
+        const audio = audioRef.current;
 
-        const pendingSeek =
-          pendingSeekRef.current?.trackId === track.id
-            ? pendingSeekRef.current
-            : null;
+        audio?.pause();
 
-        audio.dataset.trackId = track.id;
-
-        audio.src = `/api/music/stream?trackId=${encodeURIComponent(track.id)}`;
-
-        if (!pendingSeek) {
-          storePlaybackState(track.id, 0);
-        }
-
-        audio.load();
-      }
-
-      if (!shouldPlay) {
         isMusicPlayingRef.current = false;
 
         setIsMusicPlaying(false);
+        setIsTrackLoading(false);
+        setMusicError(message);
 
-        return;
-      }
-
-      try {
-        await audio.play();
-
-        isMusicPlayingRef.current = true;
-
-        setIsMusicPlaying(true);
-      } catch (error) {
-        console.warn("Unable to play music:", error);
-
-        failMusic(MUSIC_UNAVAILABLE_MESSAGE);
-      }
-    },
-    [failMusic],
-  );
-
-  const loadPlaylist = useCallback(async () => {
-    if (playlistRef.current) {
-      return playlistRef.current;
-    }
-
-    if (playlistPromiseRef.current) {
-      return playlistPromiseRef.current;
-    }
-
-    setIsPlaylistLoading(true);
-
-    const request = fetch("/api/music/playlist")
-      .then(async (response) => {
-        if (!response.ok) {
-          throw new Error(
-            `Music playlist request failed with ${response.status}.`,
-          );
+        if (isMusicVisibleRef.current) {
+            setIsMusicClosing(true);
         }
+    }, []);
 
-        return (await response.json()) as MusicPlaylist;
-      })
-      .then((nextPlaylist) => {
-        if (nextPlaylist.tracks.length === 0) {
-          throw new Error("The Audius playlist contains no playable tracks.");
-        }
+    const playTrackAtIndex = useCallback(
+        async (index: number, shouldPlay: boolean) => {
+            const audio = audioRef.current;
 
-        playlistRef.current = nextPlaylist;
+            const currentPlaylist = playlistRef.current;
 
-        setPlaylist(nextPlaylist);
+            if (
+                !audio ||
+                !currentPlaylist ||
+                currentPlaylist.tracks.length === 0
+            ) {
+                return;
+            }
 
-        const storedPlayback = getStoredPlaybackState();
+            const trackCount = currentPlaylist.tracks.length;
 
-        if (storedPlayback) {
-          const storedTrackIndex = nextPlaylist.tracks.findIndex(
-            (track) => track.id === storedPlayback.trackId,
-          );
+            const normalizedIndex =
+                ((index % trackCount) + trackCount) % trackCount;
 
-          if (storedTrackIndex >= 0) {
-            currentIndexRef.current = storedTrackIndex;
+            const track = currentPlaylist.tracks[normalizedIndex];
 
-            setCurrentIndex(storedTrackIndex);
+            const isNewTrack = audio.dataset.trackId !== track.id;
 
-            pendingSeekRef.current = {
-              trackId: storedPlayback.trackId,
-              position: storedPlayback.position,
-            };
-          }
-        }
+            if (isNewTrack && !consumeTrackStart()) {
+                failMusic(MUSIC_LIMIT_MESSAGE);
 
-        return nextPlaylist;
-      })
-      .finally(() => {
-        playlistPromiseRef.current = null;
+                return;
+            }
 
-        setIsPlaylistLoading(false);
-      });
+            currentIndexRef.current = normalizedIndex;
 
-    playlistPromiseRef.current = request;
+            setCurrentIndex(normalizedIndex);
 
-    return request;
-  }, []);
+            if (isNewTrack) {
+                const previousTrackId = audio.dataset.trackId;
 
-  const previousTrack = useCallback(() => {
-    if (!playlistRef.current) {
-      return;
-    }
+                if (previousTrackId) {
+                    storePlaybackState(previousTrackId, audio.currentTime);
+                }
 
-    saveCurrentPlayback();
+                setIsTrackLoading(true);
 
-    pendingSeekRef.current = null;
+                audio.pause();
 
-    void playTrackAtIndex(
-      currentIndexRef.current - 1,
-      isMusicPlayingRef.current,
+                const pendingSeek =
+                    pendingSeekRef.current?.trackId === track.id
+                        ? pendingSeekRef.current
+                        : null;
+
+                audio.dataset.trackId = track.id;
+
+                audio.src = `/api/music/stream?trackId=${encodeURIComponent(track.id)}`;
+
+                if (!pendingSeek) {
+                    storePlaybackState(track.id, 0);
+                }
+
+                audio.load();
+            }
+
+            if (!shouldPlay) {
+                isMusicPlayingRef.current = false;
+
+                setIsMusicPlaying(false);
+
+                return;
+            }
+
+            try {
+                await audio.play();
+
+                isMusicPlayingRef.current = true;
+
+                setIsMusicPlaying(true);
+            } catch (error) {
+                console.warn("Unable to play music:", error);
+
+                failMusic(MUSIC_UNAVAILABLE_MESSAGE);
+            }
+        },
+        [failMusic],
     );
-  }, [playTrackAtIndex, saveCurrentPlayback]);
 
-  const nextTrack = useCallback(() => {
-    if (!playlistRef.current) {
-      return;
-    }
-
-    saveCurrentPlayback();
-
-    pendingSeekRef.current = null;
-
-    void playTrackAtIndex(
-      currentIndexRef.current + 1,
-      isMusicPlayingRef.current,
-    );
-  }, [playTrackAtIndex, saveCurrentPlayback]);
-
-  const pauseMusic = useCallback(() => {
-    audioRef.current?.pause();
-
-    saveCurrentPlayback();
-
-    isMusicPlayingRef.current = false;
-
-    setIsMusicPlaying(false);
-  }, [saveCurrentPlayback]);
-
-  const playMusic = useCallback(() => {
-    isMusicVisibleRef.current = true;
-
-    setMusicError(null);
-    setIsMusicVisible(true);
-    setIsMusicClosing(false);
-
-    if (playlistRef.current) {
-      void playTrackAtIndex(currentIndexRef.current, true);
-
-      return;
-    }
-
-    void loadPlaylist()
-      .then(() => {
-        if (!isMusicVisibleRef.current) {
-          return;
+    const loadPlaylist = useCallback(async () => {
+        if (playlistRef.current) {
+            return playlistRef.current;
         }
 
-        return playTrackAtIndex(currentIndexRef.current, true);
-      })
-      .catch((error) => {
-        console.error("Unable to start Audius playback:", error);
+        if (playlistPromiseRef.current) {
+            return playlistPromiseRef.current;
+        }
 
-        failMusic(MUSIC_UNAVAILABLE_MESSAGE);
-      });
-  }, [failMusic, loadPlaylist, playTrackAtIndex]);
+        setIsPlaylistLoading(true);
 
-  const requestCloseMusic = useCallback(() => {
-    audioRef.current?.pause();
+        const request = fetch("/api/music/playlist")
+            .then(async (response) => {
+                if (!response.ok) {
+                    throw new Error(
+                        `Music playlist request failed with ${response.status}.`,
+                    );
+                }
 
-    saveCurrentPlayback();
+                return (await response.json()) as MusicPlaylist;
+            })
+            .then((nextPlaylist) => {
+                if (nextPlaylist.tracks.length === 0) {
+                    throw new Error(
+                        "The Audius playlist contains no playable tracks.",
+                    );
+                }
 
-    isMusicPlayingRef.current = false;
+                playlistRef.current = nextPlaylist;
 
-    setIsMusicPlaying(false);
-    setIsMusicClosing(true);
-  }, [saveCurrentPlayback]);
+                setPlaylist(nextPlaylist);
 
-  const finishHideMusic = useCallback(() => {
-    audioRef.current?.pause();
+                const storedPlayback = getStoredPlaybackState();
 
-    saveCurrentPlayback();
+                if (storedPlayback) {
+                    const storedTrackIndex = nextPlaylist.tracks.findIndex(
+                        (track) => track.id === storedPlayback.trackId,
+                    );
 
-    isMusicVisibleRef.current = false;
+                    if (storedTrackIndex >= 0) {
+                        currentIndexRef.current = storedTrackIndex;
 
-    isMusicPlayingRef.current = false;
+                        setCurrentIndex(storedTrackIndex);
 
-    setIsMusicVisible(false);
-    setIsMusicPlaying(false);
-    setIsMusicClosing(false);
-    setIsTrackLoading(false);
-  }, [saveCurrentPlayback]);
+                        pendingSeekRef.current = {
+                            trackId: storedPlayback.trackId,
+                            position: storedPlayback.position,
+                        };
+                    }
+                }
 
-  const toggleMusic = useCallback(() => {
-    if (isMusicVisibleRef.current) {
-      requestCloseMusic();
+                return nextPlaylist;
+            })
+            .finally(() => {
+                playlistPromiseRef.current = null;
 
-      return;
-    }
+                setIsPlaylistLoading(false);
+            });
 
-    playMusic();
-  }, [playMusic, requestCloseMusic]);
+        playlistPromiseRef.current = request;
 
-  useEffect(() => {
-    const audio = new Audio();
+        return request;
+    }, []);
 
-    audio.preload = "none";
+    const previousTrack = useCallback(() => {
+        if (!playlistRef.current) {
+            return;
+        }
 
-    function handleLoadStart() {
-      setIsTrackLoading(true);
-    }
+        saveCurrentPlayback();
 
-    function handleLoadedMetadata() {
-      const pendingSeek = pendingSeekRef.current;
+        pendingSeekRef.current = null;
 
-      const trackId = audio.dataset.trackId;
+        void playTrackAtIndex(
+            currentIndexRef.current - 1,
+            isMusicPlayingRef.current,
+        );
+    }, [playTrackAtIndex, saveCurrentPlayback]);
 
-      if (!pendingSeek || pendingSeek.trackId !== trackId) {
-        return;
-      }
+    const nextTrack = useCallback(() => {
+        if (!playlistRef.current) {
+            return;
+        }
 
-      const maxPosition =
-        Number.isFinite(audio.duration) && audio.duration > 0
-          ? Math.max(0, audio.duration - 0.25)
-          : pendingSeek.position;
+        saveCurrentPlayback();
 
-      audio.currentTime = Math.min(pendingSeek.position, maxPosition);
+        pendingSeekRef.current = null;
 
-      pendingSeekRef.current = null;
-    }
+        void playTrackAtIndex(
+            currentIndexRef.current + 1,
+            isMusicPlayingRef.current,
+        );
+    }, [playTrackAtIndex, saveCurrentPlayback]);
 
-    function handleCanPlay() {
-      setIsTrackLoading(false);
-    }
+    const pauseMusic = useCallback(() => {
+        audioRef.current?.pause();
 
-    function handlePlaying() {
-      isMusicPlayingRef.current = true;
+        saveCurrentPlayback();
 
-      setIsMusicPlaying(true);
-      setIsTrackLoading(false);
-    }
+        isMusicPlayingRef.current = false;
 
-    function handleWaiting() {
-      setIsTrackLoading(true);
-    }
+        setIsMusicPlaying(false);
+    }, [saveCurrentPlayback]);
 
-    function handleStalled() {
-      setIsTrackLoading(true);
-    }
+    const playMusic = useCallback(() => {
+        isMusicVisibleRef.current = true;
 
-    function handlePause() {
-      isMusicPlayingRef.current = false;
+        setMusicError(null);
+        setIsMusicVisible(true);
+        setIsMusicClosing(false);
 
-      setIsMusicPlaying(false);
+        if (playlistRef.current) {
+            void playTrackAtIndex(currentIndexRef.current, true);
 
-      const trackId = audio.dataset.trackId;
+            return;
+        }
 
-      if (trackId) {
-        storePlaybackState(trackId, audio.currentTime);
-      }
-    }
+        void loadPlaylist()
+            .then(() => {
+                if (!isMusicVisibleRef.current) {
+                    return;
+                }
 
-    function handleError() {
-      failMusic(MUSIC_UNAVAILABLE_MESSAGE);
-    }
+                return playTrackAtIndex(currentIndexRef.current, true);
+            })
+            .catch((error) => {
+                console.error("Unable to start Audius playback:", error);
 
-    function handleEnded() {
-      const currentPlaylist = playlistRef.current;
+                failMusic(MUSIC_UNAVAILABLE_MESSAGE);
+            });
+    }, [failMusic, loadPlaylist, playTrackAtIndex]);
 
-      if (!currentPlaylist || currentPlaylist.tracks.length === 0) {
-        return;
-      }
+    const requestCloseMusic = useCallback(() => {
+        audioRef.current?.pause();
 
-      pendingSeekRef.current = null;
+        saveCurrentPlayback();
 
-      void playTrackAtIndex(currentIndexRef.current + 1, true);
-    }
+        isMusicPlayingRef.current = false;
 
-    function handlePageHide() {
-      const trackId = audio.dataset.trackId;
+        setIsMusicPlaying(false);
+        setIsMusicClosing(true);
+    }, [saveCurrentPlayback]);
 
-      if (trackId) {
-        storePlaybackState(trackId, audio.currentTime);
-      }
-    }
+    const finishHideMusic = useCallback(() => {
+        audioRef.current?.pause();
 
-    audio.addEventListener("loadstart", handleLoadStart);
+        saveCurrentPlayback();
 
-    audio.addEventListener("loadedmetadata", handleLoadedMetadata);
+        isMusicVisibleRef.current = false;
 
-    audio.addEventListener("canplay", handleCanPlay);
+        isMusicPlayingRef.current = false;
 
-    audio.addEventListener("playing", handlePlaying);
+        setIsMusicVisible(false);
+        setIsMusicPlaying(false);
+        setIsMusicClosing(false);
+        setIsTrackLoading(false);
+    }, [saveCurrentPlayback]);
 
-    audio.addEventListener("waiting", handleWaiting);
+    const toggleMusic = useCallback(() => {
+        if (isMusicVisibleRef.current) {
+            requestCloseMusic();
 
-    audio.addEventListener("stalled", handleStalled);
+            return;
+        }
 
-    audio.addEventListener("pause", handlePause);
+        playMusic();
+    }, [playMusic, requestCloseMusic]);
 
-    audio.addEventListener("error", handleError);
+    useEffect(() => {
+        const audio = new Audio();
 
-    audio.addEventListener("ended", handleEnded);
+        audio.preload = "none";
 
-    window.addEventListener("pagehide", handlePageHide);
+        function handleLoadStart() {
+            setIsTrackLoading(true);
+        }
 
-    audioRef.current = audio;
+        function handleLoadedMetadata() {
+            const pendingSeek = pendingSeekRef.current;
 
-    return () => {
-      const trackId = audio.dataset.trackId;
+            const trackId = audio.dataset.trackId;
 
-      if (trackId) {
-        storePlaybackState(trackId, audio.currentTime);
-      }
+            if (!pendingSeek || pendingSeek.trackId !== trackId) {
+                return;
+            }
 
-      audio.pause();
+            const maxPosition =
+                Number.isFinite(audio.duration) && audio.duration > 0
+                    ? Math.max(0, audio.duration - 0.25)
+                    : pendingSeek.position;
 
-      audio.removeEventListener("loadstart", handleLoadStart);
+            audio.currentTime = Math.min(pendingSeek.position, maxPosition);
 
-      audio.removeEventListener("loadedmetadata", handleLoadedMetadata);
+            pendingSeekRef.current = null;
+        }
 
-      audio.removeEventListener("canplay", handleCanPlay);
+        function handleCanPlay() {
+            setIsTrackLoading(false);
+        }
 
-      audio.removeEventListener("playing", handlePlaying);
+        function handlePlaying() {
+            isMusicPlayingRef.current = true;
 
-      audio.removeEventListener("waiting", handleWaiting);
+            setIsMusicPlaying(true);
+            setIsTrackLoading(false);
+        }
 
-      audio.removeEventListener("stalled", handleStalled);
+        function handleWaiting() {
+            setIsTrackLoading(true);
+        }
 
-      audio.removeEventListener("pause", handlePause);
+        function handleStalled() {
+            setIsTrackLoading(true);
+        }
 
-      audio.removeEventListener("error", handleError);
+        function handlePause() {
+            isMusicPlayingRef.current = false;
 
-      audio.removeEventListener("ended", handleEnded);
+            setIsMusicPlaying(false);
 
-      window.removeEventListener("pagehide", handlePageHide);
+            const trackId = audio.dataset.trackId;
 
-      audio.removeAttribute("src");
-      audio.load();
+            if (trackId) {
+                storePlaybackState(trackId, audio.currentTime);
+            }
+        }
 
-      audioRef.current = null;
-    };
-  }, [failMusic, playTrackAtIndex]);
+        function handleError() {
+            failMusic(MUSIC_UNAVAILABLE_MESSAGE);
+        }
 
-  const currentTrack = playlist?.tracks[currentIndex] ?? null;
+        function handleEnded() {
+            const currentPlaylist = playlistRef.current;
 
-  const isMusicLoading = isPlaylistLoading || isTrackLoading;
+            if (!currentPlaylist || currentPlaylist.tracks.length === 0) {
+                return;
+            }
 
-  const value = useMemo<MusicContextValue>(
-    () => ({
-      isMusicVisible,
-      isMusicPlaying,
-      isMusicClosing,
-      isMusicLoading,
+            pendingSeekRef.current = null;
 
-      playlistName: playlist?.name ?? null,
+            void playTrackAtIndex(currentIndexRef.current + 1, true);
+        }
 
-      currentTrack,
-      musicError,
+        function handlePageHide() {
+            const trackId = audio.dataset.trackId;
 
-      toggleMusic,
-      playMusic,
-      pauseMusic,
-      previousTrack,
-      nextTrack,
+            if (trackId) {
+                storePlaybackState(trackId, audio.currentTime);
+            }
+        }
 
-      requestCloseMusic,
-      finishHideMusic,
-      clearMusicError,
-    }),
-    [
-      isMusicVisible,
-      isMusicPlaying,
-      isMusicClosing,
-      isMusicLoading,
-      playlist,
-      currentTrack,
-      musicError,
-      toggleMusic,
-      playMusic,
-      pauseMusic,
-      previousTrack,
-      nextTrack,
-      requestCloseMusic,
-      finishHideMusic,
-      clearMusicError,
-    ],
-  );
+        audio.addEventListener("loadstart", handleLoadStart);
 
-  return (
-    <MusicContext.Provider value={value}>{children}</MusicContext.Provider>
-  );
+        audio.addEventListener("loadedmetadata", handleLoadedMetadata);
+
+        audio.addEventListener("canplay", handleCanPlay);
+
+        audio.addEventListener("playing", handlePlaying);
+
+        audio.addEventListener("waiting", handleWaiting);
+
+        audio.addEventListener("stalled", handleStalled);
+
+        audio.addEventListener("pause", handlePause);
+
+        audio.addEventListener("error", handleError);
+
+        audio.addEventListener("ended", handleEnded);
+
+        window.addEventListener("pagehide", handlePageHide);
+
+        audioRef.current = audio;
+
+        return () => {
+            const trackId = audio.dataset.trackId;
+
+            if (trackId) {
+                storePlaybackState(trackId, audio.currentTime);
+            }
+
+            audio.pause();
+
+            audio.removeEventListener("loadstart", handleLoadStart);
+
+            audio.removeEventListener("loadedmetadata", handleLoadedMetadata);
+
+            audio.removeEventListener("canplay", handleCanPlay);
+
+            audio.removeEventListener("playing", handlePlaying);
+
+            audio.removeEventListener("waiting", handleWaiting);
+
+            audio.removeEventListener("stalled", handleStalled);
+
+            audio.removeEventListener("pause", handlePause);
+
+            audio.removeEventListener("error", handleError);
+
+            audio.removeEventListener("ended", handleEnded);
+
+            window.removeEventListener("pagehide", handlePageHide);
+
+            audio.removeAttribute("src");
+            audio.load();
+
+            audioRef.current = null;
+        };
+    }, [failMusic, playTrackAtIndex]);
+
+    const currentTrack = playlist?.tracks[currentIndex] ?? null;
+
+    const isMusicLoading = isPlaylistLoading || isTrackLoading;
+
+    const value = useMemo<MusicContextValue>(
+        () => ({
+            isMusicVisible,
+            isMusicPlaying,
+            isMusicClosing,
+            isMusicLoading,
+
+            playlistName: playlist?.name ?? null,
+
+            currentTrack,
+            musicError,
+
+            toggleMusic,
+            playMusic,
+            pauseMusic,
+            previousTrack,
+            nextTrack,
+
+            requestCloseMusic,
+            finishHideMusic,
+            clearMusicError,
+        }),
+        [
+            isMusicVisible,
+            isMusicPlaying,
+            isMusicClosing,
+            isMusicLoading,
+            playlist,
+            currentTrack,
+            musicError,
+            toggleMusic,
+            playMusic,
+            pauseMusic,
+            previousTrack,
+            nextTrack,
+            requestCloseMusic,
+            finishHideMusic,
+            clearMusicError,
+        ],
+    );
+
+    return (
+        <MusicContext.Provider value={value}>{children}</MusicContext.Provider>
+    );
 }
 
 export function useMusic() {
-  const context = useContext(MusicContext);
+    const context = useContext(MusicContext);
 
-  if (!context) {
-    throw new Error("useMusic must be used inside MusicProvider.");
-  }
+    if (!context) {
+        throw new Error("useMusic must be used inside MusicProvider.");
+    }
 
-  return context;
+    return context;
 }

@@ -7,91 +7,91 @@ import { formatLongNoteDate } from "@/components/apps/notes/notes-utils";
 import type { NoteDocument, NotesLoadStatus } from "@/lib/notes/notes-types";
 
 type NoteViewerProps = {
-  note: NoteDocument | null;
-  status: NotesLoadStatus;
-  sidebarsVisible: boolean;
-  onToggleSidebars: () => void;
+    note: NoteDocument | null;
+    status: NotesLoadStatus;
+    sidebarsVisible: boolean;
+    onToggleSidebars: () => void;
 };
 
 export function NoteViewer({
-  note,
-  status,
-  sidebarsVisible,
-  onToggleSidebars,
+    note,
+    status,
+    sidebarsVisible,
+    onToggleSidebars,
 }: NoteViewerProps) {
-  return (
-    <section className={NOTES_UI.viewer.root}>
-      <ViewerToolbar
-        note={note}
-        sidebarsVisible={sidebarsVisible}
-        onToggleSidebars={onToggleSidebars}
-      />
+    return (
+        <section className={NOTES_UI.viewer.root}>
+            <ViewerToolbar
+                note={note}
+                sidebarsVisible={sidebarsVisible}
+                onToggleSidebars={onToggleSidebars}
+            />
 
-      <div className={NOTES_UI.viewer.scroller}>
-        <ViewerContent note={note} status={status} />
-      </div>
-    </section>
-  );
+            <div className={NOTES_UI.viewer.scroller}>
+                <ViewerContent note={note} status={status} />
+            </div>
+        </section>
+    );
 }
 
 type ViewerToolbarProps = {
-  note: NoteDocument | null;
-  sidebarsVisible: boolean;
-  onToggleSidebars: () => void;
+    note: NoteDocument | null;
+    sidebarsVisible: boolean;
+    onToggleSidebars: () => void;
 };
 
 function ViewerToolbar({
-  note,
-  sidebarsVisible,
-  onToggleSidebars,
+    note,
+    sidebarsVisible,
+    onToggleSidebars,
 }: ViewerToolbarProps) {
-  return (
-    <header className={NOTES_UI.viewer.toolbar}>
-      <NotesPaneToggle
-        direction={sidebarsVisible ? "left" : "right"}
-        label={sidebarsVisible ? "Hide sidebars" : "Show sidebars"}
-        onClick={onToggleSidebars}
-      />
+    return (
+        <header className={NOTES_UI.viewer.toolbar}>
+            <NotesPaneToggle
+                direction={sidebarsVisible ? "left" : "right"}
+                label={sidebarsVisible ? "Hide sidebars" : "Show sidebars"}
+                onClick={onToggleSidebars}
+            />
 
-      {note?.date ? (
-        <time dateTime={note.date} className={NOTES_UI.viewer.date}>
-          {formatLongNoteDate(note.date)}
-        </time>
-      ) : (
-        <span />
-      )}
-    </header>
-  );
+            {note?.date ? (
+                <time dateTime={note.date} className={NOTES_UI.viewer.date}>
+                    {formatLongNoteDate(note.date)}
+                </time>
+            ) : (
+                <span />
+            )}
+        </header>
+    );
 }
 
 function ViewerContent({
-  note,
-  status,
+    note,
+    status,
 }: {
-  note: NoteDocument | null;
-  status: NotesLoadStatus;
+    note: NoteDocument | null;
+    status: NotesLoadStatus;
 }) {
-  if (status === "loading") {
-    return <ViewerMessage>Loading note…</ViewerMessage>;
-  }
+    if (status === "loading") {
+        return <ViewerMessage>Loading note…</ViewerMessage>;
+    }
 
-  if (status === "error") {
-    return <ViewerMessage>Unable to load notes.</ViewerMessage>;
-  }
+    if (status === "error") {
+        return <ViewerMessage>Unable to load notes.</ViewerMessage>;
+    }
 
-  if (!note) {
-    return <ViewerMessage>No notes yet.</ViewerMessage>;
-  }
+    if (!note) {
+        return <ViewerMessage>No notes yet.</ViewerMessage>;
+    }
 
-  return (
-    <article className={NOTES_UI.viewer.article}>
-      <h1 className={NOTES_UI.viewer.title}>{note.title}</h1>
+    return (
+        <article className={NOTES_UI.viewer.article}>
+            <h1 className={NOTES_UI.viewer.title}>{note.title}</h1>
 
-      <NotesMarkdown html={note.html} />
-    </article>
-  );
+            <NotesMarkdown html={note.html} />
+        </article>
+    );
 }
 
 function ViewerMessage({ children }: { children: ReactNode }) {
-  return <div className={NOTES_UI.viewer.message}>{children}</div>;
+    return <div className={NOTES_UI.viewer.message}>{children}</div>;
 }

@@ -2,93 +2,93 @@
 import type { ReactNode } from "react";
 
 import {
-  type AppWindowConfig,
-  type WindowActions,
-  type WindowPosition,
-  type WindowState,
+    type AppWindowConfig,
+    type WindowActions,
+    type WindowPosition,
+    type WindowState,
 } from "@/components/windows/window-manager";
 import {
-  type ResizeDirection,
-  useWindowFrame,
+    type ResizeDirection,
+    useWindowFrame,
 } from "@/components/windows/use-window-frame";
 
 type AppWindowProps = {
-  config: AppWindowConfig;
-  state: WindowState;
-  actions: WindowActions;
-  cascadeIndex: number;
-  children?: ReactNode;
-  iconPosition?: WindowPosition;
+    config: AppWindowConfig;
+    state: WindowState;
+    actions: WindowActions;
+    cascadeIndex: number;
+    children?: ReactNode;
+    iconPosition?: WindowPosition;
 
-  getIconPosition?: () => WindowPosition | undefined;
+    getIconPosition?: () => WindowPosition | undefined;
 };
 
 const RESIZE_HANDLES: {
-  direction: Exclude<ResizeDirection, null>;
-  className: string;
+    direction: Exclude<ResizeDirection, null>;
+    className: string;
 }[] = [
-  {
-    direction: "top-left",
-    className: "absolute left-0 top-0 h-3 w-3 cursor-nwse-resize",
-  },
-  {
-    direction: "top-right",
-    className: "absolute right-0 top-0 h-3 w-3 cursor-nesw-resize",
-  },
-  {
-    direction: "bottom-left",
-    className: "absolute bottom-0 left-0 h-3 w-3 cursor-nesw-resize",
-  },
-  {
-    direction: "bottom-right",
-    className: "absolute bottom-0 right-0 h-3 w-3 cursor-nwse-resize",
-  },
-  {
-    direction: "top",
-    className: "absolute left-3 right-3 top-0 h-1 cursor-ns-resize",
-  },
-  {
-    direction: "bottom",
-    className: "absolute bottom-0 left-3 right-3 h-1 cursor-ns-resize",
-  },
-  {
-    direction: "left",
-    className: "absolute bottom-3 left-0 top-3 w-1 cursor-ew-resize",
-  },
-  {
-    direction: "right",
-    className: "absolute bottom-3 right-0 top-3 w-1 cursor-ew-resize",
-  },
+    {
+        direction: "top-left",
+        className: "absolute left-0 top-0 h-3 w-3 cursor-nwse-resize",
+    },
+    {
+        direction: "top-right",
+        className: "absolute right-0 top-0 h-3 w-3 cursor-nesw-resize",
+    },
+    {
+        direction: "bottom-left",
+        className: "absolute bottom-0 left-0 h-3 w-3 cursor-nesw-resize",
+    },
+    {
+        direction: "bottom-right",
+        className: "absolute bottom-0 right-0 h-3 w-3 cursor-nwse-resize",
+    },
+    {
+        direction: "top",
+        className: "absolute left-3 right-3 top-0 h-1 cursor-ns-resize",
+    },
+    {
+        direction: "bottom",
+        className: "absolute bottom-0 left-3 right-3 h-1 cursor-ns-resize",
+    },
+    {
+        direction: "left",
+        className: "absolute bottom-3 left-0 top-3 w-1 cursor-ew-resize",
+    },
+    {
+        direction: "right",
+        className: "absolute bottom-3 right-0 top-3 w-1 cursor-ew-resize",
+    },
 ];
 
 /** Returns window chrome and content for the supplied configuration, state and actions. */
 export function AppWindow({
-  config,
-  state,
-  actions,
-  cascadeIndex,
-  children,
-  iconPosition,
-  getIconPosition,
-}: AppWindowProps) {
-  const frame = useWindowFrame({
     config,
     state,
     actions,
     cascadeIndex,
+    children,
     iconPosition,
     getIconPosition,
-  });
+}: AppWindowProps) {
+    const frame = useWindowFrame({
+        config,
+        state,
+        actions,
+        cascadeIndex,
+        iconPosition,
+        getIconPosition,
+    });
 
-  if (!frame.shouldRender) {
-    return null;
-  }
+    if (!frame.shouldRender) {
+        return null;
+    }
 
-  return (
-    <>
-      {frame.snapZone && frame.snapPreviewStyle && (
-        <div
-          className="
+    return (
+        <>
+            {frame.snapZone && frame.snapPreviewStyle && (
+                <div
+                    className="
                         pointer-events-none
                         fixed
                         z-100
@@ -102,47 +102,51 @@ export function AppWindow({
                         transition-all
                         duration-150
                     "
-          style={frame.snapPreviewStyle}
-        />
-      )}
+                    style={frame.snapPreviewStyle}
+                />
+            )}
 
-      <section
-        aria-label={`${config.title} window`}
-        onMouseDown={frame.handleWindowMouseDown}
-        className={`
+            <section
+                aria-label={`${config.title} window`}
+                onMouseDown={frame.handleWindowMouseDown}
+                className={`
                     absolute
                     motion-reduce:transition-none
                     ${
-                      frame.isTransitioning && !frame.reducedMotion
-                        ? frame.isClosing
-                          ? "transition-[transform,width,height,opacity] duration-[450ms] ease-[cubic-bezier(0.4,0,0.2,1)]"
-                          : frame.isOpening
-                            ? "transition-[transform,width,height,opacity] duration-300 ease-out"
-                            : "transition-[transform,width,height,opacity] duration-200"
-                        : ""
+                        frame.isTransitioning && !frame.reducedMotion
+                            ? frame.isClosing
+                                ? "transition-[transform,width,height,opacity] duration-[450ms] ease-[cubic-bezier(0.4,0,0.2,1)]"
+                                : frame.isOpening
+                                  ? "transition-[transform,width,height,opacity] duration-300 ease-out"
+                                  : "transition-[transform,width,height,opacity] duration-200"
+                            : ""
                     }
                     ${frame.isMaximized ? "" : "rounded-2xl"}
                 `}
-        style={{
-          transform: `translate3d(${frame.position.x}px, ${frame.position.y}px, 0) scale(${frame.scale})`,
-          transformOrigin: "center center",
+                style={{
+                    transform: `translate3d(${frame.position.x}px, ${frame.position.y}px, 0) scale(${frame.scale})`,
+                    transformOrigin: "center center",
 
-          width: frame.size.width,
+                    width: frame.size.width,
 
-          height: frame.size.height,
+                    height: frame.size.height,
 
-          opacity: frame.opacity,
+                    opacity: frame.opacity,
 
-          zIndex: frame.isActive ? 50 + frame.zIndex : 40 + frame.zIndex,
+                    zIndex: frame.isActive
+                        ? 50 + frame.zIndex
+                        : 40 + frame.zIndex,
 
-          pointerEvents: frame.isMinimized ? "none" : "auto",
+                    pointerEvents: frame.isMinimized ? "none" : "auto",
 
-          visibility:
-            frame.isMinimized && frame.reducedMotion ? "hidden" : undefined,
-        }}
-      >
-        <div
-          className={`
+                    visibility:
+                        frame.isMinimized && frame.reducedMotion
+                            ? "hidden"
+                            : undefined,
+                }}
+            >
+                <div
+                    className={`
                         relative
                         h-full
                         w-full
@@ -160,12 +164,12 @@ export function AppWindow({
 
                         ${frame.isMaximized ? "" : "rounded-2xl"}
                     `}
-        >
-          {!frame.hideTitleBar && (
-            <div
-              onMouseDown={frame.handleDragMouseDown}
-              onDoubleClick={frame.handleTitleBarDoubleClick}
-              className={`
+                >
+                    {!frame.hideTitleBar && (
+                        <div
+                            onMouseDown={frame.handleDragMouseDown}
+                            onDoubleClick={frame.handleTitleBarDoubleClick}
+                            className={`
                                 flex
                                 h-12
                                 cursor-move
@@ -182,77 +186,85 @@ export function AppWindow({
 
                                 ${frame.isMaximized ? "" : "rounded-t-2xl"}
                             `}
-            >
-              <div
-                className="
+                        >
+                            <div
+                                className="
                                     flex
                                     items-center
                                     gap-2
                                 "
-                onMouseDown={(event) => {
-                  event.stopPropagation();
-                }}
-              >
-                <button
-                  type="button"
-                  aria-label={`Close ${config.title}`}
-                  onClick={frame.handleClose}
-                  className={`
+                                onMouseDown={(event) => {
+                                    event.stopPropagation();
+                                }}
+                            >
+                                <button
+                                    type="button"
+                                    aria-label={`Close ${config.title}`}
+                                    onClick={frame.handleClose}
+                                    className={`
                                         size-3
                                         rounded-full
                                         transition-colors
                                         motion-reduce:transition-none
                                         ${
-                                          frame.isActive
-                                            ? "bg-[#ff5f57] hover:bg-[#ff4b42]"
-                                            : "bg-zinc-400 dark:bg-zinc-600"
+                                            frame.isActive
+                                                ? "bg-[#ff5f57] hover:bg-[#ff4b42]"
+                                                : "bg-zinc-400 dark:bg-zinc-600"
                                         }
                                     `}
-                />
+                                />
 
-                <button
-                  type="button"
-                  aria-label={`Minimize ${config.title}`}
-                  disabled={!frame.canMinimize}
-                  onClick={frame.canMinimize ? frame.handleMinimize : undefined}
-                  className={`
+                                <button
+                                    type="button"
+                                    aria-label={`Minimize ${config.title}`}
+                                    disabled={!frame.canMinimize}
+                                    onClick={
+                                        frame.canMinimize
+                                            ? frame.handleMinimize
+                                            : undefined
+                                    }
+                                    className={`
                                         size-3
                                         rounded-full
                                         transition-colors
                                         motion-reduce:transition-none
                                         ${
-                                          !frame.canMinimize
-                                            ? "cursor-not-allowed bg-zinc-400 dark:bg-zinc-600"
-                                            : frame.isActive
-                                              ? "bg-[#febc2e] hover:bg-[#e9a91f]"
-                                              : "bg-zinc-400 dark:bg-zinc-600"
+                                            !frame.canMinimize
+                                                ? "cursor-not-allowed bg-zinc-400 dark:bg-zinc-600"
+                                                : frame.isActive
+                                                  ? "bg-[#febc2e] hover:bg-[#e9a91f]"
+                                                  : "bg-zinc-400 dark:bg-zinc-600"
                                         }
                                     `}
-                />
+                                />
 
-                <button
-                  type="button"
-                  aria-label={`Maximize ${config.title}`}
-                  disabled={!frame.canMaximize}
-                  onClick={frame.canMaximize ? frame.handleMaximize : undefined}
-                  className={`
+                                <button
+                                    type="button"
+                                    aria-label={`Maximize ${config.title}`}
+                                    disabled={!frame.canMaximize}
+                                    onClick={
+                                        frame.canMaximize
+                                            ? frame.handleMaximize
+                                            : undefined
+                                    }
+                                    className={`
                                         size-3
                                         rounded-full
                                         transition-colors
                                         motion-reduce:transition-none
                                         ${
-                                          !frame.canMaximize
-                                            ? "cursor-not-allowed bg-zinc-400 dark:bg-zinc-600"
-                                            : frame.isActive
-                                              ? "bg-[#28c840] hover:bg-[#1fb735]"
-                                              : "bg-zinc-400 dark:bg-zinc-600"
+                                            !frame.canMaximize
+                                                ? "cursor-not-allowed bg-zinc-400 dark:bg-zinc-600"
+                                                : frame.isActive
+                                                  ? "bg-[#28c840] hover:bg-[#1fb735]"
+                                                  : "bg-zinc-400 dark:bg-zinc-600"
                                         }
                                     `}
-                />
-              </div>
+                                />
+                            </div>
 
-              <div
-                className="
+                            <div
+                                className="
                                     ml-3
                                     flex
                                     min-w-0
@@ -263,65 +275,65 @@ export function AppWindow({
                                     text-black/80
                                     dark:text-white/80
                                 "
-              >
-                {config.icon && (
-                  <span
-                    className={`
+                            >
+                                {config.icon && (
+                                    <span
+                                        className={`
                                             shrink-0
                                             ${
-                                              frame.isActive
-                                                ? ""
-                                                : "opacity-50 grayscale"
+                                                frame.isActive
+                                                    ? ""
+                                                    : "opacity-50 grayscale"
                                             }
                                         `}
-                  >
-                    {config.icon}
-                  </span>
-                )}
+                                    >
+                                        {config.icon}
+                                    </span>
+                                )}
 
-                <span className="truncate">{config.title}</span>
-              </div>
-            </div>
-          )}
+                                <span className="truncate">{config.title}</span>
+                            </div>
+                        </div>
+                    )}
 
-          <div
-            className={`
+                    <div
+                        className={`
                             relative
                             overflow-auto
                             ${
-                              frame.hideTitleBar
-                                ? "h-full"
-                                : "h-[calc(100%-3rem)]"
+                                frame.hideTitleBar
+                                    ? "h-full"
+                                    : "h-[calc(100%-3rem)]"
                             }
                         `}
-          >
-            {children}
+                    >
+                        {children}
 
-            {!frame.isActive && (
-              <div
-                className="
+                        {!frame.isActive && (
+                            <div
+                                className="
                                     absolute
                                     inset-0
                                     z-10
                                 "
-                onMouseDown={frame.handleWindowMouseDown}
-              />
-            )}
-          </div>
-        </div>
+                                onMouseDown={frame.handleWindowMouseDown}
+                            />
+                        )}
+                    </div>
+                </div>
 
-        {frame.canResize &&
-          !frame.isMaximized &&
-          RESIZE_HANDLES.map(({ direction, className }) => (
-            <div
-              key={direction}
-              className={className}
-              onMouseDown={(event) => {
-                frame.handleResizeMouseDown(event, direction);
-              }}
-            />
-          ))}
-      </section>
-    </>
-  );
+                {frame.canResize &&
+                    !frame.isMaximized &&
+                    RESIZE_HANDLES.map(({ direction, className }) => (
+                        <div
+                            key={direction}
+                            className={className}
+                            onMouseDown={(event) => {
+                                frame.handleResizeMouseDown(event, direction);
+                            }}
+                        />
+                    ))}
+            </section>
+        </>
+    );
 }

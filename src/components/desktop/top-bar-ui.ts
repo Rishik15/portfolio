@@ -1,5 +1,5 @@
 export const TOP_BAR_UI = {
-  root: `
+    root: `
         pointer-events-none
         absolute
         inset-x-0
@@ -25,8 +25,8 @@ export const TOP_BAR_UI = {
         min-[2400px]:py-12
     `,
 
-  identity: {
-    name: `
+    identity: {
+        name: `
             text-[20px]
             font-semibold
             uppercase
@@ -38,7 +38,7 @@ export const TOP_BAR_UI = {
             min-[2400px]:text-[24px]
         `,
 
-    role: `
+        role: `
             mt-2
 
             text-[14px]
@@ -53,10 +53,10 @@ export const TOP_BAR_UI = {
             min-[2400px]:mt-3
             min-[2400px]:text-[16px]
         `,
-  },
+    },
 
-  right: {
-    root: `
+    right: {
+        root: `
             flex
             items-center
 
@@ -69,7 +69,7 @@ export const TOP_BAR_UI = {
             min-[2400px]:gap-6
         `,
 
-    themeWrapper: `
+        themeWrapper: `
             pointer-events-auto
 
             flex
@@ -83,7 +83,7 @@ export const TOP_BAR_UI = {
             min-[2400px]:size-[22px]
         `,
 
-    themeButton: `
+        themeButton: `
             relative
             -top-px
 
@@ -111,10 +111,10 @@ export const TOP_BAR_UI = {
             min-[2400px]:size-[22px]
             min-[2400px]:[&_svg]:size-[22px]
         `,
-  },
+    },
 
-  clock: {
-    root: `
+    clock: {
+        root: `
             flex
             items-center
 
@@ -134,5 +134,5 @@ export const TOP_BAR_UI = {
             min-[2400px]:gap-4
             min-[2400px]:text-[14px]
         `,
-  },
+    },
 } as const;

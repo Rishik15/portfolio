@@ -3,12 +3,12 @@
 
 import { useReducedMotion } from "motion/react";
 import {
-  createContext,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-  type CSSProperties,
+    createContext,
+    useContext,
+    useEffect,
+    useRef,
+    useState,
+    type CSSProperties,
 } from "react";
 
 import { TERMINAL_MOTION } from "@/components/apps/terminal/terminal-ui";
@@ -25,9 +25,9 @@ const HIDDEN_STYLE: CSSProperties = { visibility: "hidden" };
  * @returns Props to spread onto the unit's element.
  */
 export function usePrintUnit(index: number) {
-  const revealed = useContext(PrintContext);
+    const revealed = useContext(PrintContext);
 
-  return index < revealed ? {} : { inert: true, style: HIDDEN_STYLE };
+    return index < revealed ? {} : { inert: true, style: HIDDEN_STYLE };
 }
 
 /**
@@ -38,41 +38,41 @@ export function usePrintUnit(index: number) {
  * @returns The number of units revealed so far.
  */
 export function useReveal(
-  total: number,
-  skipToken: number,
-  report: (printing: boolean) => void,
+    total: number,
+    skipToken: number,
+    report: (printing: boolean) => void,
 ) {
-  const reduceMotion = useReducedMotion();
-  const [revealed, setRevealed] = useState(reduceMotion ? total : 0);
-  const initialSkipToken = useRef(skipToken);
-  const isComplete = revealed >= total;
+    const reduceMotion = useReducedMotion();
+    const [revealed, setRevealed] = useState(reduceMotion ? total : 0);
+    const initialSkipToken = useRef(skipToken);
+    const isComplete = revealed >= total;
 
-  useEffect(() => {
-    if (reduceMotion || skipToken !== initialSkipToken.current) {
-      setRevealed(total);
-    }
-  }, [reduceMotion, skipToken, total]);
+    useEffect(() => {
+        if (reduceMotion || skipToken !== initialSkipToken.current) {
+            setRevealed(total);
+        }
+    }, [reduceMotion, skipToken, total]);
 
-  useEffect(() => {
-    if (isComplete) return;
+    useEffect(() => {
+        if (isComplete) return;
 
-    const step = Math.min(
-      TERMINAL_MOTION.revealStepMs,
-      TERMINAL_MOTION.revealMaxTotalMs / total,
-    );
-    const timer = setInterval(
-      () => setRevealed((current) => Math.min(total, current + 1)),
-      step,
-    );
+        const step = Math.min(
+            TERMINAL_MOTION.revealStepMs,
+            TERMINAL_MOTION.revealMaxTotalMs / total,
+        );
+        const timer = setInterval(
+            () => setRevealed((current) => Math.min(total, current + 1)),
+            step,
+        );
 
-    return () => clearInterval(timer);
-  }, [isComplete, total]);
+        return () => clearInterval(timer);
+    }, [isComplete, total]);
 
-  useEffect(() => {
-    report(!isComplete);
+    useEffect(() => {
+        report(!isComplete);
 
-    return () => report(false);
-  }, [isComplete, report]);
+        return () => report(false);
+    }, [isComplete, report]);
 
-  return revealed;
+    return revealed;
 }

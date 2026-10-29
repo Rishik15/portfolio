@@ -8,73 +8,76 @@ const TIME_ZONE = "America/New_York";
 const ONE_MINUTE = 60_000;
 
 const TIME_FORMATTER = new Intl.DateTimeFormat("en-US", {
-  timeZone: TIME_ZONE,
-  hour: "2-digit",
-  minute: "2-digit",
-  hour12: true,
+    timeZone: TIME_ZONE,
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
 });
 
 const DATE_FORMATTER = new Intl.DateTimeFormat("en-US", {
-  timeZone: TIME_ZONE,
-  month: "short",
-  day: "2-digit",
+    timeZone: TIME_ZONE,
+    month: "short",
+    day: "2-digit",
 });
 
 export function LiveClock() {
-  const [now, setNow] = useState(() => new Date());
+    const [now, setNow] = useState(() => new Date());
 
-  useEffect(() => {
-    let timer: ReturnType<typeof setTimeout>;
+    useEffect(() => {
+        let timer: ReturnType<typeof setTimeout>;
 
-    function scheduleNextTick() {
-      const delay = ONE_MINUTE - (Date.now() % ONE_MINUTE);
+        function scheduleNextTick() {
+            const delay = ONE_MINUTE - (Date.now() % ONE_MINUTE);
 
-      timer = setTimeout(() => {
-        setNow(new Date());
+            timer = setTimeout(() => {
+                setNow(new Date());
+                scheduleNextTick();
+            }, delay);
+        }
+
+        function syncClock() {
+            clearTimeout(timer);
+            setNow(new Date());
+            scheduleNextTick();
+        }
+
+        function handleVisibilityChange() {
+            if (document.visibilityState === "visible") {
+                syncClock();
+            }
+        }
+
         scheduleNextTick();
-      }, delay);
-    }
 
-    function syncClock() {
-      clearTimeout(timer);
-      setNow(new Date());
-      scheduleNextTick();
-    }
+        document.addEventListener("visibilitychange", handleVisibilityChange);
 
-    function handleVisibilityChange() {
-      if (document.visibilityState === "visible") {
-        syncClock();
-      }
-    }
+        return () => {
+            clearTimeout(timer);
 
-    scheduleNextTick();
+            document.removeEventListener(
+                "visibilitychange",
+                handleVisibilityChange,
+            );
+        };
+    }, []);
 
-    document.addEventListener("visibilitychange", handleVisibilityChange);
+    const time = TIME_FORMATTER.format(now);
+    const date = DATE_FORMATTER.format(now).toUpperCase();
 
-    return () => {
-      clearTimeout(timer);
+    return (
+        <div
+            className={TOP_BAR_UI.clock.root}
+            aria-label="Current date and time in New York"
+        >
+            <time suppressHydrationWarning className="tabular-nums">
+                {time}
+            </time>
 
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
-    };
-  }, []);
+            <span suppressHydrationWarning className="tabular-nums">
+                {date}
+            </span>
 
-  const time = TIME_FORMATTER.format(now);
-  const date = DATE_FORMATTER.format(now).toUpperCase();
-
-  return (
-    <div
-      className={TOP_BAR_UI.clock.root}
-      aria-label="Current date and time in New York"
-    >
-      <time suppressHydrationWarning className="tabular-nums">
-        {time}
-      </time>
-
-      <span suppressHydrationWarning className="tabular-nums">
-        {date}
-      </span>
-
-      <span>New York</span>
-    </div>
-  );
+            <span>New York</span>
+        </div>
+    );
 }

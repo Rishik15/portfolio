@@ -1,5 +1,5 @@
 export const ABOUT_UI = {
-  root: `
+    root: `
         @container/about
         min-h-full
         bg-transparent
@@ -14,7 +14,7 @@ export const ABOUT_UI = {
         @min-[960px]/about:py-8
     `,
 
-  content: `
+    content: `
         mx-auto
         max-w-3xl
         space-y-5
@@ -24,8 +24,8 @@ export const ABOUT_UI = {
         @min-[960px]/about:space-y-8
     `,
 
-  copy: {
-    heading: `
+    copy: {
+        heading: `
             text-[24px]
             font-semibold
             tracking-tight
@@ -36,7 +36,7 @@ export const ABOUT_UI = {
             @min-[960px]/about:text-[30px]
         `,
 
-    body: `
+        body: `
             mt-4
             max-w-2xl
             space-y-3
@@ -56,14 +56,14 @@ export const ABOUT_UI = {
             @min-[960px]/about:leading-7
         `,
 
-    greeting: `
+        greeting: `
             font-medium
             text-foreground/90
         `,
-  },
+    },
 
-  map: {
-    section: `
+    map: {
+        section: `
             border-t
             border-foreground/10
             pt-4
@@ -73,7 +73,7 @@ export const ABOUT_UI = {
             @min-[960px]/about:pt-6
         `,
 
-    header: `
+        header: `
             mb-3
 
             @min-[768px]/about:mb-4
@@ -81,7 +81,7 @@ export const ABOUT_UI = {
             @min-[960px]/about:mb-5
         `,
 
-    title: `
+        title: `
             text-[18px]
             font-semibold
             text-foreground
@@ -91,7 +91,7 @@ export const ABOUT_UI = {
             @min-[960px]/about:text-[22px]
         `,
 
-    location: `
+        location: `
             mt-1
             text-[14px]
             text-foreground/55
@@ -101,7 +101,7 @@ export const ABOUT_UI = {
             @min-[960px]/about:text-[16px]
         `,
 
-    frame: `
+        frame: `
             h-59
             overflow-hidden
             rounded-xl
@@ -112,5 +112,5 @@ export const ABOUT_UI = {
 
             @min-[960px]/about:h-[310px]
         `,
-  },
+    },
 } as const;

@@ -1,22 +1,22 @@
 export const RESUME_ASSET = {
-  imageSrc: "/resume/resume.webp",
-  pdfSrc: "/resume/resume.pdf",
-  alt: "Rishik's Resume",
-  downloadName: "Rishik-Resume.pdf",
-  width: 1582,
-  height: 2048,
-  aspectRatio: "8.5 / 11",
+    imageSrc: "/resume/resume.webp",
+    pdfSrc: "/resume/resume.pdf",
+    alt: "Rishik's Resume",
+    downloadName: "Rishik-Resume.pdf",
+    width: 1582,
+    height: 2048,
+    aspectRatio: "8.5 / 11",
 } as const;
 
 export const RESUME_ZOOM = {
-  min: 50,
-  max: 200,
-  step: 25,
-  default: 100,
+    min: 50,
+    max: 200,
+    step: 25,
+    default: 100,
 } as const;
 
 export const RESUME_UI = {
-  root: `
+    root: `
         @container/resume
         relative
         h-full
@@ -25,7 +25,7 @@ export const RESUME_UI = {
         bg-foreground/4
     `,
 
-  scroller: `
+    scroller: `
         h-full
         w-full
         overflow-auto
@@ -46,7 +46,7 @@ export const RESUME_UI = {
         @7xl/resume:pb-28
     `,
 
-  document: `
+    document: `
         relative
         mx-auto
         overflow-hidden
@@ -54,8 +54,8 @@ export const RESUME_UI = {
         shadow-sm
     `,
 
-  loading: {
-    wrapper: `
+    loading: {
+        wrapper: `
             absolute
             inset-0
             flex
@@ -67,7 +67,7 @@ export const RESUME_UI = {
             text-black/35
         `,
 
-    text: `
+        text: `
             text-[10px]
 
             @2xl/resume:text-[11px]
@@ -79,7 +79,7 @@ export const RESUME_UI = {
             @7xl/resume:text-[14px]
         `,
 
-    spinner: `
+        spinner: `
             size-3.5
             shrink-0
             animate-spin
@@ -94,9 +94,9 @@ export const RESUME_UI = {
 
             @7xl/resume:size-[18px]
         `,
-  },
+    },
 
-  image: `
+    image: `
         absolute
         inset-0
         h-full
@@ -110,8 +110,8 @@ export const RESUME_UI = {
         motion-reduce:transition-none
     `,
 
-  controls: {
-    position: `
+    controls: {
+        position: `
             absolute
             z-10
 
@@ -128,7 +128,7 @@ export const RESUME_UI = {
             @7xl/resume:left-6
         `,
 
-    panel: `
+        panel: `
             flex
             items-center
             overflow-hidden
@@ -139,7 +139,7 @@ export const RESUME_UI = {
             shadow-lg
         `,
 
-    iconButton: `
+        iconButton: `
             flex
             size-9
             items-center
@@ -167,7 +167,7 @@ export const RESUME_UI = {
             @7xl/resume:text-[21px]
         `,
 
-    percentageButton: `
+        percentageButton: `
             h-9
             min-w-13
             border-x
@@ -197,10 +197,10 @@ export const RESUME_UI = {
             @7xl/resume:min-w-20
             @7xl/resume:text-[14px]
         `,
-  },
+    },
 
-  download: {
-    position: `
+    download: {
+        position: `
             absolute
             z-10
 
@@ -217,7 +217,7 @@ export const RESUME_UI = {
             @7xl/resume:bottom-6
         `,
 
-    button: `
+        button: `
             flex
             size-9
             items-center
@@ -247,7 +247,7 @@ export const RESUME_UI = {
             @7xl/resume:px-5
         `,
 
-    icon: `
+        icon: `
             size-4
             shrink-0
 
@@ -256,7 +256,7 @@ export const RESUME_UI = {
             @7xl/resume:size-5
         `,
 
-    label: `
+        label: `
             hidden
             whitespace-nowrap
             font-medium
@@ -270,5 +270,5 @@ export const RESUME_UI = {
 
             @7xl/resume:text-[14px]
         `,
-  },
+    },
 } as const;

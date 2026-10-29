@@ -1,5 +1,5 @@
 export const DESKTOP_ICON_UI = {
-  root: `
+    root: `
         group
         absolute
         z-10
@@ -17,7 +17,7 @@ export const DESKTOP_ICON_UI = {
         min-[2400px]:w-36
     `,
 
-  responsiveScale: `
+    responsiveScale: `
         origin-bottom
 
         transition-transform
@@ -29,7 +29,7 @@ export const DESKTOP_ICON_UI = {
         min-[2400px]:scale-[1.15]
     `,
 
-  iconSurface: `
+    iconSurface: `
         flex
         h-fit
         w-fit
@@ -46,7 +46,7 @@ export const DESKTOP_ICON_UI = {
         group-hover:scale-[1.02]
     `,
 
-  image: `
+    image: `
         pointer-events-none
         block
         shrink-0
@@ -56,7 +56,7 @@ export const DESKTOP_ICON_UI = {
         drop-shadow-[0_5px_6px_rgba(0,0,0,0.16)]
     `,
 
-  label: `
+    label: `
         whitespace-nowrap
         text-center
 
@@ -79,7 +79,7 @@ export const DESKTOP_ICON_UI = {
         min-[2400px]:leading-7
     `,
 
-  dragArea: `
+    dragArea: `
         pointer-events-none
         absolute
         inset-x-0

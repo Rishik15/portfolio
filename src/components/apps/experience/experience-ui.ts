@@ -1,34 +1,34 @@
 export const EXPERIENCE_SIDEBAR = {
-  minWidth: 190,
-  maxWidth: 420,
+    minWidth: 190,
+    maxWidth: 420,
 
-  getMinDetailWidth(windowWidth: number) {
-    if (windowWidth >= 1440) {
-      return 700;
-    }
+    getMinDetailWidth(windowWidth: number) {
+        if (windowWidth >= 1440) {
+            return 700;
+        }
 
-    if (windowWidth >= 1280) {
-      return 650;
-    }
+        if (windowWidth >= 1280) {
+            return 650;
+        }
 
-    if (windowWidth >= 1150) {
-      return 600;
-    }
+        if (windowWidth >= 1150) {
+            return 600;
+        }
 
-    if (windowWidth >= 900) {
-      return 500;
-    }
+        if (windowWidth >= 900) {
+            return 500;
+        }
 
-    if (windowWidth >= 760) {
-      return 420;
-    }
+        if (windowWidth >= 760) {
+            return 420;
+        }
 
-    return 360;
-  },
+        return 360;
+    },
 } as const;
 
 export const EXPERIENCE_UI = {
-  root: `
+    root: `
         @container/experience
         flex
         h-full
@@ -40,15 +40,15 @@ export const EXPERIENCE_UI = {
         text-foreground
     `,
 
-  main: `
+    main: `
         flex
         min-h-0
         flex-1
         overflow-hidden
     `,
 
-  sidebar: {
-    root: `
+    sidebar: {
+        root: `
             @container/experience-sidebar
             relative
             flex
@@ -80,7 +80,7 @@ export const EXPERIENCE_UI = {
             @min-[1440px]/experience:max-w-[calc(100%_-_700px)]
         `,
 
-    scroller: `
+        scroller: `
             min-h-0
             flex-1
             overflow-y-auto
@@ -91,7 +91,7 @@ export const EXPERIENCE_UI = {
             @min-[320px]/experience-sidebar:py-2.5
         `,
 
-    content: `
+        content: `
             px-1.5
 
             @min-[240px]/experience-sidebar:px-2
@@ -101,7 +101,7 @@ export const EXPERIENCE_UI = {
             @min-[320px]/experience-sidebar:px-3
         `,
 
-    yearButton: `
+        yearButton: `
             flex
             h-8
             w-full
@@ -132,7 +132,7 @@ export const EXPERIENCE_UI = {
             @min-[320px]/experience-sidebar:text-[15px]
         `,
 
-    chevron: `
+        chevron: `
             size-3.5
             shrink-0
             text-foreground/65
@@ -145,7 +145,7 @@ export const EXPERIENCE_UI = {
             @min-[320px]/experience-sidebar:size-[18px]
         `,
 
-    folderIcon: `
+        folderIcon: `
             size-4
             shrink-0
             text-foreground/75
@@ -155,7 +155,7 @@ export const EXPERIENCE_UI = {
             @min-[320px]/experience-sidebar:size-5
         `,
 
-    yearCount: `
+        yearCount: `
             ml-auto
             shrink-0
             pr-1
@@ -171,7 +171,7 @@ export const EXPERIENCE_UI = {
             @min-[320px]/experience-sidebar:text-[12px]
         `,
 
-    experienceList: `
+        experienceList: `
             flex
             flex-col
             gap-0.5
@@ -187,7 +187,7 @@ export const EXPERIENCE_UI = {
             @min-[320px]/experience-sidebar:pl-7
         `,
 
-    experienceButton: `
+        experienceButton: `
             flex
             min-h-9
             w-full
@@ -212,19 +212,19 @@ export const EXPERIENCE_UI = {
             @min-[320px]/experience-sidebar:py-2.5
         `,
 
-    selectedExperience: `
+        selectedExperience: `
             bg-foreground/10
             text-foreground
         `,
 
-    inactiveExperience: `
+        inactiveExperience: `
             text-foreground/80
 
             hover:bg-foreground/[0.05]
             hover:text-foreground
         `,
 
-    role: `
+        role: `
             truncate
 
             text-[11px]
@@ -237,7 +237,7 @@ export const EXPERIENCE_UI = {
             @min-[320px]/experience-sidebar:text-[14px]
         `,
 
-    company: `
+        company: `
             truncate
 
             text-[10px]
@@ -250,12 +250,12 @@ export const EXPERIENCE_UI = {
             @min-[320px]/experience-sidebar:text-[13px]
         `,
 
-    empty: `
+        empty: `
             px-2
             py-1
         `,
 
-    emptyRow: `
+        emptyRow: `
             flex
             h-8
             items-center
@@ -268,7 +268,7 @@ export const EXPERIENCE_UI = {
             @min-[320px]/experience-sidebar:h-10
         `,
 
-    resizer: `
+        resizer: `
             group
             absolute
             right-[-3px]
@@ -282,7 +282,7 @@ export const EXPERIENCE_UI = {
             touch-none
         `,
 
-    resizerLine: `
+        resizerLine: `
             absolute
             right-[2px]
             top-0
@@ -298,10 +298,10 @@ export const EXPERIENCE_UI = {
             group-hover:bg-foreground/20
             group-active:bg-foreground/30
         `,
-  },
+    },
 
-  detail: {
-    root: `
+    detail: {
+        root: `
             @container/experience-detail
             min-h-0
             min-w-0
@@ -309,7 +309,7 @@ export const EXPERIENCE_UI = {
             overflow-y-auto
         `,
 
-    content: `
+        content: `
             mx-auto
             w-full
             max-w-[860px]
@@ -336,7 +336,7 @@ export const EXPERIENCE_UI = {
             @min-[1050px]/experience-detail:py-14
         `,
 
-    role: `
+        role: `
             text-[18px]
             font-semibold
             leading-tight
@@ -354,7 +354,7 @@ export const EXPERIENCE_UI = {
             @min-[1050px]/experience-detail:text-[28px]
         `,
 
-    companyRow: `
+        companyRow: `
             mt-1
             flex
             min-w-0
@@ -376,7 +376,7 @@ export const EXPERIENCE_UI = {
             @min-[1050px]/experience-detail:text-[16px]
         `,
 
-    companyIcon: `
+        companyIcon: `
             size-3
             shrink-0
 
@@ -387,7 +387,7 @@ export const EXPERIENCE_UI = {
             @min-[1050px]/experience-detail:size-[18px]
         `,
 
-    externalIcon: `
+        externalIcon: `
             size-2.5
             shrink-0
 
@@ -398,7 +398,7 @@ export const EXPERIENCE_UI = {
             @min-[1050px]/experience-detail:size-4
         `,
 
-    metadata: `
+        metadata: `
             mt-6
             grid
             grid-cols-1
@@ -431,7 +431,7 @@ export const EXPERIENCE_UI = {
             @min-[1050px]/experience-detail:pt-8
         `,
 
-    label: `
+        label: `
             mb-1.5
 
             text-[9px]
@@ -448,7 +448,7 @@ export const EXPERIENCE_UI = {
             @min-[1050px]/experience-detail:text-[13px]
         `,
 
-    metadataValue: `
+        metadataValue: `
             flex
             min-w-0
             items-center
@@ -466,7 +466,7 @@ export const EXPERIENCE_UI = {
             @min-[1050px]/experience-detail:text-[15px]
         `,
 
-    metadataIcon: `
+        metadataIcon: `
             size-3
             shrink-0
             text-foreground/60
@@ -478,7 +478,7 @@ export const EXPERIENCE_UI = {
             @min-[1050px]/experience-detail:size-[18px]
         `,
 
-    section: `
+        section: `
             mt-6
 
             border-t
@@ -499,7 +499,7 @@ export const EXPERIENCE_UI = {
             @min-[1050px]/experience-detail:pt-9
         `,
 
-    sectionTitle: `
+        sectionTitle: `
             mb-3
 
             text-[9px]
@@ -518,7 +518,7 @@ export const EXPERIENCE_UI = {
             @min-[1050px]/experience-detail:text-[13px]
         `,
 
-    summary: `
+        summary: `
             max-w-3xl
 
             text-[12px]
@@ -538,7 +538,7 @@ export const EXPERIENCE_UI = {
             @min-[1050px]/experience-detail:leading-8
         `,
 
-    highlights: `
+        highlights: `
             space-y-2.5
 
             @min-[560px]/experience-detail:space-y-3
@@ -550,7 +550,7 @@ export const EXPERIENCE_UI = {
             @min-[1050px]/experience-detail:space-y-5
         `,
 
-    highlightRow: `
+        highlightRow: `
             flex
             items-start
             gap-2.5
@@ -562,7 +562,7 @@ export const EXPERIENCE_UI = {
             @min-[900px]/experience-detail:gap-4
         `,
 
-    highlightDot: `
+        highlightDot: `
             mt-[7px]
             size-1
             shrink-0
@@ -578,7 +578,7 @@ export const EXPERIENCE_UI = {
             @min-[1050px]/experience-detail:mt-[12px]
         `,
 
-    highlightText: `
+        highlightText: `
             text-[12px]
             leading-5
             text-foreground/85
@@ -596,7 +596,7 @@ export const EXPERIENCE_UI = {
             @min-[1050px]/experience-detail:leading-8
         `,
 
-    technologies: `
+        technologies: `
             text-[11px]
             leading-5
             text-foreground/80
@@ -612,7 +612,7 @@ export const EXPERIENCE_UI = {
             @min-[1050px]/experience-detail:text-[16px]
         `,
 
-    emptyLine: `
+        emptyLine: `
             h-2.5
             rounded-sm
             bg-foreground/[0.085]
@@ -621,10 +621,10 @@ export const EXPERIENCE_UI = {
 
             @min-[900px]/experience-detail:h-3.5
         `,
-  },
+    },
 
-  status: {
-    root: `
+    status: {
+        root: `
             flex
             h-9
             shrink-0
@@ -657,7 +657,7 @@ export const EXPERIENCE_UI = {
             @min-[1440px]/experience:text-[14px]
         `,
 
-    stats: `
+        stats: `
             flex
             shrink-0
             items-center
@@ -670,5 +670,5 @@ export const EXPERIENCE_UI = {
 
             @min-[1280px]/experience:gap-3
         `,
-  },
+    },
 } as const;
