@@ -4,31 +4,11 @@
     width: 100vw;
     height: 100dvh;
     overflow: hidden;
-    background: var(--background);
+    background: radial-gradient(circle at 50% 42%, #d1d0c3, #bebdb0 85%);
 }
 
-.wallpaper {
-    z-index: -1;
-    object-fit: cover;
-    object-position: center 70%;
-    pointer-events: none;
-    user-select: none;
-}
-
-.lightWallpaper {
-    visibility: visible;
-}
-
-.darkWallpaper {
-    visibility: hidden;
-}
-
-:global(.dark) .lightWallpaper {
-    visibility: hidden;
-}
-
-:global(.dark) .darkWallpaper {
-    visibility: visible;
+:global(.dark) .desktop {
+    background: radial-gradient(circle at 50% 42%, #333129, #201f1b 85%);
 }
 
 .content {

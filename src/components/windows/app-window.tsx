@@ -153,12 +153,12 @@ export function AppWindow({
 
                         border
                         border-black/15
-                        bg-white/96
+                        bg-white
 
                         shadow-[0_24px_60px_-16px_rgba(0,0,0,0.38),0_8px_24px_-12px_rgba(0,0,0,0.28)]
 
                         dark:border-white/15
-                        dark:bg-black/99
+                        dark:bg-black
                         dark:shadow-[0_24px_60px_-16px_rgba(0,0,0,0.75),0_8px_24px_-12px_rgba(0,0,0,0.6)]
 
                         ${frame.isMaximized ? "" : "rounded-2xl"}
@@ -178,10 +178,10 @@ export function AppWindow({
                                 px-4
 
                                 border-black/10
-                                bg-white/72
+                                bg-white
 
                                 dark:border-white/10
-                                dark:bg-white/6
+                                dark:bg-[#0f0f0f]
 
                                 ${frame.isMaximized ? "" : "rounded-t-2xl"}
                             `}

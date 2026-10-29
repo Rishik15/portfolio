@@ -16,7 +16,10 @@ export const TOP_BAR_UI = {
         font-mono
 
         text-black
+        [text-shadow:0_0_6px_rgb(255_255_255/0.95),0_0_14px_rgb(255_255_255/0.8)]
+
         dark:text-white
+        dark:[text-shadow:none]
 
         min-[1800px]:px-12
         min-[1800px]:py-10

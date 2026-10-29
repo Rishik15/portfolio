@@ -1,7 +1,5 @@
-import Image from "next/image";
-
-import { DesktopIcons } from "@/components/desktop/desktop-icons";
 import { Dock } from "@/components/desktop/dock";
+import { LakeBackground } from "@/components/desktop/lake/lake-background";
 import { TopBar } from "@/components/desktop/top-bar";
 import { MusicProvider } from "@/components/providers/music-provider";
 import DynamicIsland from "@/components/ui/dynamic-island";
@@ -14,25 +12,7 @@ import styles from "./desktop.module.css";
 export function Desktop() {
     return (
         <main className={styles.desktop}>
-            <Image
-                src="/backgrounds/tree-light.webp"
-                alt=""
-                fill
-                sizes="100vw"
-                loading="eager"
-                draggable={false}
-                className={`${styles.wallpaper} ${styles.lightWallpaper}`}
-            />
-
-            <Image
-                src="/backgrounds/tree-dark.webp"
-                alt=""
-                fill
-                sizes="100vw"
-                loading="eager"
-                draggable={false}
-                className={`${styles.wallpaper} ${styles.darkWallpaper}`}
-            />
+            <LakeBackground />
 
             <WindowManagerProvider configs={WINDOW_CONFIGS}>
                 <MusicProvider>
@@ -41,7 +21,6 @@ export function Desktop() {
 
                         <DynamicIsland />
 
-                        <DesktopIcons />
                         <WindowLayer />
                         <Dock />
                     </div>
