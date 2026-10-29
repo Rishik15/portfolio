@@ -1,4 +1,3 @@
-/** use-window-frame.ts manages window geometry, gestures and frame transitions. */
 import {
     useCallback,
     useEffect,
@@ -73,12 +72,10 @@ const WORK_AREA_INSET_BOTTOM = 128;
 const DEFAULT_VIEWPORT_WIDTH = 1440;
 const DEFAULT_VIEWPORT_HEIGHT = 900;
 
-/** Returns the input value constrained to the supplied minimum and maximum. */
 function clamp(value: number, minimum: number, maximum: number) {
     return Math.min(Math.max(value, minimum), maximum);
 }
 
-/** Returns browser viewport dimensions, or fallback dimensions during server rendering. */
 function getViewportBounds(): WindowBounds {
     if (typeof window === "undefined") {
         return {
@@ -93,10 +90,6 @@ function getViewportBounds(): WindowBounds {
     };
 }
 
-/**
- * Returns the desktop area between the top bar and the dock, used to size
- * and place windows, for supplied viewport dimensions or the current browser.
- */
 function getWorkArea(viewport = getViewportBounds()): WorkArea {
     const steps = viewport.width >= 2400 ? 2 : viewport.width >= 1800 ? 1 : 0;
     const top = WORK_AREA_INSET_TOP + steps * 8;
@@ -110,9 +103,6 @@ function getWorkArea(viewport = getViewportBounds()): WorkArea {
     };
 }
 
-/**
- * Returns the full viewport frame for maximize, with no inputs.
- */
 function getFullFrame(): WindowFrame {
     return {
         position: { x: 0, y: 0 },
@@ -120,7 +110,6 @@ function getFullFrame(): WindowFrame {
     };
 }
 
-/** Returns the input frame fitted to the supplied viewport and app size limits. */
 function clampWindowFrame(
     config: AppWindowConfig,
     frame: WindowFrame,
@@ -146,7 +135,6 @@ function clampWindowFrame(
     };
 }
 
-/** Returns a viewport-contained position for the candidate position and frame size. */
 function clampWindowPosition(
     position: WindowPosition,
     size: WindowSize,
@@ -158,7 +146,6 @@ function clampWindowPosition(
     };
 }
 
-/** Returns a resized frame from a fitted start frame, direction, delta, config and viewport. */
 function resizeWindowFrame(
     frame: WindowFrame,
     direction: Exclude<ResizeDirection, null>,
@@ -207,7 +194,6 @@ function resizeWindowFrame(
     return { position, size };
 }
 
-/** Returns the initial app frame for the supplied config and cascade index. */
 function getDefaultWindowFrame(
     config: AppWindowConfig,
     cascadeIndex: number,
@@ -241,7 +227,6 @@ function getDefaultWindowFrame(
     );
 }
 
-/** Returns a fitted frame scaled between supplied work areas using app limits and relative placement. */
 function scaleFrameBetweenWorkAreas(
     config: AppWindowConfig,
     frame: WindowFrame,
@@ -299,7 +284,6 @@ function scaleFrameBetweenWorkAreas(
     };
 }
 
-/** Returns window frame state and interaction handlers for the supplied app, actions and placement options. */
 export function useWindowFrame({
     config,
     state,
@@ -385,13 +369,11 @@ export function useWindowFrame({
     const animationTimers = useRef(new Set<number>());
     const pendingMinimize = useRef(false);
 
-    /** Cancels tracked transition timers, with no inputs or return value. */
     const clearAnimationTimers = useCallback(() => {
         animationTimers.current.forEach((timer) => window.clearTimeout(timer));
         animationTimers.current.clear();
     }, []);
 
-    /** Schedules the supplied completion after a motion delay; returns nothing. */
     const finishTransition = useCallback(
         (complete: () => void, delay: number) => {
             if (reducedMotion) {
@@ -445,25 +427,21 @@ export function useWindowFrame({
         startPosY: 0,
     });
 
-    /** Stores the supplied position in state and its synchronous ref; returns nothing. */
     const setFramePosition = useCallback((nextPosition: WindowPosition) => {
         positionRef.current = nextPosition;
         setPosition(nextPosition);
     }, []);
 
-    /** Stores the supplied size in state and its synchronous ref; returns nothing. */
     const setFrameSize = useCallback((nextSize: WindowSize) => {
         sizeRef.current = nextSize;
         setSize(nextSize);
     }, []);
 
-    /** Stores the supplied maximize flag in state and its ref; returns nothing. */
     const setFrameMaximized = useCallback((nextValue: boolean) => {
         isMaximizedRef.current = nextValue;
         setIsMaximized(nextValue);
     }, []);
 
-    /** Stores the supplied preview zone when changed; returns nothing. */
     const setFrameSnapZone = useCallback((nextValue: SnapZone) => {
         if (snapZoneRef.current === nextValue) {
             return;
@@ -479,12 +457,10 @@ export function useWindowFrame({
 
     const zIndex = isOpen ? state.zIndex : isMinimized ? state.zIndex : 0;
 
-    /** Closes the current app with no inputs or return value. */
     const handleClose = useCallback(() => {
         actions.close();
     }, [actions]);
 
-    /** Minimizes the current app toward its icon with no inputs or return value. */
     const handleMinimize = useCallback(() => {
         if (isAnimating.current || !canMinimize) {
             return;
@@ -545,7 +521,6 @@ export function useWindowFrame({
         setFrameSize,
     ]);
 
-    /** Toggles the current app between restored and full viewport frames; returns nothing. */
     const handleMaximize = useCallback(() => {
         if (!canMaximize || typeof window === "undefined") {
             return;
@@ -779,7 +754,6 @@ export function useWindowFrame({
         setFrameSize,
     ]);
 
-    /** Starts a title-bar drag from the supplied mouse event; returns nothing. */
     const handleDragMouseDown = useCallback(
         (event: ReactMouseEvent<HTMLDivElement>) => {
             if (!isActive) {
@@ -804,7 +778,6 @@ export function useWindowFrame({
         [actions, isActive],
     );
 
-    /** Toggles maximize when allowed, with no inputs or return value. */
     const handleTitleBarDoubleClick = useCallback(() => {
         if (canMaximize) {
             handleMaximize();
@@ -825,7 +798,6 @@ export function useWindowFrame({
             y: number;
         } | null = null;
 
-        /** Applies the supplied pointer coordinates to the active drag; returns nothing. */
         const applyDragPosition = (clientX: number, clientY: number) => {
             if (version !== gestureVersion.current) {
                 return;
@@ -912,7 +884,6 @@ export function useWindowFrame({
             setFrameSnapZone(null);
         };
 
-        /** Applies the latest queued gesture coordinates with no inputs or return value. */
         const flushPendingPointer = () => {
             if (!pendingPointer) {
                 return;
@@ -924,7 +895,6 @@ export function useWindowFrame({
             applyDragPosition(pointer.x, pointer.y);
         };
 
-        /** Queues the supplied mouse event for the next animation frame; returns nothing. */
         const handleMouseMove = (event: MouseEvent) => {
             hasMoved = true;
             pendingPointer = {
@@ -942,7 +912,6 @@ export function useWindowFrame({
             });
         };
 
-        /** Flushes the supplied release coordinates and saves the completed gesture; returns nothing. */
         const handleMouseUp = (event: MouseEvent) => {
             if (version !== gestureVersion.current) {
                 return;
@@ -1035,7 +1004,6 @@ export function useWindowFrame({
         setFrameSnapZone,
     ]);
 
-    /** Fits the frame and starts resizing from the supplied event and direction; returns nothing. */
     const handleResizeMouseDown = useCallback(
         (
             event: ReactMouseEvent<HTMLDivElement>,
@@ -1087,7 +1055,6 @@ export function useWindowFrame({
             y: number;
         } | null = null;
 
-        /** Applies the supplied pointer coordinates to the anchored resize frame; returns nothing. */
         const applyResize = (clientX: number, clientY: number) => {
             if (version !== gestureVersion.current) {
                 return;
@@ -1115,7 +1082,6 @@ export function useWindowFrame({
             hasUserAdjustedFrame.current = true;
         };
 
-        /** Applies the latest queued gesture coordinates with no inputs or return value. */
         const flushPendingPointer = () => {
             if (!pendingPointer) {
                 return;
@@ -1127,7 +1093,6 @@ export function useWindowFrame({
             applyResize(pointer.x, pointer.y);
         };
 
-        /** Queues the supplied mouse event for the next animation frame; returns nothing. */
         const handleMouseMove = (event: MouseEvent) => {
             pendingPointer = {
                 x: event.clientX,
@@ -1144,7 +1109,6 @@ export function useWindowFrame({
             });
         };
 
-        /** Flushes the supplied release coordinates and saves the completed gesture; returns nothing. */
         const handleMouseUp = (event: MouseEvent) => {
             if (version !== gestureVersion.current) {
                 return;
@@ -1194,7 +1158,6 @@ export function useWindowFrame({
     useEffect(() => {
         let animationFrame = 0;
 
-        /** Cancels active gestures and refits saved frames to the viewport; has no inputs or return value. */
         const handleBrowserResize = () => {
             if (hasActiveGesture.current && !isMaximizedRef.current) {
                 previousState.current = {
@@ -1280,7 +1243,6 @@ export function useWindowFrame({
         setFrameSnapZone,
     ]);
 
-    /** Focuses the current window if inactive, with no inputs or return value. */
     const handleWindowMouseDown = useCallback(() => {
         if (!isActive) {
             actions.focus();

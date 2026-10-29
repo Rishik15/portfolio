@@ -87,9 +87,7 @@ export function storePlaybackState(trackId: string, position: number) {
                 position: Math.max(0, position),
             } satisfies StoredPlaybackState),
         );
-    } catch {
-        // Playback persistence is optional.
-    }
+    } catch {}
 }
 
 export function consumeTrackStart() {
@@ -155,10 +153,6 @@ export function consumeTrackStart() {
 
         return true;
     } catch {
-        /*
-         * If browser storage is unavailable,
-         * music should still remain usable.
-         */
         return true;
     }
 }

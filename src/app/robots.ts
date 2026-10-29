@@ -7,7 +7,7 @@ export default function robots(): MetadataRoute.Robots {
             allow: "/",
             disallow: "/api/",
         },
-        sitemap: "https://www.rishik-y.tech/sitemap.xml",
-        host: "https://www.rishik-y.tech",
+        sitemap: "https://rishikyesgari.com/sitemap.xml",
+        host: "https://rishikyesgari.com",
     };
 }

@@ -1,4 +1,3 @@
-/** app-window.tsx renders window chrome, content and frame controls. */
 import type { ReactNode } from "react";
 
 import {
@@ -11,6 +10,7 @@ import {
     type ResizeDirection,
     useWindowFrame,
 } from "@/components/windows/use-window-frame";
+import { TrafficLightGlyph } from "@/components/windows/traffic-light-glyph";
 
 type AppWindowProps = {
     config: AppWindowConfig;
@@ -61,7 +61,6 @@ const RESIZE_HANDLES: {
     },
 ];
 
-/** Returns window chrome and content for the supplied configuration, state and actions. */
 export function AppWindow({
     config,
     state,
@@ -202,6 +201,8 @@ export function AppWindow({
                                     aria-label={`Close ${config.title}`}
                                     onClick={frame.handleClose}
                                     className={`
+                                        group/dot
+                                        relative
                                         size-3
                                         rounded-full
                                         transition-colors
@@ -212,7 +213,9 @@ export function AppWindow({
                                                 : "bg-zinc-400 dark:bg-zinc-600"
                                         }
                                     `}
-                                />
+                                >
+                                    <TrafficLightGlyph kind="close" />
+                                </button>
 
                                 <button
                                     type="button"
@@ -224,6 +227,8 @@ export function AppWindow({
                                             : undefined
                                     }
                                     className={`
+                                        group/dot
+                                        relative
                                         size-3
                                         rounded-full
                                         transition-colors
@@ -236,7 +241,9 @@ export function AppWindow({
                                                   : "bg-zinc-400 dark:bg-zinc-600"
                                         }
                                     `}
-                                />
+                                >
+                                    <TrafficLightGlyph kind="minimize" />
+                                </button>
 
                                 <button
                                     type="button"
@@ -248,6 +255,8 @@ export function AppWindow({
                                             : undefined
                                     }
                                     className={`
+                                        group/dot
+                                        relative
                                         size-3
                                         rounded-full
                                         transition-colors
@@ -260,7 +269,9 @@ export function AppWindow({
                                                   : "bg-zinc-400 dark:bg-zinc-600"
                                         }
                                     `}
-                                />
+                                >
+                                    <TrafficLightGlyph kind="maximize" />
+                                </button>
                             </div>
 
                             <div

@@ -1,5 +1,3 @@
-// welcome.ts: copy and launch targets shown in the Welcome window.
-
 import { WINDOW_IDS, type WindowId } from "@/config/windows";
 
 export type WelcomeAction =
@@ -10,7 +8,7 @@ export const WELCOME = {
     eyebrow: "Welcome",
     name: "Rishik Yesgari",
     role: "Software engineer · CS senior at NJIT",
-    intro: "Hey, thanks for stopping by. I built this site as a little desktop, so go ahead and poke around. About me is a good place to start.",
+    intro: "Hey, thanks for stopping by.",
 
     outcomes: [{ title: "Full-stack" }, { title: "ML & AI" }],
 

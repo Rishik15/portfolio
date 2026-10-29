@@ -1,5 +1,3 @@
-// welcome-ui.ts: class names for the Welcome window, sized by its own container width.
-
 export const WELCOME_UI = {
     root: `
         @container/welcome

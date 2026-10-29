@@ -1,4 +1,3 @@
-/** window-manager.tsx owns app registration, window state and activation actions. */
 "use client";
 
 import {

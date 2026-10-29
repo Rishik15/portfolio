@@ -1,4 +1,3 @@
-/** windows.ts defines app identities, fluid sizing policies and initial placement. */
 import type { AppWindowConfig } from "@/components/windows/window-manager";
 
 export const WINDOW_IDS = {
@@ -20,8 +19,18 @@ export const WINDOW_CONFIGS = [
         title: "Welcome",
 
         sizing: {
-            width: { defaultFraction: 0.44, minFraction: 0.25, maxFraction: 1, contentFloor: 460 },
-            height: { defaultFraction: 0.62, minFraction: 0.35, maxFraction: 1, contentFloor: 400 },
+            width: {
+                defaultFraction: 0.43,
+                minFraction: 0.25,
+                maxFraction: 1,
+                contentFloor: 400,
+            },
+            height: {
+                defaultFraction: 0.5,
+                minFraction: 0.35,
+                maxFraction: 1,
+                contentFloor: 350,
+            },
         },
 
         initialPlacement: {
@@ -42,13 +51,23 @@ export const WINDOW_CONFIGS = [
         title: "Terminal",
 
         sizing: {
-            width: { defaultFraction: 0.5, minFraction: 0.25, maxFraction: 1, contentFloor: 620 },
-            height: { defaultFraction: 0.73, minFraction: 0.35, maxFraction: 1, contentFloor: 400 },
+            width: {
+                defaultFraction: 0.5,
+                minFraction: 0.25,
+                maxFraction: 1,
+                contentFloor: 620,
+            },
+            height: {
+                defaultFraction: 0.73,
+                minFraction: 0.35,
+                maxFraction: 1,
+                contentFloor: 400,
+            },
         },
 
         initialPlacement: {
             x: 0.5,
-            y: 0.40,
+            y: 0.4,
         },
 
         canMinimize: true,
@@ -64,8 +83,18 @@ export const WINDOW_CONFIGS = [
         title: "About Me",
 
         sizing: {
-            width: { defaultFraction: 0.38, minFraction: 0.25, maxFraction: 1, contentFloor: 380 },
-            height: { defaultFraction: 0.59, minFraction: 0.35, maxFraction: 1, contentFloor: 340 },
+            width: {
+                defaultFraction: 0.38,
+                minFraction: 0.25,
+                maxFraction: 1,
+                contentFloor: 380,
+            },
+            height: {
+                defaultFraction: 0.59,
+                minFraction: 0.35,
+                maxFraction: 1,
+                contentFloor: 340,
+            },
         },
 
         initialPlacement: {
@@ -86,8 +115,18 @@ export const WINDOW_CONFIGS = [
         title: "Notes",
 
         sizing: {
-            width: { defaultFraction: 0.6, minFraction: 0.25, maxFraction: 1, contentFloor: 540 },
-            height: { defaultFraction: 0.73, minFraction: 0.35, maxFraction: 1, contentFloor: 420 },
+            width: {
+                defaultFraction: 0.6,
+                minFraction: 0.25,
+                maxFraction: 1,
+                contentFloor: 540,
+            },
+            height: {
+                defaultFraction: 0.73,
+                minFraction: 0.35,
+                maxFraction: 1,
+                contentFloor: 420,
+            },
         },
 
         initialPlacement: {
@@ -108,8 +147,18 @@ export const WINDOW_CONFIGS = [
         title: "Resume",
 
         sizing: {
-            width: { defaultFraction: 0.56, minFraction: 0.25, maxFraction: 1, contentFloor: 500 },
-            height: { defaultFraction: 0.79, minFraction: 0.35, maxFraction: 1, contentFloor: 420 },
+            width: {
+                defaultFraction: 0.56,
+                minFraction: 0.25,
+                maxFraction: 1,
+                contentFloor: 500,
+            },
+            height: {
+                defaultFraction: 0.79,
+                minFraction: 0.35,
+                maxFraction: 1,
+                contentFloor: 420,
+            },
         },
 
         initialPlacement: {
@@ -132,8 +181,18 @@ export const WINDOW_CONFIGS = [
         title: "Projects",
 
         sizing: {
-            width: { defaultFraction: 0.76, minFraction: 0.25, maxFraction: 1, contentFloor: 680 },
-            height: { defaultFraction: 0.79, minFraction: 0.35, maxFraction: 1, contentFloor: 480 },
+            width: {
+                defaultFraction: 0.76,
+                minFraction: 0.25,
+                maxFraction: 1,
+                contentFloor: 680,
+            },
+            height: {
+                defaultFraction: 0.79,
+                minFraction: 0.35,
+                maxFraction: 1,
+                contentFloor: 480,
+            },
         },
 
         initialPlacement: {
@@ -156,8 +215,18 @@ export const WINDOW_CONFIGS = [
         title: "Experience",
 
         sizing: {
-            width: { defaultFraction: 0.7, minFraction: 0.25, maxFraction: 1, contentFloor: 640 },
-            height: { defaultFraction: 0.75, minFraction: 0.35, maxFraction: 1, contentFloor: 460 },
+            width: {
+                defaultFraction: 0.7,
+                minFraction: 0.25,
+                maxFraction: 1,
+                contentFloor: 640,
+            },
+            height: {
+                defaultFraction: 0.75,
+                minFraction: 0.35,
+                maxFraction: 1,
+                contentFloor: 460,
+            },
         },
 
         initialPlacement: {

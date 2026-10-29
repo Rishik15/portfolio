@@ -18,14 +18,8 @@ export type TransitionVariant =
 interface AnimatedThemeTogglerProps extends React.ComponentPropsWithoutRef<"button"> {
     duration?: number;
     variant?: TransitionVariant;
-    /** When true, the transition expands from the viewport center instead of the button center. */
     fromCenter?: boolean;
-    /**
-     * Controlled theme value. When provided, the parent owns persistence
-     * (e.g. `next-themes`) and this component will not write to localStorage.
-     */
     theme?: "light" | "dark";
-    /** Called on toggle. Pair with `theme` for controlled usage. */
     onThemeChange?: (theme: "light" | "dark") => void;
 }
 
@@ -34,10 +28,6 @@ function polygonCollapsed(point: string, vertexCount: number): string {
     return `polygon(${pairs})`;
 }
 
-// All coordinates are percentages of the snapshot reference box: Chrome 150
-// renders absolute px clip-path coordinates on ::view-transition-new(root)
-// unscaled on fractional display scales (e.g. Windows 150%) for the first
-// transition after load, so px values land at the wrong position (#989).
 function getThemeTransitionClipPaths(
     variant: TransitionVariant,
     cx: number,
@@ -49,7 +39,6 @@ function getThemeTransitionClipPaths(
     const toX = (x: number) => `${(x / viewportWidth) * 100}%`;
     const toY = (y: number) => `${(y / viewportHeight) * 100}%`;
     const point = (x: number, y: number) => `${toX(x)} ${toY(y)}`;
-    // circle() percentage radii resolve against hypot(w, h) / sqrt(2) of the reference box.
     const toRadius = (r: number) =>
         `${(r / (Math.hypot(viewportWidth, viewportHeight) / Math.SQRT2)) * 100}%`;
 
@@ -82,7 +71,6 @@ function getThemeTransitionClipPaths(
             return [polygonCollapsed(point(cx, cy), 3), `polygon(${verts})`];
         }
         case "diamond": {
-            // Slightly larger than the view-transition circle radius so axis-aligned coverage matches the circle reveal.
             const R = maxRadius * Math.SQRT2;
             const end = [
                 point(cx, cy - R),
@@ -116,7 +104,6 @@ function getThemeTransitionClipPaths(
             return [polygonCollapsed(point(cx, cy), 4), `polygon(${end})`];
         }
         case "star": {
-            // Small overscan so the last frames never leave a 1px seam before the transition group ends.
             const R = maxRadius * Math.SQRT2 * 1.03;
             const innerRatio = 0.42;
             const starPolygon = (radius: number) => {
@@ -195,8 +182,6 @@ export const AnimatedThemeToggler = ({
         )
             return;
 
-        // innerWidth/innerHeight (not visualViewport): percentages must resolve
-        // against the snapshot reference box, which includes classic scrollbars.
         const viewportWidth = window.innerWidth;
         const viewportHeight = window.innerHeight;
 
@@ -218,8 +203,6 @@ export const AnimatedThemeToggler = ({
 
         const applyTheme = () => {
             const newTheme = !isDark;
-            // Always toggle the class synchronously so the View Transitions API
-            // snapshots the new theme inside the startViewTransition callback.
             document.documentElement.classList.toggle("dark");
             if (isControlled) {
                 onThemeChange?.(newTheme ? "dark" : "light");
@@ -249,8 +232,6 @@ export const AnimatedThemeToggler = ({
             "--magicui-theme-toggle-vt-duration",
             `${duration}ms`,
         );
-        // Pin the collapsed clip-path via CSS so Firefox does not paint the new
-        // theme unclipped between snapshot and the ready.then() JS animation.
         root.style.setProperty("--magicui-theme-vt-clip-from", clipPath[0]);
         const cleanup = () => {
             isTransitioningRef.current = false;
@@ -279,7 +260,6 @@ export const AnimatedThemeToggler = ({
                         },
                         {
                             duration,
-                            // Star: linear avoids easing overshoot that fights polygon interpolation at t→1; VT group duration is synced above.
                             easing: shape === "star" ? "linear" : "ease-in-out",
                             fill: "forwards",
                             pseudoElement: "::view-transition-new(root)",

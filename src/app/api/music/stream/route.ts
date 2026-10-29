@@ -60,9 +60,7 @@ async function fetchTrackStreamWithRetry(
 
             try {
                 return await fetchTrackStream(trackId, range);
-            } catch {
-                // Try the next retry delay.
-            }
+            } catch {}
         }
 
         throw firstError;

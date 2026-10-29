@@ -78,7 +78,7 @@ function DockItemComponent({ item }: DockItemProps) {
             </button>
         );
     } else if (item.type === "email") {
-        const composeUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(
+        const composeUrl = `https:
             item.email,
         )}`;
 

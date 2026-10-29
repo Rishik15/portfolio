@@ -1,24 +1,14 @@
 "use client";
 
-// welcome.tsx: first-load window with the owner's name, role, outcomes and launch buttons.
-
 import { WELCOME_UI } from "@/components/apps/welcome/welcome-ui";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useWindowManager } from "@/components/windows/window-manager";
 import { WELCOME, type WelcomeAction } from "@/config/welcome";
 
-/**
- * Renders the Welcome window content.
- * Takes no props; returns the intro, outcome cards and calls to action.
- */
 export function Welcome() {
     const { activateWindow } = useWindowManager();
 
-    /**
-     * Renders one action as a button (opens a window) or a link (external href).
-     * Takes the action and whether it is the primary one; returns the element.
-     */
     function renderAction(action: WelcomeAction, primary: boolean) {
         const className = cn(
             buttonVariants({

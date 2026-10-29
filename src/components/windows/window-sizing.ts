@@ -1,5 +1,3 @@
-/** window-sizing.ts resolves numeric app sizing policies against the desktop work area. */
-
 export type AxisSizingPolicy = {
     defaultFraction: number;
     minFraction: number;
@@ -27,12 +25,10 @@ const DEFAULT_POLICY: WindowSizingPolicy = {
     },
 };
 
-/** Returns the supplied nonnegative finite value, or the fallback for invalid inputs. */
 function validNumber(value: number, fallback: number): number {
     return Number.isFinite(value) && value >= 0 ? value : fallback;
 }
 
-/** Returns default, minimum and maximum pixels for an axis policy, fallback and available extent. */
 function resolveAxis(
     policy: AxisSizingPolicy,
     fallback: AxisSizingPolicy,
@@ -63,7 +59,6 @@ function resolveAxis(
     };
 }
 
-/** Returns default size and effective limits for the optional policy and work-area dimensions. */
 export function resolveWindowSizing(
     policy: WindowSizingPolicy | undefined,
     area: { width: number; height: number },

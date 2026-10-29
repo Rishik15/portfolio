@@ -1,4 +1,3 @@
-/** dock.tsx provides the magnifying dock and fixed-size accessible-motion icons. */
 "use client";
 
 import React, { useRef, type PropsWithChildren } from "react";
@@ -34,7 +33,6 @@ const dockVariants = cva(
 );
 
 const Dock = React.forwardRef<HTMLDivElement, DockProps>(
-    /** Returns a dock for the supplied sizing props, children and forwarded DOM ref. */
     (
         {
             className,
@@ -50,7 +48,6 @@ const Dock = React.forwardRef<HTMLDivElement, DockProps>(
     ) => {
         const mouseX = useMotionValue(Infinity);
 
-        /** Takes no arguments and returns children with inherited dock sizing and pointer state. */
         const renderChildren = () => {
             return React.Children.map(children, (child) => {
                 if (
@@ -109,7 +106,6 @@ export interface DockIconProps extends Omit<
     props?: PropsWithChildren;
 }
 
-/** Returns an icon for the supplied sizing, motion preference, pointer and content props. */
 const DockIcon = ({
     size = DEFAULT_SIZE,
     magnification = DEFAULT_MAGNIFICATION,

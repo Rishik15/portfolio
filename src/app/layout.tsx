@@ -19,7 +19,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-    metadataBase: new URL("https://www.rishik-y.tech"),
+    metadataBase: new URL("https://rishikyesgari.com"),
 
     title: "Rishik Yesgari | Software Engineer",
 
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     authors: [
         {
             name: "Rishik Yesgari",
-            url: "https://www.rishik-y.tech",
+            url: "https://rishikyesgari.com",
         },
     ],
 
@@ -75,16 +75,16 @@ export const metadata: Metadata = {
 const profileJsonLd = {
     "@context": "https://schema.org",
     "@type": "ProfilePage",
-    "@id": "https://www.rishik-y.tech/#profile",
-    url: "https://www.rishik-y.tech/",
+    "@id": "https://rishikyesgari.com/#profile",
+    url: "https://rishikyesgari.com/",
     name: "Rishik Yesgari | Software Engineer",
     description:
         "Portfolio of Rishik Yesgari, a software engineer building full-stack applications, AI and machine learning systems, and modern software solutions.",
     mainEntity: {
         "@type": "Person",
-        "@id": "https://www.rishik-y.tech/#person",
+        "@id": "https://rishikyesgari.com/#person",
         name: "Rishik Yesgari",
-        url: "https://www.rishik-y.tech/",
+        url: "https://rishikyesgari.com/",
         jobTitle: "Software Engineer",
         description:
             "Software engineer building full-stack applications, AI and machine learning systems, and modern software solutions.",

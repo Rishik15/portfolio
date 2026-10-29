@@ -134,8 +134,8 @@ export const RESUME_UI = {
             overflow-hidden
             rounded-xl
             border
-            border-foreground/10
-            bg-background/95
+            border-white/15
+            bg-black/95
             shadow-lg
         `,
 
@@ -146,13 +146,13 @@ export const RESUME_UI = {
             justify-center
 
             text-[17px]
-            text-foreground/70
+            text-white/70
 
             transition-colors
             duration-100
 
-            hover:bg-foreground/6
-            hover:text-foreground
+            hover:bg-white/10
+            hover:text-white
 
             disabled:pointer-events-none
             disabled:opacity-30
@@ -171,18 +171,18 @@ export const RESUME_UI = {
             h-9
             min-w-13
             border-x
-            border-foreground/10
+            border-white/15
             px-2
 
             text-[10px]
             font-medium
-            text-foreground/65
+            text-white/65
 
             transition-colors
             duration-100
 
-            hover:bg-foreground/6
-            hover:text-foreground
+            hover:bg-white/10
+            hover:text-white
 
             @2xl/resume:h-10
             @2xl/resume:min-w-16
@@ -224,8 +224,8 @@ export const RESUME_UI = {
             justify-center
             rounded-xl
 
-            bg-foreground
-            text-background
+            bg-black
+            text-white
             shadow-lg
 
             transition-transform
