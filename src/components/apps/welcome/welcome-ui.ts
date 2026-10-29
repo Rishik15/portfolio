@@ -25,16 +25,7 @@ export const WELCOME_UI = {
         @min-[640px]/welcome:space-y-6
     `,
 
-    eyebrow: `
-        text-[12px]
-        font-medium
-        uppercase
-        tracking-[0.18em]
-        text-foreground/55
-    `,
-
     name: `
-        mt-2
         text-[28px]
         font-semibold
         leading-tight

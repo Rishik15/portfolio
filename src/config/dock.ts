@@ -33,11 +33,39 @@ export const APP_DOCK_ITEMS = [
         windowId: WINDOW_IDS.about,
     },
     {
+        id: "experience",
+        type: "window",
+        label: "Experience",
+        icon: "/icons/experience.webp",
+        windowId: WINDOW_IDS.experience,
+    },
+    {
+        id: "projects",
+        type: "window",
+        label: "Projects",
+        icon: "/icons/projects.webp",
+        windowId: WINDOW_IDS.projects,
+    },
+    {
+        id: "resume",
+        type: "window",
+        label: "Resume",
+        icon: "/icons/resume.webp",
+        windowId: WINDOW_IDS.resume,
+    },
+    {
         id: "notes",
         type: "window",
         label: "Notes",
         icon: "/icons/notes.webp",
         windowId: WINDOW_IDS.notes,
+    },
+    {
+        id: "terminal",
+        type: "window",
+        label: "Terminal",
+        icon: "/icons/terminal.webp",
+        windowId: WINDOW_IDS.terminal,
     },
 ] as const satisfies readonly DockItemConfig[];
 

@@ -44,7 +44,6 @@ export function Welcome() {
         <div className={WELCOME_UI.root}>
             <div className={WELCOME_UI.content}>
                 <header>
-                    <p className={WELCOME_UI.eyebrow}>{WELCOME.eyebrow}</p>
                     <h1 className={WELCOME_UI.name}>{WELCOME.name}</h1>
                     <p className={WELCOME_UI.role}>{WELCOME.role}</p>
                     <p className={WELCOME_UI.intro}>{WELCOME.intro}</p>

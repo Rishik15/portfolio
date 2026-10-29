@@ -5,10 +5,9 @@ export type WelcomeAction =
     | { readonly label: string; readonly href: string };
 
 export const WELCOME = {
-    eyebrow: "Welcome",
-    name: "Rishik Yesgari",
-    role: "Software engineer · CS senior at NJIT",
-    intro: "Hey, thanks for stopping by.",
+    name: "Hello, I'm Rishik",
+    role: "Software Engineer · CS senior at NJIT",
+    intro: "This is my portfolio, set up like a little desktop. Click any app in the dock to look around, or open the terminal and type /help.",
 
     outcomes: [{ title: "Full-stack" }, { title: "ML & AI" }],
 
@@ -18,8 +17,7 @@ export const WELCOME = {
         { label: "Contact", href: "mailto:rishikreddy.yesgari@gmail.com" },
     ],
 } as const satisfies {
-    eyebrow: string;
-    name: string;
+    name: "Hello, I'm Rishik";
     role: string;
     intro: string;
     outcomes: readonly { title: string }[];
