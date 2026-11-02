@@ -1,674 +1,132 @@
-export const EXPERIENCE_SIDEBAR = {
-    minWidth: 190,
-    maxWidth: 420,
+import type { ExperienceType } from "@/config/experience";
 
-    getMinDetailWidth(windowWidth: number) {
-        if (windowWidth >= 1440) {
-            return 700;
-        }
-
-        if (windowWidth >= 1280) {
-            return 650;
-        }
-
-        if (windowWidth >= 1150) {
-            return 600;
-        }
-
-        if (windowWidth >= 900) {
-            return 500;
-        }
-
-        if (windowWidth >= 760) {
-            return 420;
-        }
-
-        return 360;
+export const TYPE_STYLES: Record<
+    ExperienceType,
+    { bar: string; dot: string; strip: string }
+> = {
+    Research: {
+        bar: "bg-sky-100 text-sky-950 dark:bg-sky-950 dark:text-sky-100",
+        dot: "bg-sky-500",
+        strip: "bg-sky-400 dark:bg-sky-500",
     },
-} as const;
+    Internship: {
+        bar: "bg-emerald-100 text-emerald-950 dark:bg-emerald-950 dark:text-emerald-100",
+        dot: "bg-emerald-500",
+        strip: "bg-emerald-400 dark:bg-emerald-500",
+    },
+    Fellowship: {
+        bar: "bg-violet-100 text-violet-950 dark:bg-violet-950 dark:text-violet-100",
+        dot: "bg-violet-500",
+        strip: "bg-violet-400 dark:bg-violet-500",
+    },
+    "Full-time": {
+        bar: "bg-rose-100 text-rose-950 dark:bg-rose-950 dark:text-rose-100",
+        dot: "bg-rose-500",
+        strip: "bg-rose-400 dark:bg-rose-500",
+    },
+    "Part-time": {
+        bar: "bg-orange-100 text-orange-950 dark:bg-orange-950 dark:text-orange-100",
+        dot: "bg-orange-500",
+        strip: "bg-orange-400 dark:bg-orange-500",
+    },
+    Contract: {
+        bar: "bg-amber-100 text-amber-950 dark:bg-amber-950 dark:text-amber-100",
+        dot: "bg-amber-500",
+        strip: "bg-amber-400 dark:bg-amber-500",
+    },
+    Other: {
+        bar: "bg-slate-100 text-slate-950  dark:bg-slate-800 dark:text-slate-100",
+        dot: "bg-slate-500",
+        strip: "bg-slate-400 dark:bg-slate-500",
+    },
+};
 
 export const EXPERIENCE_UI = {
-    root: `
-        @container/experience
-        flex
-        h-full
-        min-h-0
-        w-full
-        flex-col
-        overflow-hidden
-        bg-background
-        text-foreground
-    `,
+    root: "@container/experience flex h-full min-h-0 w-full flex-col overflow-hidden bg-background text-foreground outline-none",
 
-    main: `
-        flex
-        min-h-0
-        flex-1
-        overflow-hidden
-    `,
+    main: "flex min-h-0 flex-1 overflow-hidden",
+
+    toolbar: {
+        root: "flex h-11 shrink-0 items-center gap-2 border-b border-foreground/10 px-3",
+        iconButton:
+            "inline-flex size-7 shrink-0 items-center justify-center rounded-md text-foreground/70 transition-colors duration-100 hover:bg-foreground/[0.07] hover:text-foreground disabled:pointer-events-none disabled:opacity-30",
+        title: "min-w-0 truncate text-[15px] font-semibold tabular-nums tracking-[-0.01em]",
+        pill: "inline-flex h-7 shrink-0 items-center rounded-md border border-foreground/10 px-2.5 text-[12px] font-medium text-foreground/80 transition-colors duration-100 hover:bg-foreground/[0.07] hover:text-foreground",
+        search: "relative ml-auto flex h-7 w-44 shrink-0 items-center @max-[800px]/experience:w-32",
+        searchIcon:
+            "pointer-events-none absolute left-2 size-3.5 text-foreground/45",
+        searchInput:
+            "h-full w-full rounded-md border border-foreground/10 bg-foreground/[0.035] pl-7 pr-12 text-[12px] outline-none transition-colors duration-100 placeholder:text-foreground/40 focus:border-foreground/25 focus:bg-background",
+        searchCount:
+            "pointer-events-none absolute right-2 text-[10px] tabular-nums text-foreground/50",
+    },
 
     sidebar: {
-        root: `
-            @container/experience-sidebar
-            relative
-            flex
-            h-full
-            min-w-[190px]
-            shrink-0
-            flex-col
-
-            border-r
-            border-foreground/10
-            bg-foreground/[0.025]
-
-            w-[210px]
-            max-w-[calc(100%_-_360px)]
-
-            @min-[760px]/experience:w-[240px]
-            @min-[760px]/experience:max-w-[calc(100%_-_420px)]
-
-            @min-[900px]/experience:w-[270px]
-            @min-[900px]/experience:max-w-[calc(100%_-_500px)]
-
-            @min-[1150px]/experience:w-[290px]
-            @min-[1150px]/experience:max-w-[calc(100%_-_600px)]
-
-            @min-[1280px]/experience:w-[310px]
-            @min-[1280px]/experience:max-w-[calc(100%_-_650px)]
-
-            @min-[1440px]/experience:w-[325px]
-            @min-[1440px]/experience:max-w-[calc(100%_-_700px)]
-        `,
-
-        scroller: `
-            min-h-0
-            flex-1
-            overflow-y-auto
-
-            py-1.5
-
-            @min-[280px]/experience-sidebar:py-2
-            @min-[320px]/experience-sidebar:py-2.5
-        `,
-
-        content: `
-            px-1.5
-
-            @min-[240px]/experience-sidebar:px-2
-
-            @min-[280px]/experience-sidebar:px-2.5
-
-            @min-[320px]/experience-sidebar:px-3
-        `,
-
-        yearButton: `
-            flex
-            h-8
-            w-full
-            items-center
-
-            gap-1.5
-            rounded-md
-            px-1.5
-
-            text-left
-            text-[12px]
-            text-foreground/90
-
-            transition-colors
-            duration-100
-
-            hover:bg-foreground/[0.055]
-            hover:text-foreground
-
-            @min-[240px]/experience-sidebar:text-[13px]
-
-            @min-[280px]/experience-sidebar:h-9
-            @min-[280px]/experience-sidebar:px-2
-            @min-[280px]/experience-sidebar:text-[14px]
-
-            @min-[320px]/experience-sidebar:h-10
-            @min-[320px]/experience-sidebar:px-2.5
-            @min-[320px]/experience-sidebar:text-[15px]
-        `,
-
-        chevron: `
-            size-3.5
-            shrink-0
-            text-foreground/65
-
-            transition-transform
-            duration-150
-
-            @min-[280px]/experience-sidebar:size-4
-
-            @min-[320px]/experience-sidebar:size-[18px]
-        `,
-
-        folderIcon: `
-            size-4
-            shrink-0
-            text-foreground/75
-
-            @min-[280px]/experience-sidebar:size-[18px]
-
-            @min-[320px]/experience-sidebar:size-5
-        `,
-
-        yearCount: `
-            ml-auto
-            shrink-0
-            pr-1
-
-            text-[9px]
-            tabular-nums
-            text-foreground/50
-
-            @min-[240px]/experience-sidebar:text-[10px]
-
-            @min-[280px]/experience-sidebar:text-[11px]
-
-            @min-[320px]/experience-sidebar:text-[12px]
-        `,
-
-        experienceList: `
-            flex
-            flex-col
-            gap-0.5
-            pb-1
-            pl-4
-
-            @min-[240px]/experience-sidebar:gap-1
-            @min-[240px]/experience-sidebar:pl-5
-
-            @min-[280px]/experience-sidebar:pl-6
-
-            @min-[320px]/experience-sidebar:gap-1.5
-            @min-[320px]/experience-sidebar:pl-7
-        `,
-
-        experienceButton: `
-            flex
-            min-h-9
-            w-full
-            items-center
-
-            rounded-md
-            px-2.5
-            py-1.5
-
-            text-left
-
-            transition-colors
-            duration-100
-
-            @min-[240px]/experience-sidebar:px-4
-            @min-[240px]/experience-sidebar:py-2
-
-            @min-[280px]/experience-sidebar:min-h-10
-
-            @min-[320px]/experience-sidebar:min-h-11
-            @min-[320px]/experience-sidebar:px-4.5
-            @min-[320px]/experience-sidebar:py-2.5
-        `,
-
-        selectedExperience: `
-            bg-foreground/10
-            text-foreground
-        `,
-
-        inactiveExperience: `
-            text-foreground/80
-
-            hover:bg-foreground/[0.05]
-            hover:text-foreground
-        `,
-
-        role: `
-            truncate
-
-            text-[11px]
-            font-medium
-
-            @min-[240px]/experience-sidebar:text-[12px]
-
-            @min-[280px]/experience-sidebar:text-[13px]
-
-            @min-[320px]/experience-sidebar:text-[14px]
-        `,
-
-        company: `
-            truncate
-
-            text-[10px]
-            text-foreground/75
-
-            @min-[240px]/experience-sidebar:text-[11px]
-
-            @min-[280px]/experience-sidebar:text-[12px]
-
-            @min-[320px]/experience-sidebar:text-[13px]
-        `,
-
-        empty: `
-            px-2
-            py-1
-        `,
-
-        emptyRow: `
-            flex
-            h-8
-            items-center
-            gap-2
-            rounded-md
-            px-2
-
-            @min-[280px]/experience-sidebar:h-9
-
-            @min-[320px]/experience-sidebar:h-10
-        `,
-
-        resizer: `
-            group
-            absolute
-            right-[-3px]
-            top-0
-            z-20
-
-            h-full
-            w-[6px]
-
-            cursor-col-resize
-            touch-none
-        `,
-
-        resizerLine: `
-            absolute
-            right-[2px]
-            top-0
-
-            h-full
-            w-px
-
-            bg-transparent
-
-            transition-colors
-            duration-100
-
-            group-hover:bg-foreground/20
-            group-active:bg-foreground/30
-        `,
+        root: "flex w-[210px] shrink-0 flex-col gap-5 overflow-y-auto border-r border-foreground/10 bg-foreground/[0.025] px-2.5 py-3 @max-[800px]/experience:w-12 @max-[800px]/experience:items-center @max-[800px]/experience:px-1.5",
+        heading:
+            "mb-1 px-2 text-[10px] font-medium tracking-[0.08em] text-foreground/50 @max-[800px]/experience:hidden",
+        row: "flex h-8 w-full items-center gap-2 rounded-md px-2 text-left text-[13px] text-foreground/85 transition-colors duration-100 hover:bg-foreground/[0.06] @max-[800px]/experience:justify-center @max-[800px]/experience:px-0",
+        rowOff: "text-foreground/40",
+        dot: "size-2.5 shrink-0 rounded-full",
+        dotOff: "bg-transparent ring-1 ring-inset ring-foreground/30",
+        label: "min-w-0 truncate @max-[800px]/experience:hidden",
+        count: "ml-auto text-[11px] tabular-nums text-foreground/45 @max-[800px]/experience:hidden",
+    },
+
+    calendar: {
+        root: "relative flex min-w-0 flex-1 flex-col overflow-hidden px-4 pb-3 pt-3",
+        months: "grid grid-cols-12",
+        month: "pb-2 text-center text-[11px] font-medium tracking-[0.04em] text-foreground/55",
+        monthNow: "text-foreground",
+        stage: "relative min-h-0 flex-1",
+        slide: "absolute inset-0 flex flex-col",
+        columns: "pointer-events-none absolute inset-0 grid grid-cols-12",
+        column: "border-l border-foreground/[0.07] last:border-r",
+        columnNow: "bg-foreground/[0.03]",
+        lanes: "relative grid min-h-0 flex-1 grid-cols-12 content-start gap-y-1.5 overflow-y-auto pt-2",
+        nowLine: "pointer-events-none absolute inset-y-0 w-px bg-red-500/70",
+        nowDot: "absolute -top-1 -left-[3px] size-[7px] rounded-full bg-red-500",
+        bar: "relative z-10 flex h-full min-w-0 cursor-pointer flex-col justify-center overflow-hidden px-2.5 text-left outline-none transition-[filter] duration-150 hover:brightness-[0.97] focus-visible:ring-2 focus-visible:ring-ring dark:hover:brightness-125",
+        barRole: "truncate text-[12px] font-semibold leading-tight",
+        barRange: "truncate text-[10px] leading-tight opacity-70",
+        summary:
+            "relative z-10 w-fit shrink-0 bg-background py-1 pr-2 pl-2 text-[12px] text-foreground/50",
+        hint: "pointer-events-none absolute bottom-3 left-1/2 z-20 -translate-x-1/2 rounded-full border border-foreground/10 bg-background px-3 py-1.5 text-[12px] text-foreground/70 shadow-md",
+    },
+
+    timeline: {
+        root: "shrink-0 border-t border-foreground/10 px-4 pb-2.5 pt-2.5",
+        track: "relative h-[72px] select-none",
+        year: "absolute top-0 inline-flex h-5 items-center rounded-full px-2 text-[11px] font-medium tabular-nums text-foreground/45 transition-colors duration-150 hover:bg-foreground/[0.06] hover:text-foreground/80",
+        yearActive: "bg-foreground/[0.08] text-foreground",
+        divider:
+            "pointer-events-none absolute inset-y-0 border-l border-foreground/10",
+        strip: "block h-1.5 w-full rounded-full opacity-80",
+    },
+
+    nav: {
+        root: "flex min-h-0 min-w-0 flex-1 flex-col",
     },
 
     detail: {
-        root: `
-            @container/experience-detail
-            min-h-0
-            min-w-0
-            flex-1
-            overflow-y-auto
-        `,
-
-        content: `
-            mx-auto
-            w-full
-            max-w-[860px]
-
-            px-4
-            py-5
-
-            @min-[420px]/experience-detail:px-5
-            @min-[420px]/experience-detail:py-6
-
-            @min-[560px]/experience-detail:px-8
-            @min-[560px]/experience-detail:py-8
-
-            @min-[760px]/experience-detail:max-w-[900px]
-            @min-[760px]/experience-detail:px-10
-            @min-[760px]/experience-detail:py-10
-
-            @min-[900px]/experience-detail:max-w-[940px]
-            @min-[900px]/experience-detail:px-12
-            @min-[900px]/experience-detail:py-12
-
-            @min-[1050px]/experience-detail:max-w-[980px]
-            @min-[1050px]/experience-detail:px-14
-            @min-[1050px]/experience-detail:py-14
-        `,
-
-        role: `
-            text-[18px]
-            font-semibold
-            leading-tight
-            tracking-[-0.02em]
-            text-foreground
-
-            @min-[420px]/experience-detail:text-[19px]
-
-            @min-[560px]/experience-detail:text-[20px]
-
-            @min-[760px]/experience-detail:text-[24px]
-
-            @min-[900px]/experience-detail:text-[26px]
-
-            @min-[1050px]/experience-detail:text-[28px]
-        `,
-
-        companyRow: `
-            mt-1
-            flex
-            min-w-0
-            items-center
-            gap-1.5
-
-            text-[11px]
-            text-foreground/75
-
-            @min-[420px]/experience-detail:text-[12px]
-
-            @min-[560px]/experience-detail:text-[13px]
-
-            @min-[760px]/experience-detail:mt-1.5
-            @min-[760px]/experience-detail:text-[14px]
-
-            @min-[900px]/experience-detail:text-[15px]
-
-            @min-[1050px]/experience-detail:text-[16px]
-        `,
-
-        companyIcon: `
-            size-3
-            shrink-0
-
-            @min-[560px]/experience-detail:size-3.5
-
-            @min-[760px]/experience-detail:size-4
-
-            @min-[1050px]/experience-detail:size-[18px]
-        `,
-
-        externalIcon: `
-            size-2.5
-            shrink-0
-
-            @min-[560px]/experience-detail:size-3
-
-            @min-[760px]/experience-detail:size-3.5
-
-            @min-[1050px]/experience-detail:size-4
-        `,
-
-        metadata: `
-            mt-6
-            grid
-            grid-cols-1
-
-            gap-x-6
-            gap-y-4
-
-            border-t
-            border-foreground/10
-
-            pt-5
-
-            @min-[420px]/experience-detail:grid-cols-2
-            @min-[420px]/experience-detail:gap-x-8
-
-            @min-[560px]/experience-detail:mt-8
-            @min-[560px]/experience-detail:gap-x-10
-            @min-[560px]/experience-detail:gap-y-5
-            @min-[560px]/experience-detail:pt-6
-
-            @min-[760px]/experience-detail:grid-cols-3
-            @min-[760px]/experience-detail:gap-x-8
-
-            @min-[900px]/experience-detail:mt-9
-            @min-[900px]/experience-detail:gap-x-12
-            @min-[900px]/experience-detail:pt-7
-
-            @min-[1050px]/experience-detail:mt-10
-            @min-[1050px]/experience-detail:gap-x-14
-            @min-[1050px]/experience-detail:pt-8
-        `,
-
-        label: `
-            mb-1.5
-
-            text-[9px]
-            font-medium
-            tracking-[0.08em]
-            text-foreground/55
-
-            @min-[560px]/experience-detail:text-[10px]
-
-            @min-[760px]/experience-detail:text-[11px]
-
-            @min-[900px]/experience-detail:text-[12px]
-
-            @min-[1050px]/experience-detail:text-[13px]
-        `,
-
-        metadataValue: `
-            flex
-            min-w-0
-            items-center
-            gap-1.5
-
-            text-[11px]
-            text-foreground/85
-
-            @min-[560px]/experience-detail:text-[12px]
-
-            @min-[760px]/experience-detail:text-[13px]
-
-            @min-[900px]/experience-detail:text-[14px]
-
-            @min-[1050px]/experience-detail:text-[15px]
-        `,
-
-        metadataIcon: `
-            size-3
-            shrink-0
-            text-foreground/60
-
-            @min-[560px]/experience-detail:size-3.5
-
-            @min-[760px]/experience-detail:size-4
-
-            @min-[1050px]/experience-detail:size-[18px]
-        `,
-
-        section: `
-            mt-6
-
-            border-t
-            border-foreground/10
-
-            pt-5
-
-            @min-[560px]/experience-detail:mt-8
-            @min-[560px]/experience-detail:pt-6
-
-            @min-[760px]/experience-detail:mt-10
-            @min-[760px]/experience-detail:pt-7
-
-            @min-[900px]/experience-detail:mt-11
-            @min-[900px]/experience-detail:pt-8
-
-            @min-[1050px]/experience-detail:mt-12
-            @min-[1050px]/experience-detail:pt-9
-        `,
-
-        sectionTitle: `
-            mb-3
-
-            text-[9px]
-            font-medium
-            tracking-[0.08em]
-            text-foreground/55
-
-            @min-[560px]/experience-detail:text-[10px]
-
-            @min-[760px]/experience-detail:mb-4
-            @min-[760px]/experience-detail:text-[11px]
-
-            @min-[900px]/experience-detail:text-[12px]
-
-            @min-[1050px]/experience-detail:mb-5
-            @min-[1050px]/experience-detail:text-[13px]
-        `,
-
-        summary: `
-            max-w-3xl
-
-            text-[12px]
-            leading-5
-            text-foreground/85
-
-            @min-[560px]/experience-detail:text-[13px]
-            @min-[560px]/experience-detail:leading-6
-
-            @min-[760px]/experience-detail:text-[15px]
-            @min-[760px]/experience-detail:leading-7
-
-            @min-[900px]/experience-detail:text-[17px]
-            @min-[900px]/experience-detail:leading-7
-
-            @min-[1050px]/experience-detail:text-[18px]
-            @min-[1050px]/experience-detail:leading-8
-        `,
-
-        highlights: `
-            space-y-2.5
-
-            @min-[560px]/experience-detail:space-y-3
-
-            @min-[760px]/experience-detail:space-y-4
-
-            @min-[900px]/experience-detail:space-y-4.5
-
-            @min-[1050px]/experience-detail:space-y-5
-        `,
-
-        highlightRow: `
-            flex
-            items-start
-            gap-2.5
-
-            @min-[560px]/experience-detail:gap-3
-
-            @min-[760px]/experience-detail:gap-3.5
-
-            @min-[900px]/experience-detail:gap-4
-        `,
-
-        highlightDot: `
-            mt-[7px]
-            size-1
-            shrink-0
-            rounded-full
-            bg-foreground/55
-
-            @min-[760px]/experience-detail:mt-[9px]
-            @min-[760px]/experience-detail:size-[5px]
-
-            @min-[900px]/experience-detail:mt-[10px]
-            @min-[900px]/experience-detail:size-1.5
-
-            @min-[1050px]/experience-detail:mt-[12px]
-        `,
-
-        highlightText: `
-            text-[12px]
-            leading-5
-            text-foreground/85
-
-            @min-[560px]/experience-detail:text-[13px]
-            @min-[560px]/experience-detail:leading-6
-
-            @min-[760px]/experience-detail:text-[15px]
-            @min-[760px]/experience-detail:leading-7
-
-            @min-[900px]/experience-detail:text-[17px]
-            @min-[900px]/experience-detail:leading-7
-
-            @min-[1050px]/experience-detail:text-[18px]
-            @min-[1050px]/experience-detail:leading-8
-        `,
-
-        technologies: `
-            text-[11px]
-            leading-5
-            text-foreground/80
-
-            @min-[560px]/experience-detail:text-[12px]
-
-            @min-[760px]/experience-detail:text-[14px]
-            @min-[760px]/experience-detail:leading-6
-
-            @min-[900px]/experience-detail:text-[15px]
-            @min-[900px]/experience-detail:leading-7
-
-            @min-[1050px]/experience-detail:text-[16px]
-        `,
-
-        emptyLine: `
-            h-2.5
-            rounded-sm
-            bg-foreground/[0.085]
-
-            @min-[760px]/experience-detail:h-3
-
-            @min-[900px]/experience-detail:h-3.5
-        `,
-    },
-
-    status: {
-        root: `
-            flex
-            h-9
-            shrink-0
-            items-center
-            justify-between
-
-            gap-3
-
-            border-t
-            border-foreground/10
-
-            px-4
-
-            text-[10px]
-            text-foreground/55
-
-            @min-[900px]/experience:px-8
-            @min-[900px]/experience:text-[11px]
-
-            @min-[1150px]/experience:h-10
-            @min-[1150px]/experience:px-10
-            @min-[1150px]/experience:text-[12px]
-
-            @min-[1280px]/experience:h-11
-            @min-[1280px]/experience:px-12
-            @min-[1280px]/experience:text-[13px]
-
-            @min-[1440px]/experience:h-12
-            @min-[1440px]/experience:px-14
-            @min-[1440px]/experience:text-[14px]
-        `,
-
-        stats: `
-            flex
-            shrink-0
-            items-center
-            gap-2
-
-            tabular-nums
-            text-foreground/60
-
-            @min-[1150px]/experience:gap-2.5
-
-            @min-[1280px]/experience:gap-3
-        `,
+        header: "flex shrink-0 items-center gap-2.5 border-b border-foreground/10 px-3 py-2 @3xl/experience:px-4",
+        headerTitle:
+            "truncate text-[13px] font-semibold leading-tight tracking-[-0.01em] @3xl/experience:text-[14px]",
+        headerSubtitle:
+            "truncate text-[10px] leading-tight text-foreground/55 @3xl/experience:text-[11px]",
+        root: "min-h-0 min-w-0 flex-1 overflow-y-auto",
+        content:
+            "grid grid-cols-1 gap-6 p-4 @3xl/experience:grid-cols-[minmax(0,1.5fr)_minmax(200px,0.8fr)] @3xl/experience:gap-8 @3xl/experience:p-5",
+        sectionTitle:
+            "mb-2 text-[10px] font-medium tracking-[0.08em] text-foreground/50",
+        body: "text-[13px] leading-6 text-foreground/80",
+        highlights: "flex flex-col gap-2",
+        highlightRow: "flex gap-2.5 text-[13px] leading-6 text-foreground/80",
+        highlightDot: "mt-[10px] size-1 shrink-0 rounded-full bg-foreground/35",
+        side: "flex flex-col gap-4 @3xl/experience:border-l @3xl/experience:border-foreground/10 @3xl/experience:pl-5",
+        label: "mb-1 text-[9px] font-medium tracking-[0.08em] text-foreground/50 @3xl/experience:text-[10px]",
+        value: "flex min-w-0 items-center gap-1.5 text-[13px] text-foreground/90",
+        chips: "flex flex-wrap gap-1.5",
+        chip: "rounded-md border border-foreground/10 px-1.5 py-0.5 text-[11px] text-foreground/75 transition-colors duration-100 hover:bg-foreground/[0.07] hover:text-foreground",
     },
 } as const;

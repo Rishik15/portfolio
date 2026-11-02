@@ -9,7 +9,6 @@ export type ExperienceType =
 
 export type Experience = {
     id: string;
-    year: number;
 
     role: string;
     company: string;
@@ -29,14 +28,13 @@ export type Experience = {
 export const EXPERIENCES: readonly Experience[] = [
     {
         id: "njit-data-science-research-assistant",
-        year: 2025,
 
         role: "Deep Learning Forecasting Research Intern",
         company: "Department of Data Science (Grace Hopper AI Research), NJIT",
         type: "Research",
 
-        startDate: "August 2025",
-        endDate: "April 2026",
+        startDate: "2025-08",
+        endDate: "2026-04",
         location: "Newark, NJ",
 
         summary:
@@ -59,18 +57,19 @@ export const EXPERIENCES: readonly Experience[] = [
             "Model Evaluation",
             "Multithreading",
         ],
+
+        companyUrl: "https://www.njit.edu",
     },
     {
         id: "break-through-tech-ai-ml-fellow",
-        year: 2025,
 
         role: "AI and ML Intern",
         company:
             "Chambers Capital Ventures | Break Through Tech @ Cornell Tech",
         type: "Internship",
 
-        startDate: "June 2025",
-        endDate: "December 2025",
+        startDate: "2025-06",
+        endDate: "2025-12",
         location: "Remote",
 
         summary:
@@ -94,17 +93,18 @@ export const EXPERIENCES: readonly Experience[] = [
             "Feature Selection",
             "Model Evaluation",
         ],
+
+        companyUrl: "https://www.breakthroughtech.org",
     },
     {
         id: "njit-computer-science-research-assistant",
-        year: 2025,
 
         role: "Undergraduate Research Assistant",
         company: "Department of Computer Science, NJIT",
         type: "Research",
 
-        startDate: "April 2025",
-        endDate: "May 2026",
+        startDate: "2025-04",
+        endDate: "2026-05",
         location: "Newark, NJ",
 
         summary:
@@ -128,17 +128,18 @@ export const EXPERIENCES: readonly Experience[] = [
             "React",
             "Research Experimentation",
         ],
+
+        companyUrl: "https://www.njit.edu",
     },
     {
         id: "propel2excel-fellow",
-        year: 2024,
 
         role: "Fellow",
         company: "Propel2Excel",
         type: "Fellowship",
 
-        startDate: "December 2024",
-        endDate: "August 2025",
+        startDate: "2024-12",
+        endDate: "2025-08",
         location: "Boston, MA · Remote",
 
         summary:
@@ -159,18 +160,17 @@ export const EXPERIENCES: readonly Experience[] = [
             "Resume Development",
         ],
 
-        companyUrl: "https://www.propel2excel.org",
+        companyUrl: "https://www.linkedin.com/company/propel2excel/",
     },
     {
         id: "njit-older-adult-online-safety-research",
-        year: 2024,
 
         role: "Undergraduate Research Assistant",
         company: "New Jersey Institute of Technology",
         type: "Research",
 
-        startDate: "May 2024",
-        endDate: "December 2024",
+        startDate: "2024-05",
+        endDate: "2024-12",
         location: "Newark, NJ",
 
         summary:
@@ -191,5 +191,7 @@ export const EXPERIENCES: readonly Experience[] = [
             "Literature Review",
             "Human-Computer Interaction",
         ],
+
+        companyUrl: "https://www.njit.edu",
     },
 ];

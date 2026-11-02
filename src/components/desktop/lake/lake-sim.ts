@@ -8,9 +8,9 @@ const PRESS_RATE = 0.42;
 const RELEASE_RATE = 0.16;
 const GRADIENT_GAIN = 3;
 const REST = 0.002;
-const WAVE_SPEED = 0.12;
-const WAVE_DAMPING = 0.95;
-const WAVE_INJECT = 0.2;
+const WAVE_SPEED = 0.16;
+const WAVE_DAMPING = 0.965;
+const WAVE_INJECT = 0.24;
 const WAVE_LIMIT = 0.22;
 
 export type LakeSim = {

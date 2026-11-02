@@ -85,8 +85,9 @@ void main() {
     face *= 1.0 - 0.12 * press;
     face *= 1.0 - rim * max(side, 0.0) * press * 0.24;
     face += rim * max(-side, 0.0) * press * 0.08;
-    face *= 1.0 + dot(tilt, light) * 0.2 - dot(lean, tilt) * 0.22;
-    face += lift * 0.04;
+    face *= 1.0 + dot(tilt, light) * mix(0.2, 0.32, uDark) - dot(lean, tilt) * 0.22;
+    face += dot(tilt, light) * 0.035 * uDark;
+    face += lift * mix(0.04, 0.075, uDark);
 
     col = mix(col, face, mask);
     col *= 1.0 - 0.04 * soft;
