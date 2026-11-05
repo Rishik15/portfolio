@@ -1,14 +1,18 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 
 import { useMusic } from "@/components/providers/music-provider";
 import { useWindowManager } from "@/components/windows/window-manager";
 import { WINDOW_IDS, type WindowId } from "@/config/windows";
 
 import {
+    isMusicCommand,
     normalizeTerminalCommand,
     resolveTerminalCommand,
 } from "./terminal-command";
 import type { TerminalDraft, TerminalEntry } from "./terminal-types";
+
+const MUSIC_LIMIT_MESSAGE =
+    "Monthly listening limit reached. Music is back next month.";
 
 const TERMINAL_WINDOW_COMMANDS: Readonly<Record<string, WindowId>> = {
     "/about": WINDOW_IDS.about,
@@ -20,7 +24,7 @@ const TERMINAL_WINDOW_COMMANDS: Readonly<Record<string, WindowId>> = {
 export function useTerminal() {
     const { activateWindow } = useWindowManager();
 
-    const { isMusicVisible, toggleMusic, musicError } = useMusic();
+    const { limitedUntil, openMusicWindow } = useMusic();
 
     const nextEntryId = useRef(0);
 
@@ -30,31 +34,27 @@ export function useTerminal() {
 
     const [showWelcome, setShowWelcome] = useState(true);
 
-    const pendingMusicEntryId = useRef<number | null>(null);
-
-    useEffect(() => {
-        const pendingId = pendingMusicEntryId.current;
-
-        if (!musicError || pendingId === null) return;
-
-        pendingMusicEntryId.current = null;
-
-        setEntries((current) => [
-            ...current.filter((entry) => entry.id !== pendingId),
-            {
-                id: nextEntryId.current++,
-                command: "/music",
-                result: { type: "text", lines: [musicError] },
-            },
-        ]);
-    }, [musicError]);
-
     function addEntry(draft: TerminalDraft) {
         const entry = { ...draft, id: nextEntryId.current++ };
 
         setEntries((current) => [...current, entry]);
 
         return entry.id;
+    }
+
+    function submitMusicCommand(command: string) {
+        if (limitedUntil !== null && Date.now() < limitedUntil) {
+            addEntry({
+                command,
+                result: { type: "text", lines: [MUSIC_LIMIT_MESSAGE] },
+            });
+
+            return;
+        }
+
+        openMusicWindow();
+
+        addEntry(resolveTerminalCommand(command));
     }
 
     function submitCommand(command: string) {
@@ -64,7 +64,6 @@ export function useTerminal() {
 
         if (normalizedCommand === "/clear") {
             setEntries([]);
-            pendingMusicEntryId.current = null;
             setShowWelcome(false);
 
             return;
@@ -76,22 +75,8 @@ export function useTerminal() {
             activateWindow(windowId);
         }
 
-        if (normalizedCommand === "/music") {
-            const wasMusicVisible = isMusicVisible;
-
-            toggleMusic();
-
-            const entryId = addEntry({
-                command,
-                result: {
-                    type: "text",
-                    lines: [
-                        wasMusicVisible ? "Music paused." : "Starting music...",
-                    ],
-                },
-            });
-
-            pendingMusicEntryId.current = wasMusicVisible ? null : entryId;
+        if (isMusicCommand(command)) {
+            submitMusicCommand(command);
 
             return;
         }

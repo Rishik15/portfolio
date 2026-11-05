@@ -4,6 +4,7 @@ import { useEffect } from "react";
 
 import { About } from "@/components/apps/about/about";
 import { Experience } from "@/components/apps/experience/experience";
+import { Music } from "@/components/apps/music/music";
 import { Notes } from "@/components/apps/notes/notes";
 import { Projects } from "@/components/apps/projects/projects";
 import { Resume } from "@/components/apps/resume/resume";
@@ -35,6 +36,9 @@ function getWindowContent(windowId: string) {
 
         case "experience":
             return <Experience />;
+
+        case "music":
+            return <Music />;
 
         default:
             return null;

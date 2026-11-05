@@ -61,6 +61,34 @@ export const DYNAMIC_ISLAND_UI = {
         `,
     },
 
+    openButton: `
+        flex
+        w-full
+        justify-center
+        rounded-full
+
+        focus-visible:outline-none
+        focus-visible:ring-2
+        focus-visible:ring-pink-500
+        focus-visible:ring-inset
+    `,
+
+    limit: `
+        flex
+        w-fit
+        items-center
+        gap-2
+
+        px-4
+        py-2
+
+        text-sm
+        font-medium
+
+        text-amber-300
+        dark:text-amber-700
+    `,
+
     player: {
         root: `
             flex
@@ -84,6 +112,24 @@ export const DYNAMIC_ISLAND_UI = {
             min-[2400px]:gap-4
             min-[2400px]:px-5
             min-[2400px]:py-3
+        `,
+
+        cover: `
+            flex
+            size-9
+            shrink-0
+            items-center
+            justify-center
+
+            rounded-full
+            bg-white/15
+            object-cover
+
+            dark:bg-black/10
+
+            min-[1800px]:size-10
+
+            min-[2400px]:size-11
         `,
 
         musicIcon: `
@@ -174,11 +220,9 @@ export const DYNAMIC_ISLAND_MOTION = {
 
     musicBarDelays: [0, 0.1, 0.2, 0.3] as const,
 
-    autoCollapseDelayMs: 1000,
 
-    islandMorphDurationSeconds: 0.25,
+    islandMorphDurationSeconds: 0.4,
     contentMorphDurationSeconds: 0.23,
 
-    exitToPillDelayMs: 130,
     exitShrinkDurationMs: 120,
 } as const;

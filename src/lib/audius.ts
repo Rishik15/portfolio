@@ -9,7 +9,7 @@ type AudiusFetchInit = RequestInit & {
     };
 };
 
-function getAudiusBearerToken() {
+export function getAudiusBearerToken() {
     const token = process.env.AUDIUS_BEARER_TOKEN;
 
     if (!token) {

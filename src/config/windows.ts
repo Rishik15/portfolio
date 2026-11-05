@@ -9,6 +9,7 @@ export const WINDOW_IDS = {
     resume: "resume",
     projects: "projects",
     experience: "experience",
+    music: "music",
 } as const;
 
 export type WindowId = (typeof WINDOW_IDS)[keyof typeof WINDOW_IDS];
@@ -232,6 +233,40 @@ export const WINDOW_CONFIGS = [
         initialPlacement: {
             x: 0.1,
             y: 0.2,
+        },
+
+        canMinimize: true,
+        canMaximize: true,
+        canResize: true,
+
+        closeOnMinimize: true,
+
+        hideTitleBar: false,
+        openMaximized: false,
+    },
+
+    {
+        id: WINDOW_IDS.music,
+        title: "Music",
+
+        sizing: {
+            width: {
+                defaultFraction: 0.53,
+                minFraction: 0.36,
+                maxFraction: 1,
+                contentFloor: 560,
+            },
+            height: {
+                defaultFraction: 0.72,
+                minFraction: 0.5,
+                maxFraction: 1,
+                contentFloor: 440,
+            },
+        },
+
+        initialPlacement: {
+            x: 0.5,
+            y: 0.5,
         },
 
         canMinimize: true,

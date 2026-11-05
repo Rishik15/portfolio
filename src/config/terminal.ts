@@ -57,7 +57,7 @@ export const TERMINAL_COMMANDS: readonly TerminalCommand[] = [
     },
     {
         name: "/music",
-        description: "Toggle music player",
+        description: "Open music player",
         visibleInHelp: true,
     },
     {

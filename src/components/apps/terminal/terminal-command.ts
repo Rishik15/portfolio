@@ -8,6 +8,10 @@ export function normalizeTerminalCommand(command: string) {
     return normalized.startsWith("/") ? normalized : `/${normalized}`;
 }
 
+export function isMusicCommand(command: string) {
+    return command.trim().toLowerCase() === "/music";
+}
+
 export function getTerminalSuggestions(value: string) {
     const trimmedValue = value.trim();
 
@@ -86,12 +90,12 @@ export function resolveTerminalCommand(command: string): TerminalDraft {
         };
     }
 
-    if (normalized === "/music") {
+    if (isMusicCommand(command)) {
         return {
             command,
             result: {
                 type: "text",
-                lines: ["Toggling music..."],
+                lines: ["Opening music..."],
             },
         };
     }
