@@ -220,9 +220,9 @@ export const DYNAMIC_ISLAND_MOTION = {
 
     musicBarDelays: [0, 0.1, 0.2, 0.3] as const,
 
-
     islandMorphDurationSeconds: 0.4,
     contentMorphDurationSeconds: 0.23,
 
-    exitShrinkDurationMs: 120,
+    enterDurationMs: 120,
+    exitShrinkDurationMs: 300,
 } as const;

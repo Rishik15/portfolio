@@ -16,14 +16,11 @@ export const MUSIC_UI = {
     body: `
         flex
         min-h-0
-        flex-col
-
-        @min-[640px]/music:flex-row
+        flex-row
     `,
 
     sidebar: {
         root: `
-            hidden
             shrink-0
 
             border-r
@@ -35,7 +32,8 @@ export const MUSIC_UI = {
             dark:border-white/10
             dark:bg-[#262626]
 
-            @min-[640px]/music:block
+            w-[148px]
+
             @min-[640px]/music:w-[168px]
 
             @min-[900px]/music:w-[200px]
@@ -80,8 +78,8 @@ export const MUSIC_UI = {
         `,
 
         itemActive: `
-            bg-black/8
-            dark:bg-white/12
+            text-pink-600
+            dark:text-pink-400
         `,
 
         thumb: `
@@ -104,38 +102,6 @@ export const MUSIC_UI = {
             text-neutral-600
 
             dark:text-neutral-400
-        `,
-
-        chips: `
-            flex
-            shrink-0
-            gap-2
-            overflow-x-auto
-            px-4
-            pt-3
-
-            @min-[640px]/music:hidden
-        `,
-
-        chip: `
-            shrink-0
-            rounded-full
-            border
-            border-border
-            px-3
-            py-1
-
-            text-[12px]
-            font-medium
-
-            focus-visible:outline-none
-            focus-visible:ring-2
-            focus-visible:ring-ring
-        `,
-
-        chipActive: `
-            bg-foreground
-            text-background
         `,
     },
 
@@ -336,11 +302,9 @@ export const MUSIC_UI = {
     table: {
         columns: `
             grid
-            grid-cols-[32px_minmax(0,1fr)_48px]
+            grid-cols-[32px_minmax(0,2fr)_minmax(0,1.2fr)_56px]
             items-center
             gap-x-3
-
-            @min-[640px]/music:grid-cols-[32px_minmax(0,2fr)_minmax(0,1.2fr)_56px]
         `,
 
         head: `
@@ -393,19 +357,8 @@ export const MUSIC_UI = {
         `,
 
         artist: `
-            hidden
             truncate
             text-muted-foreground
-
-            @min-[640px]/music:block
-        `,
-
-        subArtist: `
-            truncate
-            text-[11px]
-            text-muted-foreground
-
-            @min-[640px]/music:hidden
         `,
 
         duration: `
@@ -508,23 +461,18 @@ export const MUSIC_UI = {
     nowPlaying: {
         root: `
             grid
-            grid-cols-1
+            h-[72px]
+            grid-cols-[minmax(0,1fr)_minmax(0,2fr)_minmax(0,1fr)]
             items-center
-            gap-2
+            gap-4
 
             border-t
             border-black/10
             bg-[#f7f7f7]
             px-4
-            py-3
 
             dark:border-white/10
             dark:bg-[#232323]
-
-            @min-[640px]/music:h-[72px]
-            @min-[640px]/music:grid-cols-[minmax(0,1fr)_minmax(0,2fr)_minmax(0,1fr)]
-            @min-[640px]/music:gap-4
-            @min-[640px]/music:py-0
         `,
 
         info: `
@@ -604,13 +552,11 @@ export const MUSIC_UI = {
         `,
 
         volume: `
-            hidden
+            flex
             items-center
             justify-end
             gap-2
             pr-1.5
-
-            @min-[640px]/music:flex
         `,
     },
 

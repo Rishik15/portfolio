@@ -8,7 +8,12 @@ import {
     SkipBack,
     SkipForward,
 } from "lucide-react";
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import {
+    AnimatePresence,
+    motion,
+    useIsPresent,
+    useReducedMotion,
+} from "motion/react";
 import { useState, type MouseEvent } from "react";
 
 import { useMusic } from "@/components/providers/music-provider";
@@ -85,7 +90,9 @@ function MusicPlayer() {
                         {currentTrack?.title ?? "Music"}
                     </span>
 
-                    <span className={`block ${DYNAMIC_ISLAND_UI.player.artist}`}>
+                    <span
+                        className={`block ${DYNAMIC_ISLAND_UI.player.artist}`}
+                    >
                         {currentTrack?.artist ?? "Audius"}
                     </span>
                 </span>
@@ -143,7 +150,9 @@ function PlayerPill() {
 
     const shouldReduceMotion = useReducedMotion();
 
-    const isExpanded = isHovered || isFocused;
+    const isPresent = useIsPresent();
+
+    const isExpanded = isPresent && (isHovered || isFocused);
 
     const bounce = isExpanded
         ? DYNAMIC_ISLAND_MOTION.bounce.compactToMusic
@@ -157,7 +166,9 @@ function PlayerPill() {
             onClick={openMusicWindow}
             onHoverStart={() => setIsHovered(true)}
             onHoverEnd={() => setIsHovered(false)}
-            onFocus={() => setIsFocused(true)}
+            onFocus={(event) =>
+                setIsFocused(event.target.matches(":focus-visible"))
+            }
             onBlur={() => setIsFocused(false)}
             transition={
                 shouldReduceMotion
@@ -217,13 +228,21 @@ export default function DynamicIsland({ className = "" }: DynamicIslandProps) {
                         key={pillMode}
                         initial={hidden}
                         animate={{ opacity: 1, scale: 1 }}
-                        exit={hidden}
+                        exit={{
+                            ...hidden,
+                            transition: {
+                                duration: shouldReduceMotion
+                                    ? 0
+                                    : DYNAMIC_ISLAND_MOTION.exitShrinkDurationMs /
+                                      1000,
+                                ease: [0.4, 0, 0.2, 1],
+                            },
+                        }}
                         style={{ transformOrigin: "top center" }}
                         transition={{
                             duration: shouldReduceMotion
                                 ? 0
-                                : DYNAMIC_ISLAND_MOTION.exitShrinkDurationMs /
-                                  1000,
+                                : DYNAMIC_ISLAND_MOTION.enterDurationMs / 1000,
                             ease: [0.4, 0, 1, 1],
                         }}
                     >

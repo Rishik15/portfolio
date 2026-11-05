@@ -57,10 +57,6 @@ export function MusicTrackRow({
                 >
                     {track.title}
                 </span>
-
-                <span className={`block ${MUSIC_UI.table.subArtist}`}>
-                    {track.artist}
-                </span>
             </span>
 
             <span className={MUSIC_UI.table.artist}>{track.artist}</span>

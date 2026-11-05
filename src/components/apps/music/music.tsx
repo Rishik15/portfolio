@@ -7,7 +7,7 @@ import { useMusic } from "@/components/providers/music-provider";
 import { MusicNowPlaying } from "./music-now-playing";
 import { MusicPlaylistHeader } from "./music-playlist-header";
 import { MusicSearch } from "./music-search";
-import { MusicPlaylistChips, MusicSidebar } from "./music-sidebar";
+import { MusicSidebar } from "./music-sidebar";
 import {
     MusicEmptySearch,
     MusicErrorState,
@@ -43,7 +43,8 @@ export function Music() {
 
     const { playlist } = view;
 
-    const isPlayingHere = playlist !== null && playlist.id === playingPlaylistId;
+    const isPlayingHere =
+        playlist !== null && playlist.id === playingPlaylistId;
 
     function togglePlaylistPlayback() {
         if (!playlist) {
@@ -111,12 +112,6 @@ export function Music() {
         <div className={MUSIC_UI.root}>
             <div className={MUSIC_UI.body}>
                 <MusicSidebar
-                    playlists={playlists}
-                    selectedId={playlist?.id ?? null}
-                    onSelect={view.selectPlaylist}
-                />
-
-                <MusicPlaylistChips
                     playlists={playlists}
                     selectedId={playlist?.id ?? null}
                     onSelect={view.selectPlaylist}

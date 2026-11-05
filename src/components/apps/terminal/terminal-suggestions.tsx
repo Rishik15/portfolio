@@ -49,7 +49,7 @@ export function TerminalSuggestions({
             })}
 
             <div className={TERMINAL_UI.suggestions.hint}>
-                Press Tab to cycle · Press Enter to select
+                Tab to complete · ↑↓ to browse · Enter to select
             </div>
         </div>
     );

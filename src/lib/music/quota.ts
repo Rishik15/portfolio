@@ -21,7 +21,10 @@ export function getNextMonthStart(now: number) {
     return Date.UTC(date.getUTCFullYear(), date.getUTCMonth() + 1, 1);
 }
 
-export function createPlayQuota({ limit, maxEntries }: QuotaOptions): PlayQuota {
+export function createPlayQuota({
+    limit,
+    maxEntries,
+}: QuotaOptions): PlayQuota {
     const counts = new Map<string, number>();
 
     let currentMonth = -1;

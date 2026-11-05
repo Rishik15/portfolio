@@ -7,12 +7,10 @@ export const HELP_COMMANDS = TERMINAL_COMMANDS.filter(
     ({ visibleInHelp }) => visibleInHelp,
 );
 
-export const HELP_FOOTER_COUNT = 3;
-
 export function getResultUnitCount(result: TerminalResult) {
     switch (result.type) {
         case "help":
-            return 1 + HELP_COMMANDS.length + HELP_FOOTER_COUNT;
+            return 1 + HELP_COMMANDS.length;
 
         case "skills":
             return SKILL_GROUPS.length;

@@ -14,7 +14,10 @@ import {
 } from "lucide-react";
 import { useRef } from "react";
 
-import { useMusic, useMusicProgress } from "@/components/providers/music-provider";
+import {
+    useMusic,
+    useMusicProgress,
+} from "@/components/providers/music-provider";
 
 import { formatDuration } from "./music-format";
 import { MusicCover } from "@/components/ui/music-cover";
@@ -113,7 +116,9 @@ export function MusicNowPlaying() {
 
                     <button
                         type="button"
-                        aria-label={isLoading ? "Loading" : isPlaying ? "Pause" : "Play"}
+                        aria-label={
+                            isLoading ? "Loading" : isPlaying ? "Pause" : "Play"
+                        }
                         disabled={!hasTrack}
                         onClick={togglePlayback}
                         className={MUSIC_UI.nowPlaying.mainButton}

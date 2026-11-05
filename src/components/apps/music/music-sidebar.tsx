@@ -22,7 +22,9 @@ export function MusicSidebar({
                 <button
                     key={playlist.id}
                     type="button"
-                    aria-current={playlist.id === selectedId ? "page" : undefined}
+                    aria-current={
+                        playlist.id === selectedId ? "page" : undefined
+                    }
                     onClick={() => onSelect(playlist.id)}
                     className={`${MUSIC_UI.sidebar.item} ${
                         playlist.id === selectedId
@@ -44,35 +46,8 @@ export function MusicSidebar({
                             {playlist.artist}
                         </span>
                     </span>
-
                 </button>
             ))}
         </nav>
-    );
-}
-
-export function MusicPlaylistChips({
-    playlists,
-    selectedId,
-    onSelect,
-}: Pick<MusicSidebarProps, "playlists" | "selectedId" | "onSelect">) {
-    return (
-        <div className={MUSIC_UI.sidebar.chips}>
-            {playlists.map((playlist) => (
-                <button
-                    key={playlist.id}
-                    type="button"
-                    aria-pressed={playlist.id === selectedId}
-                    onClick={() => onSelect(playlist.id)}
-                    className={`${MUSIC_UI.sidebar.chip} ${
-                        playlist.id === selectedId
-                            ? MUSIC_UI.sidebar.chipActive
-                            : ""
-                    }`}
-                >
-                    {playlist.name}
-                </button>
-            ))}
-        </div>
     );
 }

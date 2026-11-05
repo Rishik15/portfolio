@@ -1,17 +1,12 @@
-export type Rect = { left: number; top: number; right: number; bottom: number };
-
-const WINDOW_SIGMA = 2.6;
-const SIGMA_VARIATION = 0.14;
-const POINTER_REACH = 1.8;
-const POINTER_DEPTH = 0.6;
-const PRESS_RATE = 0.42;
-const RELEASE_RATE = 0.16;
-const GRADIENT_GAIN = 3;
-const REST = 0.002;
-const WAVE_SPEED = 0.16;
-const WAVE_DAMPING = 0.965;
-const WAVE_INJECT = 0.24;
-const WAVE_LIMIT = 0.22;
+import {
+    LAKE_ENCODE,
+    LAKE_REST,
+    LAKE_SHOCK,
+    LAKE_SLEEP,
+    LAKE_SPRING,
+    LAKE_WAVE,
+} from "./lake-config";
+import { createLakeRest, type Rect } from "./lake-rest";
 
 export type LakeSim = {
     cols: number;
@@ -20,166 +15,331 @@ export type LakeSim = {
     setWindows: (rects: Rect[]) => void;
     setPointer: (x: number, y: number) => void;
     clearPointer: () => void;
-    step: () => boolean;
+    shock: (x: number, y: number) => void;
+    advance: (elapsedMs: number) => boolean;
+    asleep: () => boolean;
 };
 
-function lattice(x: number, y: number) {
-    const h = Math.sin(x * 127.1 + y * 311.7) * 43758.5453;
-    return h - Math.floor(h);
+const STEP_MS = LAKE_SPRING.stepSeconds * 1000;
+
+function clamp(value: number, min: number, max: number) {
+    return value < min ? min : value > max ? max : value;
 }
 
-function smoothNoise(x: number, y: number) {
-    const ix = Math.floor(x);
-    const iy = Math.floor(y);
-    const fx = x - ix;
-    const fy = y - iy;
-    const u = fx * fx * (3 - 2 * fx);
-    const v = fy * fy * (3 - 2 * fy);
-    const top = lattice(ix, iy) * (1 - u) + lattice(ix + 1, iy) * u;
-    const bottom = lattice(ix, iy + 1) * (1 - u) + lattice(ix + 1, iy + 1) * u;
-    return top * (1 - v) + bottom * v;
-}
-
-export function createLakeSim(cols: number, rows: number, cellPx: number): LakeSim {
+export function createLakeSim(
+    cols: number,
+    rows: number,
+    cellPx: number,
+    physics: boolean,
+): LakeSim {
     const size = cols * rows;
+    const rest = createLakeRest(cols, rows, cellPx);
     const depth = new Float32Array(size);
-    const windowDepth = new Float32Array(size);
-    const target = new Float32Array(size);
-    const field = new Uint8Array(size * 4);
-    const terrain = new Float32Array(size);
-    for (let y = 0; y < rows; y++) {
-        for (let x = 0; x < cols; x++) {
-            terrain[y * cols + x] = smoothNoise(x / 14, y / 14);
-        }
-    }
+    const velocity = new Float32Array(size);
+    const level = new Float32Array(size);
+    const waveDamping = new Float32Array(size);
     let wave = new Float32Array(size);
     let wavePrev = new Float32Array(size);
-    let pointer: { x: number; y: number } | null = null;
-    field.fill(128);
+    const blurTemp = new Float32Array(size);
+    const wide = new Float32Array(size);
+    const field = new Uint8Array(size * 4);
+    let lastPointer: { x: number; y: number } | null = null;
+    let accumulator = 0;
+    let quietSteps = 0;
+    let sleeping = false;
+    let pending = true;
 
-    function setWindows(rects: Rect[]) {
-        windowDepth.fill(0);
-        const reachPx = WINDOW_SIGMA * cellPx * (1 + SIGMA_VARIATION) * 3;
-
-        for (const rect of rects) {
-            const x0 = Math.max(0, Math.floor((rect.left - reachPx) / cellPx));
-            const x1 = Math.min(cols - 1, Math.ceil((rect.right + reachPx) / cellPx));
-            const y0 = Math.max(0, Math.floor((rect.top - reachPx) / cellPx));
-            const y1 = Math.min(rows - 1, Math.ceil((rect.bottom + reachPx) / cellPx));
-
-            for (let y = y0; y <= y1; y++) {
-                for (let x = x0; x <= x1; x++) {
-                    const px = (x + 0.5) * cellPx;
-                    const py = (y + 0.5) * cellPx;
-                    const dx = Math.max(rect.left - px, 0, px - rect.right);
-                    const dy = Math.max(rect.top - py, 0, py - rect.bottom);
-                    const i = y * cols + x;
-                    const sigma = WINDOW_SIGMA * cellPx * (1 + SIGMA_VARIATION * (2 * terrain[i] - 1));
-                    const distance = Math.hypot(dx, dy);
-                    windowDepth[i] = Math.max(windowDepth[i], Math.exp(-(distance * distance) / (2 * sigma * sigma)));
-                }
-            }
+    for (let y = 0; y < rows; y++) {
+        for (let x = 0; x < cols; x++) {
+            const edge = Math.min(x, y, cols - 1 - x, rows - 1 - y);
+            const ramp = Math.max(0, 1 - edge / LAKE_WAVE.edgeCells);
+            waveDamping[y * cols + x] =
+                LAKE_WAVE.damping * (1 - LAKE_WAVE.edgeLoss * ramp * ramp);
         }
     }
 
-    function setPointer(x: number, y: number) {
-        pointer = { x, y };
-    }
-
-    function clearPointer() {
-        pointer = null;
-    }
-
-    function buildTarget() {
-        target.set(windowDepth);
-        if (!pointer) return;
-
-        const cx = pointer.x / cellPx - 0.5;
-        const cy = pointer.y / cellPx - 0.5;
-        const reach = Math.ceil(POINTER_REACH * 3);
-        for (let y = Math.max(0, Math.round(cy) - reach); y <= Math.min(rows - 1, Math.round(cy) + reach); y++) {
-            for (let x = Math.max(0, Math.round(cx) - reach); x <= Math.min(cols - 1, Math.round(cx) + reach); x++) {
-                const d2 = (x - cx) ** 2 + (y - cy) ** 2;
-                const i = y * cols + x;
-                target[i] = Math.max(target[i], POINTER_DEPTH * Math.exp(-d2 / (2 * POINTER_REACH ** 2)));
-            }
-        }
-    }
-
-    function ease() {
-        let active = false;
-
-        for (let i = 0; i < size; i++) {
-            const diff = target[i] - depth[i];
-            if (Math.abs(diff) < REST) {
-                depth[i] = target[i];
-                continue;
-            }
-            const move = diff * (diff > 0 ? PRESS_RATE : RELEASE_RATE);
-            depth[i] += move;
-            wave[i] -= move * WAVE_INJECT;
-            active = true;
-        }
-
-        return active;
+    function wake() {
+        sleeping = false;
+        quietSteps = 0;
     }
 
     function propagate() {
-        let energy = 0;
+        let peak = 0;
 
         for (let y = 0; y < rows; y++) {
+            const row = y * cols;
             const up = Math.max(y - 1, 0) * cols;
             const down = Math.min(y + 1, rows - 1) * cols;
             for (let x = 0; x < cols; x++) {
-                const i = y * cols + x;
+                const i = row + x;
                 const lap =
-                    wave[Math.max(x - 1, 0) + y * cols] +
-                    wave[Math.min(x + 1, cols - 1) + y * cols] +
-                    wave[x + up] +
-                    wave[x + down] -
+                    wave[row + Math.max(x - 1, 0)] +
+                    wave[row + Math.min(x + 1, cols - 1)] +
+                    wave[up + x] +
+                    wave[down + x] -
                     4 * wave[i];
-                const next = (2 * wave[i] - wavePrev[i] + WAVE_SPEED * lap) * WAVE_DAMPING;
-                wavePrev[i] = Math.max(-WAVE_LIMIT, Math.min(WAVE_LIMIT, next));
-                energy = Math.max(energy, Math.abs(next));
+                const next =
+                    (2 * wave[i] - wavePrev[i] + LAKE_WAVE.speedSquared * lap) *
+                    waveDamping[i];
+                wavePrev[i] = clamp(next, -LAKE_WAVE.limit, LAKE_WAVE.limit);
+                peak = Math.max(peak, Math.abs(next));
             }
         }
 
         [wave, wavePrev] = [wavePrev, wave];
-
-        if (energy < REST) {
-            wave.fill(0);
-            wavePrev.fill(0);
-            return false;
-        }
-        return true;
+        return peak;
     }
 
     function step() {
-        buildTarget();
-        const easing = ease();
-        const rippling = propagate();
-        encode();
-        return easing || rippling;
+        const dt = LAKE_SPRING.stepSeconds;
+        let peakVelocity = 0;
+        let peakAcceleration = 0;
+
+        for (let y = 0; y < rows; y++) {
+            const row = y * cols;
+            const up = Math.max(y - 1, 0) * cols;
+            const down = Math.min(y + 1, rows - 1) * cols;
+            for (let x = 0; x < cols; x++) {
+                const i = row + x;
+                const lap =
+                    depth[row + Math.max(x - 1, 0)] +
+                    depth[row + Math.min(x + 1, cols - 1)] +
+                    depth[up + x] +
+                    depth[down + x] -
+                    4 * depth[i];
+                const acceleration =
+                    LAKE_SPRING.stiffness * (rest.values[i] - depth[i]) -
+                    LAKE_SPRING.damping * velocity[i] +
+                    LAKE_SPRING.coupling * lap;
+                velocity[i] += dt * acceleration;
+                peakVelocity = Math.max(peakVelocity, Math.abs(velocity[i]));
+                peakAcceleration = Math.max(
+                    peakAcceleration,
+                    Math.abs(acceleration),
+                );
+            }
+        }
+
+        for (let i = 0; i < size; i++) {
+            depth[i] += dt * velocity[i];
+            wave[i] -= LAKE_WAVE.inject * dt * velocity[i];
+        }
+
+        const peakWave = propagate();
+
+        const quiet =
+            peakVelocity < LAKE_SLEEP.velocity &&
+            peakAcceleration < LAKE_SLEEP.acceleration &&
+            peakWave < LAKE_SLEEP.wave;
+        quietSteps = quiet ? quietSteps + 1 : 0;
+        if (quietSteps >= LAKE_SLEEP.quietSteps) {
+            velocity.fill(0);
+            wave.fill(0);
+            wavePrev.fill(0);
+            sleeping = true;
+        }
     }
 
-    function level(x: number, y: number) {
-        const i = Math.min(Math.max(y, 0), rows - 1) * cols + Math.min(Math.max(x, 0), cols - 1);
-        return depth[i] + wave[i];
+    function composeLevel() {
+        for (let i = 0; i < size; i++) level[i] = depth[i] + wave[i];
     }
 
-    function encode() {
+    function blurWide() {
+        const radius = LAKE_ENCODE.wideBlurRadius;
+        const norm = 1 / (2 * radius + 1);
+
         for (let y = 0; y < rows; y++) {
             for (let x = 0; x < cols; x++) {
-                const o = (y * cols + x) * 4;
-                const gx = (level(x + 1, y) - level(x - 1, y)) * GRADIENT_GAIN;
-                const gy = (level(x, y + 1) - level(x, y - 1)) * GRADIENT_GAIN;
-                field[o] = 128 + Math.max(-1, Math.min(1, gx)) * 127;
-                field[o + 1] = 128 + Math.max(-1, Math.min(1, gy)) * 127;
-                field[o + 2] = 128 - Math.max(-1, Math.min(1, level(x, y))) * 127;
-                field[o + 3] = 255;
+                let sum = 0;
+                for (let k = -radius; k <= radius; k++) {
+                    sum += Math.max(
+                        level[y * cols + clamp(x + k, 0, cols - 1)],
+                        0,
+                    );
+                }
+                blurTemp[y * cols + x] = sum * norm;
+            }
+        }
+        for (let y = 0; y < rows; y++) {
+            for (let x = 0; x < cols; x++) {
+                let sum = 0;
+                for (let k = -radius; k <= radius; k++) {
+                    sum += blurTemp[clamp(y + k, 0, rows - 1) * cols + x];
+                }
+                wide[y * cols + x] = sum * norm;
             }
         }
     }
 
-    return { cols, rows, field, setWindows, setPointer, clearPointer, step };
+    function encode() {
+        composeLevel();
+        blurWide();
+
+        for (let y = 0; y < rows; y++) {
+            const row = y * cols;
+            const up = Math.max(y - 1, 0) * cols;
+            const down = Math.min(y + 1, rows - 1) * cols;
+            for (let x = 0; x < cols; x++) {
+                const i = row + x;
+                const o = i * 4;
+                const gx =
+                    (level[row + Math.min(x + 1, cols - 1)] -
+                        level[row + Math.max(x - 1, 0)]) *
+                    0.5;
+                const gy = (level[down + x] - level[up + x]) * 0.5;
+                field[o] =
+                    128 + clamp(gx * LAKE_ENCODE.gradientGain, -1, 1) * 127;
+                field[o + 1] =
+                    128 + clamp(gy * LAKE_ENCODE.gradientGain, -1, 1) * 127;
+                field[o + 2] =
+                    clamp(
+                        (level[i] - LAKE_ENCODE.depthMin) /
+                            LAKE_ENCODE.depthSpan,
+                        0,
+                        1,
+                    ) * 255;
+                field[o + 3] = clamp(wide[i], 0, 1) * 255;
+            }
+        }
+    }
+
+    function setWindows(rects: Rect[]) {
+        rest.setWindows(rects);
+        if (!physics) depth.set(rest.values);
+        pending = true;
+        wake();
+    }
+
+    function disturbWave(x: number, y: number, amount: number) {
+        const cx = x / cellPx - 0.5;
+        const cy = y / cellPx - 0.5;
+        const reach = LAKE_REST.pointerReach;
+        const extent = Math.ceil(reach * 3);
+        const twoSigma2 = 2 * reach ** 2;
+
+        for (
+            let j = Math.max(0, Math.round(cy) - extent);
+            j <= Math.min(rows - 1, Math.round(cy) + extent);
+            j++
+        ) {
+            for (
+                let i = Math.max(0, Math.round(cx) - extent);
+                i <= Math.min(cols - 1, Math.round(cx) + extent);
+                i++
+            ) {
+                wave[j * cols + i] -=
+                    amount *
+                    Math.exp(-((i - cx) ** 2 + (j - cy) ** 2) / twoSigma2);
+            }
+        }
+    }
+
+    function leaveWake(x: number, y: number) {
+        if (!lastPointer) return;
+        const cells = Math.hypot(x - lastPointer.x, y - lastPointer.y) / cellPx;
+        const steps = Math.min(Math.ceil(cells), LAKE_WAVE.pointerWakeMaxSteps);
+        if (steps === 0) return;
+        const amount =
+            (LAKE_WAVE.pointerWake *
+                Math.min(cells, LAKE_WAVE.pointerWakeMaxSteps)) /
+            steps;
+
+        for (let k = 1; k <= steps; k++) {
+            const t = k / steps;
+            disturbWave(
+                lastPointer.x + (x - lastPointer.x) * t,
+                lastPointer.y + (y - lastPointer.y) * t,
+                amount,
+            );
+        }
+    }
+
+    function setPointer(x: number, y: number) {
+        if (!physics) return;
+        leaveWake(x, y);
+        lastPointer = { x, y };
+        rest.setPointer(x, y);
+        wake();
+    }
+
+    function clearPointer() {
+        if (!physics) return;
+        lastPointer = null;
+        rest.clearPointer();
+        wake();
+    }
+
+    function shock(x: number, y: number) {
+        if (!physics) return;
+        const cx = x / cellPx - 0.5;
+        const cy = y / cellPx - 0.5;
+        const extent = Math.ceil(LAKE_SHOCK.reach * 3);
+        const twoSigma2 = 2 * LAKE_SHOCK.reach ** 2;
+
+        for (
+            let j = Math.max(0, Math.round(cy) - extent);
+            j <= Math.min(rows - 1, Math.round(cy) + extent);
+            j++
+        ) {
+            for (
+                let i = Math.max(0, Math.round(cx) - extent);
+                i <= Math.min(cols - 1, Math.round(cx) + extent);
+                i++
+            ) {
+                const falloff = Math.exp(
+                    -((i - cx) ** 2 + (j - cy) ** 2) / twoSigma2,
+                );
+                velocity[j * cols + i] += LAKE_SHOCK.impulse * falloff;
+                wave[j * cols + i] -= LAKE_WAVE.shockRing * falloff;
+            }
+        }
+        wake();
+    }
+
+    function advance(elapsedMs: number) {
+        if (!physics || sleeping) {
+            accumulator = 0;
+            if (!pending) return false;
+            pending = false;
+            encode();
+            return true;
+        }
+
+        accumulator = Math.min(
+            accumulator + elapsedMs,
+            LAKE_SPRING.maxCatchupMs,
+        );
+        let steps = 0;
+        while (
+            accumulator >= STEP_MS &&
+            steps < LAKE_SPRING.maxStepsPerAdvance
+        ) {
+            step();
+            accumulator -= STEP_MS;
+            steps++;
+        }
+        if (steps === 0) return false;
+
+        pending = false;
+        encode();
+        return true;
+    }
+
+    function asleep() {
+        return !physics || sleeping;
+    }
+
+    encode();
+
+    return {
+        cols,
+        rows,
+        field,
+        setWindows,
+        setPointer,
+        clearPointer,
+        shock,
+        advance,
+        asleep,
+    };
 }

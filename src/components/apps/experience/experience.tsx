@@ -47,7 +47,6 @@ export function Experience() {
     const ongoing = useMemo(() => EXPERIENCES.filter(isOngoing), []);
     const lastOpenedRef = useRef<string | null>(null);
     const [openId, setOpenId] = useState<string | null>(null);
-    const [hintDismissed, setHintDismissed] = useState(false);
 
     useEffect(() => {
         const root = rootRef.current;
@@ -81,13 +80,11 @@ export function Experience() {
 
         setDirection(clamped > year ? 1 : -1);
         setYear(clamped);
-        setHintDismissed(true);
     }
 
     function open(id: string) {
         lastOpenedRef.current = id;
         setOpenId(id);
-        setHintDismissed(true);
     }
 
     function toggleType(type: ExperienceType) {
@@ -192,10 +189,7 @@ export function Experience() {
                             onPrevious={() => goToYear(year - 1)}
                             onNext={() => goToYear(year + 1)}
                             onLatest={() => goToYear(LATEST_YEAR)}
-                            onQueryChange={(value) => {
-                                setQuery(value);
-                                setHintDismissed(true);
-                            }}
+                            onQueryChange={setQuery}
                         />
 
                         <div className={EXPERIENCE_UI.main}>
@@ -212,7 +206,6 @@ export function Experience() {
                                 year={year}
                                 direction={direction}
                                 query={query}
-                                showHint={!hintDismissed}
                                 onOpen={open}
                             />
                         </div>

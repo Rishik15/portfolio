@@ -8,7 +8,9 @@ export function MusicLoadingState() {
     return (
         <div aria-busy="true" className="px-6 pt-6">
             <div className="flex gap-5">
-                <div className={`${MUSIC_UI.state.skeleton} size-36 rounded-xl`} />
+                <div
+                    className={`${MUSIC_UI.state.skeleton} size-36 rounded-xl`}
+                />
 
                 <div className="flex flex-col justify-end gap-3">
                     <div className={`${MUSIC_UI.state.skeleton} h-7 w-56`} />
@@ -18,7 +20,10 @@ export function MusicLoadingState() {
 
             <div className="mt-8 flex flex-col gap-3">
                 {Array.from({ length: 8 }, (_, row) => (
-                    <div key={row} className="flex h-9 items-center justify-between gap-6">
+                    <div
+                        key={row}
+                        className="flex h-9 items-center justify-between gap-6"
+                    >
                         {SKELETON_WIDTHS.map((width) => (
                             <div
                                 key={width}
@@ -48,7 +53,11 @@ export function MusicErrorState({ onRetry }: MusicErrorStateProps) {
                 Audius didn&apos;t respond. Check your connection and try again.
             </p>
 
-            <button type="button" onClick={onRetry} className={MUSIC_UI.state.action}>
+            <button
+                type="button"
+                onClick={onRetry}
+                className={MUSIC_UI.state.action}
+            >
                 Try again
             </button>
         </div>
@@ -73,7 +82,11 @@ export function MusicEmptySearch({ query, onClear }: MusicEmptySearchProps) {
                 Try a different title or artist.
             </p>
 
-            <button type="button" onClick={onClear} className={MUSIC_UI.state.action}>
+            <button
+                type="button"
+                onClick={onClear}
+                className={MUSIC_UI.state.action}
+            >
                 Clear search
             </button>
         </div>

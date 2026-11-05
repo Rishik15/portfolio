@@ -28,9 +28,15 @@ test("ended action follows repeat mode", () => {
     const order = [0, 1, 2];
 
     assert.deepEqual(getEndedAction(order, 1, "one"), { type: "replay" });
-    assert.deepEqual(getEndedAction(order, 2, "all"), { type: "play", index: 0 });
+    assert.deepEqual(getEndedAction(order, 2, "all"), {
+        type: "play",
+        index: 0,
+    });
     assert.deepEqual(getEndedAction(order, 2, "off"), { type: "stop" });
-    assert.deepEqual(getEndedAction(order, 0, "off"), { type: "play", index: 1 });
+    assert.deepEqual(getEndedAction(order, 0, "off"), {
+        type: "play",
+        index: 1,
+    });
 });
 
 test("repeat cycles off, all, one", () => {

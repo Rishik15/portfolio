@@ -10,7 +10,6 @@ export const TERMINAL_PROMPT = {
 } as const;
 
 export const TERMINAL_WELCOME = {
-    title: "Hello there. I'm Rishik, welcome to my portfolio.",
     description: "Explore the portfolio through the terminal.",
     help: {
         prefix: "Type",

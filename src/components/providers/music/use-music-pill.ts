@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 export type PillMode = "hidden" | "player" | "limit";
 
@@ -10,6 +10,11 @@ type PillInput = {
     isLimitNotice: boolean;
 };
 
+type LingerState = {
+    wasPlayingClosed: boolean;
+    isLingering: boolean;
+};
+
 const PAUSE_LINGER_MS = 15000;
 
 export function useMusicPill({
@@ -17,33 +22,37 @@ export function useMusicPill({
     isPlaying,
     isLimitNotice,
 }: PillInput): PillMode {
-    const [isLingering, setIsLingering] = useState(false);
+    const [state, setState] = useState<LingerState>({
+        wasPlayingClosed: false,
+        isLingering: false,
+    });
 
-    const wasPlayingClosedRef = useRef(false);
+    const isPlayingClosed = isPlaying && !isWindowOpen;
+
+    const isIdleClosed = !isPlaying && !isWindowOpen;
+
+    const isLingering =
+        isIdleClosed && (state.isLingering || state.wasPlayingClosed);
+
+    if (
+        isPlayingClosed !== state.wasPlayingClosed ||
+        isLingering !== state.isLingering
+    ) {
+        setState({ wasPlayingClosed: isPlayingClosed, isLingering });
+    }
 
     useEffect(() => {
-        const isPlayingClosed = isPlaying && !isWindowOpen;
-
-        const shouldLinger =
-            !isPlaying && !isWindowOpen && wasPlayingClosedRef.current;
-
-        wasPlayingClosedRef.current = isPlayingClosed;
-
-        if (!shouldLinger) {
-            setIsLingering(false);
-
+        if (!isLingering) {
             return;
         }
 
-        setIsLingering(true);
-
         const timeout = window.setTimeout(
-            () => setIsLingering(false),
+            () => setState((current) => ({ ...current, isLingering: false })),
             PAUSE_LINGER_MS,
         );
 
         return () => window.clearTimeout(timeout);
-    }, [isPlaying, isWindowOpen]);
+    }, [isLingering]);
 
     if (isLimitNotice) {
         return "limit";

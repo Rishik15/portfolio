@@ -33,10 +33,16 @@ function TextResult({ lines }: { lines: readonly string[] }) {
     );
 }
 
-function Result({ result }: { result: TerminalResult }) {
+function Result({
+    result,
+    onRun,
+}: {
+    result: TerminalResult;
+    onRun: (command: string) => void;
+}) {
     switch (result.type) {
         case "help":
-            return <TerminalHelp />;
+            return <TerminalHelp onRun={onRun} />;
 
         case "skills":
             return <TerminalSkills />;
@@ -53,9 +59,10 @@ type EntryProps = {
     entry: TerminalEntry;
     skipToken: number;
     onPrintingChange: (id: number, printing: boolean) => void;
+    onRun: (command: string) => void;
 };
 
-function Entry({ entry, skipToken, onPrintingChange }: EntryProps) {
+function Entry({ entry, skipToken, onPrintingChange, onRun }: EntryProps) {
     const report = useCallback(
         (printing: boolean) => onPrintingChange(entry.id, printing),
         [entry.id, onPrintingChange],
@@ -78,7 +85,7 @@ function Entry({ entry, skipToken, onPrintingChange }: EntryProps) {
                 className={TERMINAL_UI.output.result}
             >
                 <PrintProvider value={revealed}>
-                    <Result result={entry.result} />
+                    <Result result={entry.result} onRun={onRun} />
                 </PrintProvider>
             </div>
         </div>
@@ -90,6 +97,7 @@ type TerminalOutputProps = {
     showWelcome: boolean;
     skipToken: number;
     onPrintingChange: (id: number, printing: boolean) => void;
+    onRun: (command: string) => void;
 };
 
 export function TerminalOutput({
@@ -97,6 +105,7 @@ export function TerminalOutput({
     showWelcome,
     skipToken,
     onPrintingChange,
+    onRun,
 }: TerminalOutputProps) {
     return (
         <div className={TERMINAL_UI.output.root}>
@@ -116,6 +125,7 @@ export function TerminalOutput({
                             entry={entry}
                             skipToken={skipToken}
                             onPrintingChange={onPrintingChange}
+                            onRun={onRun}
                         />
                     ))}
                 </div>

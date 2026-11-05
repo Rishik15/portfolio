@@ -50,9 +50,18 @@ test("token verifies only for same track, ip, before expiry", () => {
     const good = { trackId: "t1", ip: "1.1.1.1", now: 999 };
 
     assert.equal(verifyStreamToken("secret", token, good), true);
-    assert.equal(verifyStreamToken("secret", token, { ...good, now: 1000 }), false);
-    assert.equal(verifyStreamToken("secret", token, { ...good, trackId: "t2" }), false);
-    assert.equal(verifyStreamToken("secret", token, { ...good, ip: "2.2.2.2" }), false);
+    assert.equal(
+        verifyStreamToken("secret", token, { ...good, now: 1000 }),
+        false,
+    );
+    assert.equal(
+        verifyStreamToken("secret", token, { ...good, trackId: "t2" }),
+        false,
+    );
+    assert.equal(
+        verifyStreamToken("secret", token, { ...good, ip: "2.2.2.2" }),
+        false,
+    );
     assert.equal(verifyStreamToken("other", token, good), false);
     assert.equal(verifyStreamToken("secret", `x${token}`, good), false);
     assert.equal(verifyStreamToken("secret", "garbage", good), false);

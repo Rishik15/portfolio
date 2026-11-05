@@ -23,7 +23,6 @@ type ExperienceCalendarProps = {
     year: number;
     direction: number;
     query: string;
-    showHint: boolean;
     onOpen: (id: string) => void;
 };
 
@@ -34,7 +33,6 @@ export function ExperienceCalendar({
     year,
     direction,
     query,
-    showHint,
     onOpen,
 }: ExperienceCalendarProps) {
     const reduced = useReducedMotion();
@@ -194,19 +192,14 @@ export function ExperienceCalendar({
                 </AnimatePresence>
             </div>
 
-            <AnimatePresence>
-                {showHint ? (
-                    <motion.div
-                        className={EXPERIENCE_UI.calendar.hint}
-                        initial={{ opacity: 0, y: 8 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 8 }}
-                        transition={{ delay: 0.6 }}
-                    >
-                        Click a role to see details
-                    </motion.div>
-                ) : null}
-            </AnimatePresence>
+            <motion.div
+                className={EXPERIENCE_UI.calendar.hint}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6 }}
+            >
+                Click a role to see details
+            </motion.div>
         </div>
     );
 }

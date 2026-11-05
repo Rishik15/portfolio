@@ -138,6 +138,7 @@ export function Terminal() {
                         showWelcome={terminal.showWelcome}
                         skipToken={skipToken}
                         onPrintingChange={handlePrintingChange}
+                        onRun={handleCommand}
                     />
 
                     <div

@@ -94,17 +94,17 @@ export const TERMINAL_UI = {
         `,
 
         entriesWithWelcome: `
-            mt-2
-            space-y-2
+            mt-4
+            space-y-5
 
-            @min-[1440px]/terminal:mt-3
-            @min-[1440px]/terminal:space-y-3
+            @min-[1440px]/terminal:mt-5
+            @min-[1440px]/terminal:space-y-6
         `,
 
         entries: `
-            space-y-2
+            space-y-5
 
-            @min-[1440px]/terminal:space-y-3
+            @min-[1440px]/terminal:space-y-6
         `,
 
         inputWithContent: `
@@ -180,6 +180,18 @@ export const TERMINAL_UI = {
             outline-none
         `,
 
+        ghost: `
+            pointer-events-none
+
+            absolute
+            top-1/2
+
+            -translate-y-1/2
+
+            whitespace-pre
+            text-foreground/30
+        `,
+
         caret: `
             pointer-events-none
 
@@ -203,13 +215,7 @@ export const TERMINAL_UI = {
             mt-2
             w-full
 
-            border-y
-            border-foreground/15
-
-            py-1
-
             @min-[1440px]/terminal:mt-3
-            @min-[1440px]/terminal:py-1.5
         `,
 
         row: `
@@ -289,53 +295,9 @@ export const TERMINAL_UI = {
     welcome: {
         root: `
             w-full
-
-            border
-            border-foreground/25
         `,
 
-        body: `
-            px-3
-            py-2.5
-
-            @min-[760px]/terminal:px-4
-            @min-[760px]/terminal:py-3
-
-            @min-[1200px]/terminal:px-5
-            @min-[1200px]/terminal:py-3.5
-
-            @min-[1440px]/terminal:px-6
-            @min-[1440px]/terminal:py-4
-        `,
-
-        title: `
-            text-[13px]
-            font-medium
-            text-foreground/90
-
-            @min-[760px]/terminal:text-[14px]
-
-            @min-[1200px]/terminal:text-[15px]
-
-            @min-[1440px]/terminal:text-[16px]
-
-            @min-[1680px]/terminal:text-[17px]
-        `,
-
-        helpRow: `
-            border-t
-            border-foreground/10
-
-            px-3
-            py-2
-
-            @min-[760px]/terminal:px-4
-
-            @min-[1200px]/terminal:px-5
-
-            @min-[1440px]/terminal:px-6
-            @min-[1440px]/terminal:py-2.5
-        `,
+        helpRow: ``,
 
         muted: `
             text-foreground/65
@@ -358,6 +320,7 @@ export const TERMINAL_UI = {
             border-foreground/25
 
             bg-background/20
+            py-2
         `,
 
         header: `
@@ -367,11 +330,8 @@ export const TERMINAL_UI = {
 
             gap-3
 
-            border-b
-            border-foreground/15
-
-            px-3
-            py-1.5
+            px-2
+            pb-1
 
             text-[9px]
             uppercase
@@ -435,6 +395,8 @@ export const TERMINAL_UI = {
             @min-[1440px]/terminal:py-2
 
             @min-[1680px]/terminal:grid-cols-[15rem_minmax(0,1fr)]
+
+            cursor-pointer
         `,
 
         command: `
@@ -446,53 +408,6 @@ export const TERMINAL_UI = {
         description: `
             min-w-0
             text-foreground/50
-        `,
-
-        footer: `
-            grid
-            grid-cols-1
-
-            gap-1.5
-
-            border-t
-            border-foreground/15
-
-            px-3
-            py-2
-
-            text-[9px]
-            text-foreground/35
-
-            @min-[700px]/terminal:grid-cols-3
-            @min-[700px]/terminal:gap-3
-
-            @min-[760px]/terminal:px-4
-            @min-[760px]/terminal:py-2.5
-            @min-[760px]/terminal:text-[10px]
-
-            @min-[1200px]/terminal:gap-4
-            @min-[1200px]/terminal:px-5
-            @min-[1200px]/terminal:text-[11px]
-
-            @min-[1440px]/terminal:gap-5
-            @min-[1440px]/terminal:px-6
-            @min-[1440px]/terminal:py-3
-            @min-[1440px]/terminal:text-[12px]
-
-            @min-[1680px]/terminal:text-[13px]
-        `,
-
-        footerItem: `
-            flex
-            min-w-0
-            items-center
-
-            gap-2
-        `,
-
-        footerKey: `
-            shrink-0
-            text-foreground/60
         `,
     },
 
@@ -524,8 +439,6 @@ export const TERMINAL_UI = {
             border-foreground/10
 
             first:border-t-0
-
-            hover:bg-foreground/[0.035]
         `,
 
         category: `

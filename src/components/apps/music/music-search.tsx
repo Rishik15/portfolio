@@ -8,7 +8,11 @@ type MusicSearchProps = {
     onChange: (value: string) => void;
 };
 
-export function MusicSearch({ value, resultCount, onChange }: MusicSearchProps) {
+export function MusicSearch({
+    value,
+    resultCount,
+    onChange,
+}: MusicSearchProps) {
     return (
         <div className={MUSIC_UI.search.root}>
             <div className={MUSIC_UI.search.field}>

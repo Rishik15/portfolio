@@ -11,16 +11,18 @@ import {
     type ReactNode,
 } from "react";
 
-import { useMusicLibrary, type LibraryStatus } from "@/components/providers/music/use-music-library";
-import { useMusicPill, type PillMode } from "@/components/providers/music/use-music-pill";
+import {
+    useMusicLibrary,
+    type LibraryStatus,
+} from "@/components/providers/music/use-music-library";
+import {
+    useMusicPill,
+    type PillMode,
+} from "@/components/providers/music/use-music-pill";
 import { useMusicPlayer } from "@/components/providers/music/use-music-player";
 import { useWindowManager } from "@/components/windows/window-manager";
 import { WINDOW_IDS } from "@/config/windows";
-import type {
-    MusicPlaylist,
-    MusicRepeatMode,
-    MusicTrack,
-} from "@/types/music";
+import type { MusicPlaylist, MusicRepeatMode, MusicTrack } from "@/types/music";
 
 const LIMIT_NOTICE_MS = 5000;
 
@@ -109,8 +111,7 @@ export function MusicProvider({ children }: MusicProviderProps) {
         onLimit: handleLimit,
     });
 
-    const isWindowOpen =
-        windows.get(WINDOW_IDS.music)?.state.status === "open";
+    const isWindowOpen = windows.get(WINDOW_IDS.music)?.state.status === "open";
 
     const pillMode = useMusicPill({
         isWindowOpen,
@@ -197,7 +198,10 @@ export function MusicProvider({ children }: MusicProviderProps) {
         ],
     );
 
-    const progress = useMemo(() => ({ position, duration }), [position, duration]);
+    const progress = useMemo(
+        () => ({ position, duration }),
+        [position, duration],
+    );
 
     return (
         <MusicContext.Provider value={value}>

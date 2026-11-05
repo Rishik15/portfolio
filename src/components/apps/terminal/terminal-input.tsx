@@ -8,6 +8,7 @@ import {
     type SyntheticEvent,
 } from "react";
 
+import { getGhostText } from "@/components/apps/terminal/terminal-command";
 import { TerminalPrompt } from "@/components/apps/terminal/terminal-prompt";
 import { TerminalSuggestions } from "@/components/apps/terminal/terminal-suggestions";
 import { TERMINAL_UI } from "@/components/apps/terminal/terminal-ui";
@@ -122,6 +123,11 @@ export function TerminalInput({
         });
     }
 
+    const ghostText = getGhostText(
+        input.value,
+        input.suggestions[input.activeIndex]?.name,
+    );
+
     const cursorCharacter = input.value[caretIndex] ?? "\u00A0";
 
     return (
@@ -156,6 +162,16 @@ export function TerminalInput({
                         autoFocus
                         className={TERMINAL_UI.input.field}
                     />
+
+                    {ghostText && (
+                        <span
+                            aria-hidden="true"
+                            style={{ left: `${input.value.length}ch` }}
+                            className={TERMINAL_UI.input.ghost}
+                        >
+                            {ghostText}
+                        </span>
+                    )}
 
                     {isFocused && (
                         <span

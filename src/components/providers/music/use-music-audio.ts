@@ -45,7 +45,9 @@ export function useMusicAudio(callbacks: AudioCallbacks) {
             pause: () => setIsPlaying(false),
             timeupdate: () => setPosition(audio.currentTime),
             durationchange: () => {
-                setDuration(Number.isFinite(audio.duration) ? audio.duration : 0);
+                setDuration(
+                    Number.isFinite(audio.duration) ? audio.duration : 0,
+                );
             },
             loadedmetadata: () => {
                 if (pendingSeekRef.current > 0) {
@@ -102,7 +104,9 @@ export function useMusicAudio(callbacks: AudioCallbacks) {
 
             return true;
         } catch (error) {
-            if (!(error instanceof DOMException && error.name === "AbortError")) {
+            if (!(
+                error instanceof DOMException && error.name === "AbortError"
+            )) {
                 console.warn("Unable to play music:", error);
             }
 
@@ -136,7 +140,10 @@ export function useMusicAudio(callbacks: AudioCallbacks) {
         setVolumeState(clamped);
     }, []);
 
-    const getPosition = useCallback(() => audioRef.current?.currentTime ?? 0, []);
+    const getPosition = useCallback(
+        () => audioRef.current?.currentTime ?? 0,
+        [],
+    );
 
     return {
         isPlaying,

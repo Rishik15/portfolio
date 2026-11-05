@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { MUSIC_STREAM_TOKEN_TTL_MS } from "@/config/music";
 import type { MusicPlaylist, MusicRepeatMode } from "@/types/music";
@@ -35,9 +35,23 @@ type LoadedStream = {
 };
 
 export function useMusicPlayer({ playlists, onLimit }: PlayerInput) {
-    const [selection, setSelection] = useState<Selection | null>(null);
+    const [chosen, setSelection] = useState<Selection | null>(null);
 
     const [shuffle, setShuffle] = useState(false);
+
+    const fallbackSelection = useMemo<Selection | null>(() => {
+        const first = playlists.find((item) => item.tracks.length > 0);
+
+        return first
+            ? {
+                  playlistId: first.id,
+                  index: 0,
+                  order: createOrder(first.tracks.length, shuffle, 0),
+              }
+            : null;
+    }, [playlists, shuffle]);
+
+    const selection = chosen ?? fallbackSelection;
 
     const [repeat, setRepeat] = useState<MusicRepeatMode>("off");
 
@@ -65,15 +79,17 @@ export function useMusicPlayer({ playlists, onLimit }: PlayerInput) {
         getPosition,
     } = audio;
 
-    const playlist = playlists.find((item) => item.id === selection?.playlistId);
+    const playlist = playlists.find(
+        (item) => item.id === selection?.playlistId,
+    );
 
     const currentTrack = playlist?.tracks[selection?.index ?? -1] ?? null;
 
     const startTrack = useCallback(
         async (target: Selection, startAt = 0, autoplay = true) => {
-            const track = playlists
-                .find((item) => item.id === target.playlistId)
-                ?.tracks[target.index];
+            const track = playlists.find(
+                (item) => item.id === target.playlistId,
+            )?.tracks[target.index];
 
             if (!track) {
                 return;
@@ -150,7 +166,10 @@ export function useMusicPlayer({ playlists, onLimit }: PlayerInput) {
                 playlists.find((item) => item.id === playlistId)?.tracks
                     .length ?? 0;
 
-            if (selection?.playlistId === playlistId && selection.index === index) {
+            if (
+                selection?.playlistId === playlistId &&
+                selection.index === index
+            ) {
                 if (audio.isPlaying || isStarting) {
                     return;
                 }
@@ -163,8 +182,8 @@ export function useMusicPlayer({ playlists, onLimit }: PlayerInput) {
             }
 
             const order =
-                selection?.playlistId === playlistId
-                    ? selection.order
+                chosen?.playlistId === playlistId
+                    ? chosen.order
                     : createOrder(length, shuffle, index);
 
             const isLoadedTrack =
@@ -177,7 +196,20 @@ export function useMusicPlayer({ playlists, onLimit }: PlayerInput) {
                 isLoadedTrack ? getPosition() : 0,
             );
         },
-        [audio.isPlaying, currentTrack, getPosition, playAudio, hasFreshStream, hasPlaybackError, isStarting, playlists, selection, shuffle, startTrack],
+        [
+            audio.isPlaying,
+            currentTrack,
+            getPosition,
+            playAudio,
+            hasFreshStream,
+            hasPlaybackError,
+            isStarting,
+            playlists,
+            selection,
+            chosen,
+            shuffle,
+            startTrack,
+        ],
     );
 
     const pause = useCallback(() => {
@@ -232,7 +264,11 @@ export function useMusicPlayer({ playlists, onLimit }: PlayerInput) {
 
             void startTrack({
                 ...selection,
-                index: getAdjacentIndex(selection.order, selection.index, direction),
+                index: getAdjacentIndex(
+                    selection.order,
+                    selection.index,
+                    direction,
+                ),
             });
         },
         [getPosition, seek, selection, startTrack],
@@ -249,8 +285,8 @@ export function useMusicPlayer({ playlists, onLimit }: PlayerInput) {
             }
 
             const length =
-                playlists.find((item) => item.id === current.playlistId)
-                    ?.tracks.length ?? 0;
+                playlists.find((item) => item.id === current.playlistId)?.tracks
+                    .length ?? 0;
 
             return {
                 ...current,
@@ -270,7 +306,11 @@ export function useMusicPlayer({ playlists, onLimit }: PlayerInput) {
                     return;
                 }
 
-                const action = getEndedAction(selection.order, selection.index, repeat);
+                const action = getEndedAction(
+                    selection.order,
+                    selection.index,
+                    repeat,
+                );
 
                 if (action.type === "replay") {
                     void startTrack(selection);

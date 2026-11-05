@@ -1,5 +1,6 @@
 import { TERMINAL_COMMANDS } from "@/config/terminal";
 
+import { getClosestCommand } from "./terminal-closest";
 import type { TerminalDraft } from "./terminal-types";
 
 export function normalizeTerminalCommand(command: string) {
@@ -24,6 +25,14 @@ export function getTerminalSuggestions(value: string) {
     return TERMINAL_COMMANDS.filter(
         ({ name }) => name.startsWith(normalized) && name !== normalized,
     );
+}
+
+export function getGhostText(value: string, suggestion: string | undefined) {
+    if (!suggestion || !value || value !== value.trim()) {
+        return "";
+    }
+
+    return suggestion.slice(normalizeTerminalCommand(value).length);
 }
 
 export function resolveTerminalCommand(command: string): TerminalDraft {
@@ -100,13 +109,17 @@ export function resolveTerminalCommand(command: string): TerminalDraft {
         };
     }
 
+    const closest = getClosestCommand(normalized);
+
     return {
         command,
         result: {
             type: "text",
             lines: [
                 `command not found: ${command}`,
-                "Type /help to see available commands.",
+                closest
+                    ? `Did you mean ${closest}?`
+                    : "Type /help to see available commands.",
             ],
         },
     };

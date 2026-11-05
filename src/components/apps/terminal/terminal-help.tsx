@@ -2,29 +2,36 @@ import { usePrintUnit } from "@/components/apps/terminal/terminal-print";
 import { TERMINAL_UI } from "@/components/apps/terminal/terminal-ui";
 import { HELP_COMMANDS } from "@/components/apps/terminal/terminal-units";
 
-const FOOTER_ITEMS = [
-    { key: "↑", text: "Up Arrow for previous command" },
-    { key: "↓", text: "Down Arrow for next command" },
-    { key: "Esc", text: "Clears current input" },
-] as const;
-
 function HelpUnit({
     index,
     className,
+    onRun,
     children,
 }: {
     index: number;
     className: string;
+    onRun?: () => void;
     children: React.ReactNode;
 }) {
+    const interactive = onRun
+        ? {
+              role: "button",
+              tabIndex: 0,
+              onClick: onRun,
+              onKeyDown: (event: React.KeyboardEvent) => {
+                  if (event.key === "Enter") onRun();
+              },
+          }
+        : {};
+
     return (
-        <div {...usePrintUnit(index)} className={className}>
+        <div {...usePrintUnit(index)} {...interactive} className={className}>
             {children}
         </div>
     );
 }
 
-export function TerminalHelp() {
+export function TerminalHelp({ onRun }: { onRun: (command: string) => void }) {
     return (
         <div className={TERMINAL_UI.help.root}>
             <HelpUnit index={0} className={TERMINAL_UI.help.header}>
@@ -38,6 +45,7 @@ export function TerminalHelp() {
                         key={command.name}
                         index={1 + index}
                         className={TERMINAL_UI.help.row}
+                        onRun={() => onRun(command.name)}
                     >
                         <span className={TERMINAL_UI.help.command}>
                             {command.name}
@@ -46,22 +54,6 @@ export function TerminalHelp() {
                         <span className={TERMINAL_UI.help.description}>
                             {command.description}
                         </span>
-                    </HelpUnit>
-                ))}
-            </div>
-
-            <div className={TERMINAL_UI.help.footer}>
-                {FOOTER_ITEMS.map((item, index) => (
-                    <HelpUnit
-                        key={item.key}
-                        index={1 + HELP_COMMANDS.length + index}
-                        className={TERMINAL_UI.help.footerItem}
-                    >
-                        <span className={TERMINAL_UI.help.footerKey}>
-                            {item.key}
-                        </span>
-
-                        <span>{item.text}</span>
                     </HelpUnit>
                 ))}
             </div>

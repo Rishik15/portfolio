@@ -40,7 +40,22 @@ export function useTerminalInput(history: readonly string[]) {
     function handleKeyDown(event: KeyboardEvent<HTMLInputElement>) {
         if (event.key === "Tab" && suggestions.length) {
             event.preventDefault();
-            cycleSuggestion(event.shiftKey);
+
+            if (event.shiftKey) {
+                cycleSuggestion(true);
+            } else {
+                changeValue(suggestions[activeIndex].name);
+            }
+
+            return;
+        }
+
+        if (
+            suggestions.length &&
+            (event.key === "ArrowUp" || event.key === "ArrowDown")
+        ) {
+            event.preventDefault();
+            cycleSuggestion(event.key === "ArrowUp");
             return;
         }
 
