@@ -119,12 +119,21 @@ export function createLakeController(
         frame = requestAnimationFrame(tick);
     }
 
+    function overBackground(event: PointerEvent) {
+        return !(
+            event.target instanceof Element &&
+            event.target.closest(LAKE_LOOP.windowSelector)
+        );
+    }
+
     function onPointerMove(event: PointerEvent) {
-        sim.setPointer(event.clientX, event.clientY);
+        if (overBackground(event)) sim.setPointer(event.clientX, event.clientY);
+        else sim.clearPointer();
         wake();
     }
 
     function onPointerDown(event: PointerEvent) {
+        if (!overBackground(event)) return;
         sim.shock(event.clientX, event.clientY);
         wake();
     }
